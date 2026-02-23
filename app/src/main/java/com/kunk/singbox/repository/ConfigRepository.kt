@@ -2929,7 +2929,11 @@ class ConfigRepository(private val context: Context) {
         // 0. Bootstrap DNS (必须是 IP，用于解析其他 DoH/DoT 域名)
         // 使用多个 IP 以提高可靠性
         // 使用用户配置的服务器地址策略
-        val bootstrapStrategy = mapDnsStrategy(settings.serverAddressStrategy) ?: "ipv4_only"
+        // AUTO 行为：优先 IPv4，失败后自动回退 IPv6
+        val bootstrapStrategy = when (settings.serverAddressStrategy) {
+            DnsStrategy.AUTO -> "prefer_ipv4"
+            else -> mapDnsStrategy(settings.serverAddressStrategy) ?: "prefer_ipv4"
+        }
         dnsServers.add(
             DnsServer(
                 tag = "dns-bootstrap",
