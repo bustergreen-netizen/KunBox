@@ -1,5 +1,6 @@
 package com.kunk.singbox.repository.config
 
+import com.kunk.singbox.model.MultiplexConfig
 import com.kunk.singbox.model.Outbound
 import com.kunk.singbox.repository.SettingsRepository
 
@@ -94,6 +95,14 @@ object OutboundFixer {
         }
         if (normalizedFlow != result.flow) {
             result = result.copy(flow = normalizedFlow)
+        }
+
+        // Fix VLESS + Vision + Reality + Mux compatibility
+        if (result.type == "vless") {
+            val tunedMux = tuneMuxForVisionReality(result)
+            if (tunedMux != result.multiplex) {
+                result = result.copy(multiplex = tunedMux)
+            }
         }
 
         // Fix URLTest - Convert to selector to avoid sing-box core panic during InterfaceUpdated
@@ -474,6 +483,37 @@ object OutboundFixer {
 
             else -> fixed
         }
+    }
+
+    private fun tuneMuxForVisionReality(outbound: Outbound): MultiplexConfig? {
+        val mux = outbound.multiplex ?: return null
+        if (mux.enabled != true) return mux
+
+        val hasVisionFlow = outbound.flow?.contains("xtls-rprx-vision", ignoreCase = true) == true
+        val tls = outbound.tls
+        val hasReality = tls?.enabled == true && tls.reality?.enabled == true
+        if (!hasVisionFlow || !hasReality) return mux
+
+        val transportType = outbound.transport?.type?.lowercase()
+        val isXhttp = transportType == "xhttp" || transportType == "splithttp"
+        if (isXhttp) return mux
+
+        val normalizedProtocol = when (mux.protocol?.lowercase()) {
+            "h2mux", "smux", "yamux" -> "h2mux"
+            null, "" -> "h2mux"
+            else -> "h2mux"
+        }
+        val maxConnections = mux.maxConnections?.coerceIn(1, 2) ?: 1
+        val minStreams = mux.minStreams?.coerceAtLeast(1)
+        val maxStreams = mux.maxStreams?.coerceIn(1, 8) ?: 4
+
+        return mux.copy(
+            protocol = normalizedProtocol,
+            maxConnections = maxConnections,
+            minStreams = minStreams,
+            maxStreams = maxStreams,
+            padding = false
+        )
     }
 
     private fun isIpLiteral(value: String): Boolean {

@@ -1,6 +1,8 @@
 package com.kunk.singbox.repository.config
 
+import com.kunk.singbox.model.MultiplexConfig
 import com.kunk.singbox.model.Outbound
+import com.kunk.singbox.model.RealityConfig
 import com.kunk.singbox.model.TlsConfig
 import com.kunk.singbox.model.TransportConfig
 import org.junit.Assert.assertEquals
@@ -81,5 +83,68 @@ class OutboundFixerTest {
 
         assertNotNull(fixed.tls)
         assertEquals(listOf("h2"), fixed.tls?.alpn)
+    }
+
+    @Test
+    fun fixShouldTuneMuxForVlessVisionRealityWithNonXhttpTransport() {
+        val outbound = Outbound(
+            type = "vless",
+            tag = "vision-reality-ws",
+            server = "edge.example.com",
+            serverPort = 443,
+            uuid = "uuid-vision",
+            flow = "xtls-rprx-vision",
+            tls = TlsConfig(
+                enabled = true,
+                serverName = "edge.example.com",
+                reality = RealityConfig(enabled = true, publicKey = "pbk", shortId = "ab")
+            ),
+            transport = TransportConfig(type = "ws", path = "/ws"),
+            multiplex = MultiplexConfig(
+                enabled = true,
+                protocol = "smux",
+                maxConnections = 8,
+                minStreams = 0,
+                maxStreams = 64,
+                padding = true
+            )
+        )
+
+        val fixed = OutboundFixer.fix(outbound)
+
+        assertNotNull(fixed.multiplex)
+        assertEquals(true, fixed.multiplex?.enabled)
+        assertEquals("h2mux", fixed.multiplex?.protocol)
+        assertEquals(2, fixed.multiplex?.maxConnections)
+        assertEquals(1, fixed.multiplex?.minStreams)
+        assertEquals(8, fixed.multiplex?.maxStreams)
+        assertEquals(false, fixed.multiplex?.padding)
+    }
+
+    @Test
+    fun fixShouldKeepMuxForVlessVisionRealityWithXhttpTransport() {
+        val outbound = Outbound(
+            type = "vless",
+            tag = "vision-reality-xhttp",
+            server = "edge.example.com",
+            serverPort = 443,
+            uuid = "uuid-vision",
+            flow = "xtls-rprx-vision",
+            tls = TlsConfig(
+                enabled = true,
+                serverName = "edge.example.com",
+                reality = RealityConfig(enabled = true, publicKey = "pbk", shortId = "ab")
+            ),
+            transport = TransportConfig(type = "xhttp", path = "/x"),
+            multiplex = MultiplexConfig(enabled = true, protocol = "yamux", maxConnections = 8, padding = true)
+        )
+
+        val fixed = OutboundFixer.fix(outbound)
+
+        assertNotNull(fixed.multiplex)
+        assertEquals(true, fixed.multiplex?.enabled)
+        assertEquals("yamux", fixed.multiplex?.protocol)
+        assertEquals(8, fixed.multiplex?.maxConnections)
+        assertEquals(true, fixed.multiplex?.padding)
     }
 }
