@@ -166,6 +166,8 @@
     <string name="routing_settings_block_quic_subtitle">Block UDP 443 to reduce initial load latency</string>
     <string name="routing_settings_bypass_lan">Bypass LAN</string>
     <string name="routing_settings_bypass_lan_subtitle">LAN traffic does not go through proxy</string>
+    <string name="routing_settings_icmp_echo_routing">ICMP Echo Routing</string>
+    <string name="routing_settings_icmp_echo_routing_subtitle">Handle ping traffic with sing-box 1.13 ICMP routing rules</string>
     <string name="routing_settings_app_routing">App Routing</string>
     <string name="routing_settings_app_routing_rules">%d rules</string>
     <string name="routing_settings_domain_routing">Domain Routing</string>
@@ -625,4 +627,33 @@
 
     <!-- RuleSets Screen -->
     <string name="rulesets_selection_mode">%d selected</string>
+
+    <!-- Traffic Stats -->
+    <string name="traffic_stats_title">Traffic Statistics</string>
+    <string name="traffic_stats_clear_title">Clear Traffic Statistics</string>
+    <string name="traffic_stats_clear_message">Are you sure you want to clear all traffic statistics? This action cannot be undone.</string>
+    <string name="traffic_stats_clear_button">Clear</string>
+    <string name="traffic_stats_period_today">Today</string>
+    <string name="traffic_stats_period_this_week">This Week</string>
+    <string name="traffic_stats_period_this_month">This Month</string>
+    <string name="traffic_stats_period_all">All</string>
+    <string name="traffic_stats_total_traffic">Total Traffic</string>
+    <string name="traffic_stats_upload">Upload</string>
+    <string name="traffic_stats_download">Download</string>
+    <string name="traffic_stats_total_format">Total: %s</string>
+    <string name="traffic_stats_distribution">Traffic Distribution</string>
+    <string name="traffic_stats_unknown_node">Unknown</string>
+    <string name="traffic_stats_top_nodes">Top Nodes by Traffic</string>
+    <string name="traffic_stats_upload_short">↑ %s</string>
+    <string name="traffic_stats_download_short">↓ %s</string>
+    <string name="traffic_stats_no_data">No traffic data</string>
+    <string name="traffic_stats_no_data_hint">Connect and use VPN, then come back to view statistics.</string>
+    <string name="traffic_stats_settings_title">Traffic Statistics</string>
+    <string name="traffic_stats_settings_subtitle">View upload/download usage by period and node</string>
+
+    <!-- InfoCard -->
+    <string name="info_card_upload">Upload</string>
+    <string name="info_card_download">Download</string>
+    <string name="info_card_ping">Ping</string>
+
 </resources>

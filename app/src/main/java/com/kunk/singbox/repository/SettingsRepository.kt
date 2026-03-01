@@ -265,6 +265,11 @@ class SettingsRepository(private val context: Context) {
         notifyRestartRequired()
     }
 
+    suspend fun setIcmpEchoRoutingEnabled(value: Boolean) {
+        settingsStore.updateSettingsAndWait { it.copy(icmpEchoRoutingEnabled = value) }
+        notifyRestartRequired()
+    }
+
     suspend fun setWakeResetConnections(value: Boolean) {
         settingsStore.updateSettingsAndWait { it.copy(wakeResetConnections = value) }
     }

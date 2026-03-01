@@ -224,6 +224,12 @@ fun RoutingSettingsScreen(
                     checked = settings.bypassLan,
                     onCheckedChange = { settingsViewModel.setBypassLan(it) }
                 )
+                SettingSwitchItem(
+                    title = stringResource(R.string.routing_settings_icmp_echo_routing),
+                    subtitle = stringResource(R.string.routing_settings_icmp_echo_routing_subtitle),
+                    checked = settings.icmpEchoRoutingEnabled,
+                    onCheckedChange = { settingsViewModel.setIcmpEchoRoutingEnabled(it) }
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))

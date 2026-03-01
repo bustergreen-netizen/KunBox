@@ -314,6 +314,7 @@ data class RouteConfig(
 @Keep
 data class RouteRule(
     @SerializedName("action") val action: String? = null,
+    @SerializedName("network") val networkRaw: Any? = null,
     @SerializedName("protocol") val protocolRaw: Any? = null,
     @SerializedName("domain") val domain: List<String>? = null,
     @SerializedName("domain_suffix") val domainSuffix: List<String>? = null,
@@ -332,6 +333,13 @@ data class RouteRule(
     @SerializedName("user") val user: List<String>? = null,
     @SerializedName("outbound") val outbound: String? = null
 ) {
+    val network: List<String>?
+        get() = when (networkRaw) {
+            is String -> listOf(networkRaw)
+            is List<*> -> networkRaw.filterIsInstance<String>()
+            else -> null
+        }
+
     val protocol: List<String>?
         get() = when (protocolRaw) {
             is String -> listOf(protocolRaw)

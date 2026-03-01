@@ -329,6 +329,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch { repository.setBypassLan(value) }
     }
 
+    fun setIcmpEchoRoutingEnabled(value: Boolean) {
+        viewModelScope.launch { repository.setIcmpEchoRoutingEnabled(value) }
+    }
+
     fun setWakeResetConnections(value: Boolean) {
         viewModelScope.launch { repository.setWakeResetConnections(value) }
     }

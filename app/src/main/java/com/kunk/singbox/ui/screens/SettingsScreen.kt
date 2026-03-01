@@ -348,8 +348,8 @@ fun SettingsScreen(
         SettingsGroupTitle(stringResource(R.string.settings_data_management))
         StandardCard {
             SettingItem(
-                title = "Traffic Statistics",
-                subtitle = "View upload/download usage by period and node",
+                title = stringResource(R.string.traffic_stats_settings_title),
+                subtitle = stringResource(R.string.traffic_stats_settings_subtitle),
                 icon = Icons.Rounded.Analytics,
                 onClick = { navController.navigate(Screen.TrafficStats.route) }
             )

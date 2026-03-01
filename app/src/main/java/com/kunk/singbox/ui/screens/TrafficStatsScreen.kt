@@ -62,10 +62,12 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import java.util.Locale
 import androidx.navigation.NavController
+import com.kunk.singbox.R
 import com.kunk.singbox.repository.NodeTrafficStats
 import com.kunk.singbox.repository.TrafficPeriod
 import com.kunk.singbox.ui.components.ConfirmDialog
@@ -113,9 +115,9 @@ fun TrafficStatsScreen(
 
     if (showClearDialog) {
         ConfirmDialog(
-            title = "Clear Traffic Statistics",
-            message = "Are you sure you want to clear all traffic statistics? This action cannot be undone.",
-            confirmText = "Clear",
+            title = stringResource(R.string.traffic_stats_clear_title),
+            message = stringResource(R.string.traffic_stats_clear_message),
+            confirmText = stringResource(R.string.traffic_stats_clear_button),
             onConfirm = {
                 viewModel.clearAllStats()
                 showClearDialog = false
@@ -129,12 +131,12 @@ fun TrafficStatsScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Traffic Statistics", color = MaterialTheme.colorScheme.onBackground) },
+                title = { Text(stringResource(R.string.traffic_stats_title), color = MaterialTheme.colorScheme.onBackground) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.Rounded.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.common_back),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -161,7 +163,7 @@ fun TrafficStatsScreen(
                     ) {
                         Icon(
                             Icons.Rounded.Refresh,
-                            contentDescription = "Refresh",
+                            contentDescription = stringResource(R.string.common_refresh),
                             tint = if (uiState.isLoading) {
                                 MaterialTheme.colorScheme.primary
                             } else {
@@ -177,7 +179,7 @@ fun TrafficStatsScreen(
                     IconButton(onClick = { showClearDialog = true }) {
                         Icon(
                             Icons.Rounded.Delete,
-                            contentDescription = "Clear statistics",
+                            contentDescription = stringResource(R.string.traffic_stats_clear_title),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -249,10 +251,10 @@ private fun PeriodSelector(
     ) {
         TrafficPeriod.entries.forEach { period ->
             val label = when (period) {
-                TrafficPeriod.TODAY -> "Today"
-                TrafficPeriod.THIS_WEEK -> "This Week"
-                TrafficPeriod.THIS_MONTH -> "This Month"
-                TrafficPeriod.ALL_TIME -> "All"
+                TrafficPeriod.TODAY -> stringResource(R.string.traffic_stats_period_today)
+                TrafficPeriod.THIS_WEEK -> stringResource(R.string.traffic_stats_period_this_week)
+                TrafficPeriod.THIS_MONTH -> stringResource(R.string.traffic_stats_period_this_month)
+                TrafficPeriod.ALL_TIME -> stringResource(R.string.traffic_stats_period_all)
             }
             FilterChip(
                 selected = selectedPeriod == period,
@@ -275,7 +277,7 @@ private fun TotalTrafficCard(
     StandardCard {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Total Traffic",
+                text = stringResource(R.string.traffic_stats_total_traffic),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -289,13 +291,13 @@ private fun TotalTrafficCard(
             ) {
                 TrafficStatItem(
                     icon = Icons.Rounded.ArrowUpward,
-                    label = "Upload",
+                    label = stringResource(R.string.traffic_stats_upload),
                     value = formatBytes(totalUpload),
                     color = Color(0xFF22C55E)
                 )
                 TrafficStatItem(
                     icon = Icons.Rounded.ArrowDownward,
-                    label = "Download",
+                    label = stringResource(R.string.traffic_stats_download),
                     value = formatBytes(totalDownload),
                     color = Color(0xFF3B82F6)
                 )
@@ -308,7 +310,7 @@ private fun TotalTrafficCard(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Total: ${formatBytes(totalUpload + totalDownload)}",
+                    text = stringResource(R.string.traffic_stats_total_format, formatBytes(totalUpload + totalDownload)),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -363,7 +365,7 @@ private fun TrafficDistributionCard(
     StandardCard {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Traffic Distribution",
+                text = stringResource(R.string.traffic_stats_distribution),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -387,7 +389,7 @@ private fun TrafficDistributionCard(
             nodePercentages.forEachIndexed { index, (stats, percentage) ->
                 ChartLegendItem(
                     color = chartColors[index % chartColors.size],
-                    label = stats.nodeId?.let { nodeNames[it] } ?: stats.nodeName ?: "Unknown",
+                    label = stats.nodeId?.let { nodeNames[it] } ?: stats.nodeName ?: stringResource(R.string.traffic_stats_unknown_node),
                     percentage = percentage,
                     traffic = formatBytes(stats.upload + stats.download)
                 )
@@ -487,7 +489,7 @@ private fun NodeRankingCard(
     StandardCard {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Top Nodes by Traffic",
+                text = stringResource(R.string.traffic_stats_top_nodes),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -501,7 +503,7 @@ private fun NodeRankingCard(
                     stats = stats,
                     totalTraffic = totalTraffic,
                     color = chartColors[index % chartColors.size],
-                    displayName = stats.nodeId?.let { nodeNames[it] } ?: stats.nodeName ?: "Unknown"
+                    displayName = stats.nodeId?.let { nodeNames[it] } ?: stats.nodeName ?: stringResource(R.string.traffic_stats_unknown_node)
                 )
                 if (index < nodes.size - 1) {
                     Spacer(modifier = Modifier.height(12.dp))
@@ -569,13 +571,13 @@ private fun NodeRankingItem(
                 )
                 Row {
                     Text(
-                        text = "U: ${formatBytes(stats.upload)}",
+                        text = stringResource(R.string.traffic_stats_upload_short, formatBytes(stats.upload)),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF22C55E)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "D: ${formatBytes(stats.download)}",
+                        text = stringResource(R.string.traffic_stats_download_short, formatBytes(stats.download)),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF3B82F6)
                     )
@@ -614,13 +616,13 @@ private fun EmptyStateCard() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "No traffic data",
+                text = stringResource(R.string.traffic_stats_no_data),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Connect and use VPN, then come back to view statistics.",
+                text = stringResource(R.string.traffic_stats_no_data_hint),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )

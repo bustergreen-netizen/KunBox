@@ -53,6 +53,7 @@ data class AppSettings(
     @SerializedName("routingMode") val routingMode: RoutingMode = RoutingMode.RULE,
     @SerializedName("defaultRule") val defaultRule: DefaultRule = DefaultRule.PROXY,
     @SerializedName("bypassLan") val bypassLan: Boolean = true,
+    @SerializedName("icmpEchoRoutingEnabled") val icmpEchoRoutingEnabled: Boolean = false,
     // Throughput default: allow QUIC/HTTP3; users can enable blocking if their network/ISP has QUIC issues.
     @SerializedName("blockQuic") val blockQuic: Boolean = false,
     @SerializedName("debugLoggingEnabled") val debugLoggingEnabled: Boolean = false,

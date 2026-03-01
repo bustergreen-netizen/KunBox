@@ -167,6 +167,8 @@
     <string name="routing_settings_block_quic_subtitle">部分网络 QUIC 不稳定可开启；关闭可提升 HTTP/3 吞吐</string>
     <string name="routing_settings_bypass_lan">绕过局域网</string>
     <string name="routing_settings_bypass_lan_subtitle">局域网流量不经过代理</string>
+    <string name="routing_settings_icmp_echo_routing">ICMP Echo 分流</string>
+    <string name="routing_settings_icmp_echo_routing_subtitle">启用后按 sing-box 1.13 的 ICMP 规则处理 ping 流量</string>
     <string name="routing_settings_app_routing">应用分流</string>
     <string name="routing_settings_app_routing_rules">%d 条规则</string>
     <string name="routing_settings_domain_routing">域名分流</string>
@@ -651,5 +653,33 @@
 
     <!-- RuleSets Screen -->
     <string name="rulesets_selection_mode">已选择 %d 个</string>
+
+    <!-- Traffic Stats -->
+    <string name="traffic_stats_title">流量统计</string>
+    <string name="traffic_stats_clear_title">清除流量统计</string>
+    <string name="traffic_stats_clear_message">确定要清除所有流量统计数据吗？此操作不可撤销。</string>
+    <string name="traffic_stats_clear_button">清除</string>
+    <string name="traffic_stats_period_today">今天</string>
+    <string name="traffic_stats_period_this_week">本周</string>
+    <string name="traffic_stats_period_this_month">本月</string>
+    <string name="traffic_stats_period_all">全部</string>
+    <string name="traffic_stats_total_traffic">总流量</string>
+    <string name="traffic_stats_upload">上传</string>
+    <string name="traffic_stats_download">下载</string>
+    <string name="traffic_stats_total_format">总计: %s</string>
+    <string name="traffic_stats_distribution">流量分布</string>
+    <string name="traffic_stats_unknown_node">未知</string>
+    <string name="traffic_stats_top_nodes">节点排行</string>
+    <string name="traffic_stats_upload_short">↑ %s</string>
+    <string name="traffic_stats_download_short">↓ %s</string>
+    <string name="traffic_stats_no_data">暂无流量数据</string>
+    <string name="traffic_stats_no_data_hint">连接 VPN 并使用后，返回此页面查看统计。</string>
+    <string name="traffic_stats_settings_title">流量统计</string>
+    <string name="traffic_stats_settings_subtitle">按时段和节点查看上传下载用量</string>
+
+    <!-- InfoCard -->
+    <string name="info_card_upload">上传</string>
+    <string name="info_card_download">下载</string>
+    <string name="info_card_ping">延迟</string>
 
 </resources>

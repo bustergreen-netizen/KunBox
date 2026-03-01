@@ -25,7 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.kunk.singbox.R
 @Composable
 fun InfoCard(
     modifier: Modifier = Modifier,
@@ -45,12 +47,12 @@ fun InfoCard(
     ) {
         InfoItem(
             icon = Icons.Rounded.ArrowUpward,
-            label = "Upload",
+            label = stringResource(R.string.info_card_upload),
             value = uploadSpeed
         )
         InfoItem(
             icon = Icons.Rounded.ArrowDownward,
-            label = "Download",
+            label = stringResource(R.string.info_card_download),
             value = downloadSpeed
         )
         InfoItem(
@@ -60,7 +62,7 @@ fun InfoCard(
                 Modifier
             },
             icon = Icons.Rounded.Speed,
-            label = "Ping",
+            label = stringResource(R.string.info_card_ping),
             value = ping,
             isLoading = isPingLoading
         )

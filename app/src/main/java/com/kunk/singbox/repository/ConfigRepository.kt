@@ -3212,6 +3212,26 @@ class ConfigRepository(private val context: Context) {
         }
     }
 
+    private fun buildIcmpEchoRules(settings: AppSettings): List<RouteRule> {
+        if (!settings.icmpEchoRoutingEnabled) return emptyList()
+
+        return when (settings.routingMode) {
+            RoutingMode.GLOBAL_DIRECT -> listOf(RouteRule(networkRaw = listOf("icmp"), outbound = "direct"))
+            RoutingMode.GLOBAL_PROXY -> {
+                Log.w(TAG, "ICMP echo proxy outbound is limited; fallback to direct routing")
+                listOf(RouteRule(networkRaw = listOf("icmp"), outbound = "direct"))
+            }
+            RoutingMode.RULE -> when (settings.defaultRule) {
+                DefaultRule.DIRECT -> listOf(RouteRule(networkRaw = listOf("icmp"), outbound = "direct"))
+                DefaultRule.BLOCK -> listOf(RouteRule(networkRaw = listOf("icmp"), action = "reject"))
+                DefaultRule.PROXY -> {
+                    Log.w(TAG, "ICMP echo with PROXY default rule falls back to direct routing")
+                    listOf(RouteRule(networkRaw = listOf("icmp"), outbound = "direct"))
+                }
+            }
+        }
+    }
+
     private fun buildDefaultRules(settings: AppSettings, selectorTag: String): List<RouteRule> {
         return when (settings.defaultRule) {
             DefaultRule.DIRECT -> listOf(RouteRule(outbound = "direct"))
@@ -3236,15 +3256,16 @@ class ConfigRepository(private val context: Context) {
 
         val quicRule = buildQuicBlockRule(settings)
         val bypassLanRules = buildBypassLanRules(settings)
+        val icmpEchoRules = buildIcmpEchoRules(settings)
         val customDomainRules = buildCustomDomainRules(settings, selectorTag, outbounds, nodeTagResolver)
         val defaultRuleCatchAll = buildDefaultRules(settings, selectorTag)
         val hijackDnsRule = listOf(RouteRule(protocolRaw = listOf("dns"), action = "hijack-dns"))
 
         val allRules = when (settings.routingMode) {
-            RoutingMode.GLOBAL_PROXY -> hijackDnsRule
-            RoutingMode.GLOBAL_DIRECT -> hijackDnsRule + listOf(RouteRule(outbound = "direct"))
+            RoutingMode.GLOBAL_PROXY -> hijackDnsRule + icmpEchoRules
+            RoutingMode.GLOBAL_DIRECT -> hijackDnsRule + icmpEchoRules + listOf(RouteRule(outbound = "direct"))
             RoutingMode.RULE -> {
-                hijackDnsRule + quicRule + bypassLanRules +
+                hijackDnsRule + quicRule + bypassLanRules + icmpEchoRules +
                     customDomainRules + appRoutingRules + customRuleSetRules + defaultRuleCatchAll
             }
         }
