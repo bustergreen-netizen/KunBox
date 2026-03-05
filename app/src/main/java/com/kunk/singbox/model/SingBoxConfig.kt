@@ -92,6 +92,7 @@ data class Inbound(
     @SerializedName("listen_port") val listenPort: Int? = null,
     @SerializedName("reuse_addr") val reuseAddr: Boolean? = null,
     @SerializedName("interface_name") val interfaceName: String? = null,
+    @SerializedName("address") val addressRaw: Any? = null,
     @SerializedName("inet4_address") val inet4AddressRaw: Any? = null,
     @SerializedName("inet6_address") val inet6AddressRaw: Any? = null,
     @SerializedName("mtu") val mtu: Int? = null,
@@ -106,6 +107,13 @@ data class Inbound(
     @SerializedName("gso") val gso: Boolean? = null,
     @SerializedName("users") val users: List<InboundUser>? = null
 ) {
+    val address: List<String>?
+        get() = when (val raw = addressRaw) {
+            is String -> listOf(raw)
+            is List<*> -> raw.filterIsInstance<String>()
+            else -> null
+        }
+
     val inet4Address: List<String>?
         get() = when (val raw = inet4AddressRaw) {
             is String -> listOf(raw)

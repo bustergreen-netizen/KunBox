@@ -2881,6 +2881,10 @@ class ConfigRepository(private val context: Context) {
 
         val fixedOutbounds = rawOutbounds?.mapNotNull { outbound ->
             var processed = buildOutboundForRuntime(outbound)
+            if (processed.type == "dns") {
+                Log.w(TAG, "Skipping deprecated dns outbound: ${processed.tag}")
+                return@mapNotNull null
+            }
             if (dnsPreResolve && profileId != null) {
                 processed = applyDnsResolveToOutbound(profileId, processed)
             }
@@ -2898,9 +2902,7 @@ class ConfigRepository(private val context: Context) {
         if (fixedOutbounds.none { it.tag == "block" }) {
             fixedOutbounds.add(Outbound(type = "block", tag = "block"))
         }
-        if (fixedOutbounds.none { it.tag == "dns-out" }) {
-            fixedOutbounds.add(Outbound(type = "dns", tag = "dns-out"))
-        }
+
         val activeProfileId = _activeProfileId.value
         val requiredNodeIds = mutableSetOf<String>()
         val requiredProfileIds = mutableSetOf<String>()
@@ -3366,10 +3368,6 @@ class ConfigRepository(private val context: Context) {
             if (newOutbounds.none { it.tag == "block" }) {
                 newOutbounds.add(Outbound(type = "block", tag = "block"))
             }
-            if (newOutbounds.none { it.tag == "dns-out" }) {
-                newOutbounds.add(Outbound(type = "dns", tag = "dns-out"))
-            }
-
             val newConfig = deduplicateTags(SingBoxConfig(outbounds = newOutbounds))
 
             val configFile = File(configDir, "$profileId.json")
@@ -3504,10 +3502,6 @@ class ConfigRepository(private val context: Context) {
             if (newOutbounds.none { it.tag == "block" }) {
                 newOutbounds.add(Outbound(type = "block", tag = "block"))
             }
-            if (newOutbounds.none { it.tag == "dns-out" }) {
-                newOutbounds.add(Outbound(type = "dns", tag = "dns-out"))
-            }
-
             val newConfig = deduplicateTags(SingBoxConfig(outbounds = newOutbounds))
 
             val configFile = File(configDir, "$profileId.json")

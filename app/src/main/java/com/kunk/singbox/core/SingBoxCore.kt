@@ -596,7 +596,6 @@ class SingBoxCore private constructor(private val context: Context) {
 
         if (safeOutbounds.none { it.tag == "direct" }) safeOutbounds.add(com.kunk.singbox.model.Outbound(type = "direct", tag = "direct"))
         if (safeOutbounds.none { it.tag == "block" }) safeOutbounds.add(com.kunk.singbox.model.Outbound(type = "block", tag = "block"))
-        if (safeOutbounds.none { it.tag == "dns-out" }) safeOutbounds.add(com.kunk.singbox.model.Outbound(type = "dns", tag = "dns-out"))
 
         val batchTestDbPath = File(tempDir, "batch_test_${UUID.randomUUID()}.db").absolutePath
 
