@@ -40,6 +40,9 @@ import java.net.SocketTimeoutException
 import java.util.Collections
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.*
@@ -51,7 +54,6 @@ import kotlinx.coroutines.sync.withPermit
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import com.kunk.singbox.utils.NetworkClient
-import com.kunk.singbox.utils.StringBuilderPool
 import com.kunk.singbox.utils.dns.DnsResolver
 import com.kunk.singbox.utils.dns.DnsResolveStore
 import com.tencent.mmkv.MMKV
@@ -87,6 +89,8 @@ class ConfigRepository(private val context: Context) {
         private const val SUBSCRIPTION_CALL_TIMEOUT_SECONDS = 10L
         private const val SUBSCRIPTION_FAILURE_THRESHOLD = 1
         private const val SUBSCRIPTION_CIRCUIT_BREAKER_WINDOW_MS = 10 * 60 * 1000L
+        private const val CONFIG_CACHE_EXPIRY_MS = 30 * 60 * 1000L
+        private const val CONFIG_CACHE_CLEANUP_INTERVAL_MINUTES = 30L
         private val REGEX_TRAFFIC = Regex("([\\d.]+)\\s*([KMGTPE]?)B?")
         private val REGEX_KV_PAIRS =
             Regex("(?i)\\b(upload|download|total|expire)\\b\\s*[:=]\\s*\"?([^,;\\s\\n\\r}]+)\"?")
@@ -101,6 +105,20 @@ class ConfigRepository(private val context: Context) {
         private val REGEX_SANITIZE_PASSWORD = Regex("(?i)password\\s*[:=]\\s*[^\\\\n]+")
         private val REGEX_SANITIZE_TOKEN = Regex("(?i)token\\s*[:=]\\s*[^\\\\n]+")
         private val REGEX_WHITESPACE_DASH = Regex("[\\s\\-_]")
+        private val REGEX_RULE_SET_JSON_KEYS = Regex("\"(version|rules|rule_set|type|tag|path|url|payload)\"\\s*:")
+        private val REGEX_RULE_SET_TEXT_LINE = Regex(
+            "^(payload:|rules:|type:|version:|mode:|tag:|-\\s+|" +
+                "[a-z0-9*._-]+\\.[a-z]{2,}|[a-z0-9*._-]+/[a-z0-9*._/-]+|[0-9a-f:.]+/[0-9]{1,3})",
+            RegexOption.IGNORE_CASE
+        )
+        private val REGEX_RULE_SET_ERROR_TEXT = Regex(
+            "^(error|forbidden|not found|404|403|500|access denied|" +
+                "invalid request)\\b",
+            RegexOption.IGNORE_CASE
+        )
+        private const val RULE_SET_MIN_SIZE_BYTES = 10L
+        private const val RULE_SET_SNIFF_BYTES = 512
+        private const val RULE_SET_TEXT_PARSE_LIMIT_BYTES = 256 * 1024L
 
         private val TYPE_SAVED_PROFILES_DATA = object : TypeToken<SavedProfilesData>() {}.type
         private val TYPE_OUTBOUND_LIST = object : TypeToken<List<Outbound>>() {}.type
@@ -117,10 +135,7 @@ class ConfigRepository(private val context: Context) {
             val key = "$profileId|$outboundTag"
             synchronized(nodeIdCache) {
                 nodeIdCache[key]?.let { return it }
-                val id = StringBuilderPool.use { sb ->
-                    sb.append(profileId).append('|').append(outboundTag)
-                    java.util.UUID.nameUUIDFromBytes(sb.toString().toByteArray(Charsets.UTF_8)).toString()
-                }
+                val id = UUID.nameUUIDFromBytes(key.toByteArray(Charsets.UTF_8)).toString()
                 nodeIdCache[key] = id
                 return id
             }
@@ -275,10 +290,14 @@ class ConfigRepository(private val context: Context) {
 
         internal fun resolveAppRuleOutboundMode(mode: RuleSetOutboundMode?): RuleSetOutboundMode {
             return mode ?: RuleSetOutboundMode.PROXY
+            // 有意设计: 自定义规则通常是代理规则，直连为例外
+            // 符合"代理优先"的用户心智模型
         }
 
         internal fun resolveAppGroupOutboundMode(mode: RuleSetOutboundMode?): RuleSetOutboundMode {
             return mode ?: RuleSetOutboundMode.DIRECT
+            // 有意设计: AppGroup 主要用于需要直连的本地应用（游戏、支付等）
+            // 如需代理，用户应显式配置
         }
 
         internal fun resolveRuleSetOutboundMode(mode: RuleSetOutboundMode?): RuleSetOutboundMode {
@@ -475,7 +494,10 @@ class ConfigRepository(private val context: Context) {
         ): String? {
             return when (semantic) {
                 OutboundSemantic.Direct -> directServerTag
-                OutboundSemantic.Block -> null
+                OutboundSemantic.Block -> {
+                    Log.d(TAG, "DNS rule for Block semantic, skipping DNS server assignment")
+                    null
+                }
                 OutboundSemantic.Proxy -> proxyServerTag
                 is OutboundSemantic.FallbackProxy -> proxyServerTag
                 is OutboundSemantic.RouteTag -> buildDynamicDnsServerTag(semantic.tag)
@@ -715,18 +737,96 @@ class ConfigRepository(private val context: Context) {
         return "$host|$userAgent|$suffix"
     }
 
+    private fun readSubscriptionUaFailureCount(key: String): Int {
+        val memoryValue = subscriptionUaFailureCountMemory[key] ?: 0
+        val persistedValue = runCatching {
+            subscriptionUaHealthMmkv.decodeInt(key, memoryValue)
+        }.getOrElse { e ->
+            Log.w(TAG, "Failed to read subscription UA failure count for key=$key, using memory fallback", e)
+            memoryValue
+        }
+        val effectiveValue = maxOf(memoryValue, persistedValue)
+        if (effectiveValue > 0) {
+            subscriptionUaFailureCountMemory[key] = effectiveValue
+        } else {
+            subscriptionUaFailureCountMemory.remove(key)
+        }
+        return effectiveValue
+    }
+
+    private fun readSubscriptionUaBlockedUntil(key: String): Long {
+        val memoryValue = subscriptionUaBlockedUntilMemory[key] ?: 0L
+        val persistedValue = runCatching {
+            subscriptionUaHealthMmkv.decodeLong(key, memoryValue)
+        }.getOrElse { e ->
+            Log.w(TAG, "Failed to read subscription UA blocked-until for key=$key, using memory fallback", e)
+            memoryValue
+        }
+        val effectiveValue = maxOf(memoryValue, persistedValue)
+        if (effectiveValue > 0L) {
+            subscriptionUaBlockedUntilMemory[key] = effectiveValue
+        } else {
+            subscriptionUaBlockedUntilMemory.remove(key)
+        }
+        return effectiveValue
+    }
+
+    private fun persistSubscriptionUaFailureCount(key: String, value: Int) {
+        if (value > 0) {
+            subscriptionUaFailureCountMemory[key] = value
+        } else {
+            subscriptionUaFailureCountMemory.remove(key)
+        }
+        runCatching {
+            subscriptionUaHealthMmkv.encode(key, value)
+        }.onFailure { e ->
+            Log.w(TAG, "Failed to persist subscription UA failure count for key=$key", e)
+        }
+    }
+
+    private fun persistSubscriptionUaBlockedUntil(key: String, value: Long) {
+        if (value > 0L) {
+            subscriptionUaBlockedUntilMemory[key] = value
+        } else {
+            subscriptionUaBlockedUntilMemory.remove(key)
+        }
+        runCatching {
+            subscriptionUaHealthMmkv.encode(key, value)
+        }.onFailure { e ->
+            Log.w(TAG, "Failed to persist subscription UA blocked-until for key=$key", e)
+        }
+    }
+
+    private fun clearSubscriptionUaHealthKey(key: String, memoryCache: MutableMap<String, *>) {
+        when (memoryCache) {
+            subscriptionUaFailureCountMemory -> subscriptionUaFailureCountMemory.remove(key)
+            subscriptionUaBlockedUntilMemory -> subscriptionUaBlockedUntilMemory.remove(key)
+        }
+        runCatching {
+            subscriptionUaHealthMmkv.removeValueForKey(key)
+        }.onFailure { e ->
+            Log.w(TAG, "Failed to clear subscription UA health key=$key", e)
+        }
+    }
+
     private fun getCircuitBrokenUserAgents(host: String, nowMs: Long = System.currentTimeMillis()): Set<String> {
         return USER_AGENTS.filter { userAgent ->
             val blockedUntilKey = buildSubscriptionUaHealthKey(host, userAgent, "blocked_until")
-            subscriptionUaHealthMmkv.decodeLong(blockedUntilKey, 0L) > nowMs
+            val blockedUntil = readSubscriptionUaBlockedUntil(blockedUntilKey)
+            if (blockedUntil <= nowMs) {
+                persistSubscriptionUaBlockedUntil(blockedUntilKey, 0L)
+                false
+            } else {
+                true
+            }
         }.toSet()
     }
 
     private fun clearSubscriptionUserAgentFailure(host: String, userAgent: String) {
         val failureCountKey = buildSubscriptionUaHealthKey(host, userAgent, "fail_count")
         val blockedUntilKey = buildSubscriptionUaHealthKey(host, userAgent, "blocked_until")
-        subscriptionUaHealthMmkv.removeValueForKey(failureCountKey)
-        subscriptionUaHealthMmkv.removeValueForKey(blockedUntilKey)
+        clearSubscriptionUaHealthKey(failureCountKey, subscriptionUaFailureCountMemory)
+        clearSubscriptionUaHealthKey(blockedUntilKey, subscriptionUaBlockedUntilMemory)
     }
 
     private fun recordSubscriptionUserAgentFailure(
@@ -736,13 +836,10 @@ class ConfigRepository(private val context: Context) {
     ) {
         val failureCountKey = buildSubscriptionUaHealthKey(host, userAgent, "fail_count")
         val blockedUntilKey = buildSubscriptionUaHealthKey(host, userAgent, "blocked_until")
-        val nextFailureCount = subscriptionUaHealthMmkv.decodeInt(failureCountKey, 0) + 1
-        subscriptionUaHealthMmkv.encode(failureCountKey, nextFailureCount)
+        val nextFailureCount = readSubscriptionUaFailureCount(failureCountKey) + 1
+        persistSubscriptionUaFailureCount(failureCountKey, nextFailureCount)
         if (nextFailureCount >= SUBSCRIPTION_FAILURE_THRESHOLD) {
-            subscriptionUaHealthMmkv.encode(
-                blockedUntilKey,
-                nowMs + SUBSCRIPTION_CIRCUIT_BREAKER_WINDOW_MS
-            )
+            persistSubscriptionUaBlockedUntil(blockedUntilKey, nowMs + SUBSCRIPTION_CIRCUIT_BREAKER_WINDOW_MS)
         }
     }
 
@@ -787,6 +884,13 @@ class ConfigRepository(private val context: Context) {
             }
         }
     )
+    private val configCacheAccessTimes = ConcurrentHashMap<String, Long>()
+    private val cacheCleanupScheduler: ScheduledExecutorService =
+        Executors.newSingleThreadScheduledExecutor { runnable ->
+            Thread(runnable, "config-cache-cleanup").apply {
+                isDaemon = true
+            }
+        }
     private val profileNodes = ConcurrentHashMap<String, List<NodeUi>>()
     private val profileResetJobs = ConcurrentHashMap<String, kotlinx.coroutines.Job>()
     private val inFlightLatencyTests = ConcurrentHashMap<String, Deferred<Long>>()
@@ -809,6 +913,8 @@ class ConfigRepository(private val context: Context) {
     private val subscriptionUaMemoryMmkv: MMKV by lazy {
         MMKV.mmkvWithID("subscription_ua_memory", MMKV.SINGLE_PROCESS_MODE)
     }
+    private val subscriptionUaFailureCountMemory = ConcurrentHashMap<String, Int>()
+    private val subscriptionUaBlockedUntilMemory = ConcurrentHashMap<String, Long>()
     private val subscriptionUaHealthMmkv: MMKV by lazy {
         MMKV.mmkvWithID("subscription_ua_health", MMKV.SINGLE_PROCESS_MODE)
     }
@@ -834,6 +940,7 @@ class ConfigRepository(private val context: Context) {
     init {
         loadProfileNodeMemory()
         loadSavedProfiles()
+        startConfigCacheCleanup()
         scope.launch {
             settingsRepository.settings.collect { settings ->
                 cachedSettings = settings
@@ -860,7 +967,10 @@ class ConfigRepository(private val context: Context) {
     }
 
     private fun loadConfig(profileId: String): SingBoxConfig? {
-        configCache[profileId]?.let { return it }
+        configCache[profileId]?.let {
+            configCacheAccessTimes[profileId] = System.currentTimeMillis()
+            return it
+        }
 
         val configFile = File(configDir, "$profileId.json")
         if (!configFile.exists()) return null
@@ -879,10 +989,41 @@ class ConfigRepository(private val context: Context) {
 
     private fun cacheConfig(profileId: String, config: SingBoxConfig) {
         configCache[profileId] = config
+        configCacheAccessTimes[profileId] = System.currentTimeMillis()
     }
 
     private fun removeCachedConfig(profileId: String) {
         configCache.remove(profileId)
+        configCacheAccessTimes.remove(profileId)
+    }
+
+    private fun startConfigCacheCleanup() {
+        cacheCleanupScheduler.scheduleWithFixedDelay(
+            {
+                try {
+                    cleanupExpiredCache()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to cleanup expired config cache", e)
+                }
+            },
+            CONFIG_CACHE_CLEANUP_INTERVAL_MINUTES,
+            CONFIG_CACHE_CLEANUP_INTERVAL_MINUTES,
+            TimeUnit.MINUTES
+        )
+    }
+
+    private fun cleanupExpiredCache(now: Long = System.currentTimeMillis()) {
+        synchronized(configCache) {
+            val iterator = configCache.entries.iterator()
+            while (iterator.hasNext()) {
+                val entry = iterator.next()
+                val lastAccessTime = configCacheAccessTimes[entry.key] ?: now
+                if (now - lastAccessTime > CONFIG_CACHE_EXPIRY_MS) {
+                    iterator.remove()
+                    configCacheAccessTimes.remove(entry.key)
+                }
+            }
+        }
     }
 
     private fun saveProfiles() {
@@ -958,7 +1099,20 @@ class ConfigRepository(private val context: Context) {
         runCatching {
             preResolveDomainsForProfile(profileId, config, dnsServer)
         }.onFailure { e ->
-            Log.w(TAG, "DNS pre-resolve failed for profile $profileId", e)
+            when (e) {
+                is java.net.UnknownHostException -> {
+                    Log.d(TAG, "DNS pre-resolve failed (unknown host) for profile $profileId: ${e.message}")
+                }
+                is java.net.SocketTimeoutException -> {
+                    Log.d(TAG, "DNS pre-resolve timed out for profile $profileId")
+                }
+                is java.io.IOException -> {
+                    Log.w(TAG, "DNS pre-resolve I/O error for profile $profileId", e)
+                }
+                else -> {
+                    Log.e(TAG, "DNS pre-resolve failed for profile $profileId", e)
+                }
+            }
         }
     }
 
@@ -2949,6 +3103,126 @@ class ConfigRepository(private val context: Context) {
         }
     }
 
+    private fun isValidRuleSetFile(file: File, tag: String): Boolean {
+        if (!file.exists() || file.length() == 0L) {
+            Log.w(TAG, "Rule set file not found or empty: $tag (${file.absolutePath})")
+            return false
+        }
+
+        return try {
+            val sample = readRuleSetSample(file)
+            if (sample.isEmpty()) {
+                Log.w(TAG, "Rule set file header is empty, ignoring: $tag")
+                return false
+            }
+
+            if (!isLikelyTextRuleSet(sample)) {
+                validateBinaryRuleSet(file, tag)
+            } else {
+                validateTextRuleSet(file, tag, readRuleSetInspectionText(file, sample))
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to validate rule set file: $tag", e)
+            false
+        }
+    }
+
+    private fun readRuleSetSample(file: File): ByteArray {
+        return file.inputStream().use { input ->
+            val buffer = ByteArray(RULE_SET_SNIFF_BYTES)
+            val read = input.read(buffer)
+            if (read > 0) buffer.copyOf(read) else ByteArray(0)
+        }
+    }
+
+    private fun isLikelyTextRuleSet(sample: ByteArray): Boolean {
+        if (sample.any { it == 0.toByte() }) return false
+        val printableBytes = sample.count { byte ->
+            val code = byte.toInt() and 0xff
+            code == 9 || code == 10 || code == 13 || code in 32..126
+        }
+        return printableBytes >= sample.size * 3 / 4
+    }
+
+    private fun readRuleSetInspectionText(file: File, sample: ByteArray): String {
+        return if (file.length() <= RULE_SET_TEXT_PARSE_LIMIT_BYTES) {
+            file.readText()
+        } else {
+            sample.toString(Charsets.UTF_8)
+        }
+    }
+
+    private fun validateBinaryRuleSet(file: File, tag: String): Boolean {
+        if (file.length() >= RULE_SET_MIN_SIZE_BYTES) {
+            return true
+        }
+        Log.w(TAG, "Rule set binary file too small, ignoring: $tag (${file.length()} bytes)")
+        return false
+    }
+
+    private fun validateTextRuleSet(file: File, tag: String, inspectionText: String): Boolean {
+        val trimmed = inspectionText.trim()
+        if (trimmed.isEmpty()) {
+            Log.w(TAG, "Rule set text content is blank, ignoring: $tag")
+            return false
+        }
+        if (looksLikeHtmlSubscriptionPage(contentType = null, body = trimmed)) {
+            Log.e(TAG, "Rule set file appears to be HTML, ignoring: $tag")
+            return false
+        }
+
+        val validTextRuleSet = when {
+            trimmed.startsWith("{") || trimmed.startsWith("[") -> isValidRuleSetJson(trimmed)
+            else -> isValidRuleSetStructuredText(trimmed)
+        }
+        if (validTextRuleSet) {
+            return true
+        }
+        if (file.length() < RULE_SET_MIN_SIZE_BYTES) {
+            Log.w(TAG, "Rule set text file too small, ignoring: $tag (${file.length()} bytes)")
+            return false
+        }
+        if (REGEX_RULE_SET_ERROR_TEXT.containsMatchIn(trimmed.lineSequence().firstOrNull().orEmpty())) {
+            Log.e(TAG, "Rule set file looks like an error response, ignoring: $tag")
+            return false
+        }
+
+        Log.w(TAG, "Rule set file content not recognized, using size fallback: $tag (${file.length()} bytes)")
+        return true
+    }
+
+    private fun isValidRuleSetJson(content: String): Boolean {
+        return runCatching {
+            val element = JsonParser.parseString(content)
+            when {
+                element.isJsonArray -> element.asJsonArray.size() > 0
+                !element.isJsonObject -> false
+                else -> {
+                    val obj = element.asJsonObject
+                    obj.has("rules") ||
+                        obj.has("rule_set") ||
+                        obj.has("payload") ||
+                        obj.has("type") ||
+                        obj.has("version") ||
+                        REGEX_RULE_SET_JSON_KEYS.containsMatchIn(content)
+                }
+            }
+        }.getOrDefault(false)
+    }
+
+    private fun isValidRuleSetStructuredText(content: String): Boolean {
+        val lines = content.lineSequence()
+            .map { it.trim() }
+            .filter { it.isNotEmpty() && !it.startsWith("#") && !it.startsWith("//") }
+            .take(8)
+            .toList()
+        if (lines.isEmpty()) return false
+        if (REGEX_RULE_SET_ERROR_TEXT.containsMatchIn(lines.first())) {
+            return false
+        }
+        return lines.any { REGEX_RULE_SET_TEXT_LINE.containsMatchIn(it) }
+    }
+
     private fun buildCustomRuleSets(settings: AppSettings): List<RuleSetConfig> {
         val ruleSetRepo = RuleSetRepository.getInstance(context)
 
@@ -2956,29 +3230,7 @@ class ConfigRepository(private val context: Context) {
             if (ruleSet.type == RuleSetType.REMOTE) {
                 val localPath = ruleSetRepo.getRuleSetPath(ruleSet.tag)
                 val file = File(localPath)
-                if (file.exists() && file.length() > 0) {
-                    if (file.length() < 10) {
-                        Log.w(TAG, "Rule set file too small, ignoring: ${ruleSet.tag} (${file.length()} bytes)")
-                        return@map null
-                    }
-                    try {
-                        val header = file.inputStream().use { input ->
-                            val buffer = ByteArray(64)
-                            val read = input.read(buffer)
-                            if (read > 0) String(buffer, 0, read) else ""
-                        }
-                        val trimmedHeader = header.trim()
-                        if (trimmedHeader.startsWith("<!DOCTYPE html", ignoreCase = true) ||
-                            trimmedHeader.startsWith("<html", ignoreCase = true) ||
-                            trimmedHeader.startsWith("{")) {
-                            Log.e(TAG, "Rule set file appears to be invalid (HTML/JSON), ignoring: ${ruleSet.tag}")
-                            file.delete()
-                            return@map null
-                        }
-                    } catch (e: Exception) {
-                        Log.w(TAG, "Failed to inspect rule set file header: ${ruleSet.tag}", e)
-                    }
-
+                if (isValidRuleSetFile(file, ruleSet.tag)) {
                     RuleSetConfig(
                         tag = ruleSet.tag,
                         type = "local",
@@ -2986,12 +3238,14 @@ class ConfigRepository(private val context: Context) {
                         path = localPath
                     )
                 } else {
-                    Log.w(TAG, "Rule set file not found or empty: ${ruleSet.tag} ($localPath)")
+                    if (file.exists() && !file.delete()) {
+                        Log.w(TAG, "Failed to delete invalid rule set file: ${ruleSet.tag} ($localPath)")
+                    }
                     null
                 }
             } else {
                 val file = File(ruleSet.path)
-                if (file.exists() && file.length() > 0) {
+                if (isValidRuleSetFile(file, ruleSet.tag)) {
                     RuleSetConfig(
                         tag = ruleSet.tag,
                         type = "local",
@@ -3072,9 +3326,9 @@ class ConfigRepository(private val context: Context) {
             compareBy(
                 { ruleSet ->
                     when {
-                        ruleSet.tag.contains("geolocation-!cn") -> 200
-                        ruleSet.tag.contains("geolocation-cn") -> 199
-                        ruleSet.tag.contains("!cn") -> 198
+                        ruleSet.tag == "geolocation-!cn" -> 200
+                        ruleSet.tag == "geolocation-cn" -> 199
+                        ruleSet.tag == "!cn" || ruleSet.tag.endsWith("-!cn") -> 198
                         ruleSet.tag.matches(Regex("^geo(site|ip)-[a-z]{2}$")) -> 100
                         else -> 0
                     }
@@ -3103,10 +3357,9 @@ class ConfigRepository(private val context: Context) {
                 )
             )
             val baseRule = toRouteRule(semantic, defaultProxyTag)
-            val inboundTags = if (ruleSet.inbounds.isNullOrEmpty()) {
-                null
-            } else {
-                ruleSet.inbounds.map {
+            val inboundTags: List<String>? = when {
+                ruleSet.inbounds.isNullOrEmpty() -> null
+                else -> ruleSet.inbounds.map {
                     when (it) {
                         "tun" -> "tun-in"
                         "mixed" -> "mixed-in"
@@ -3132,12 +3385,11 @@ class ConfigRepository(private val context: Context) {
     ): List<RouteRule> {
         val rules = mutableListOf<RouteRule>()
 
-        fun resolveUidByPackageName(pkg: String): Int {
+        fun resolveUidByPackageName(pkg: String): Int? {
             return try {
-                val info = context.packageManager.getApplicationInfo(pkg, 0)
-                info.uid
+                context.packageManager.getApplicationInfo(pkg, 0).uid
             } catch (_: Exception) {
-                0
+                null
             }
         }
 
@@ -3155,7 +3407,7 @@ class ConfigRepository(private val context: Context) {
             val baseRule = toRouteRule(semantic, defaultProxyTag)
 
             val uid = resolveUidByPackageName(rule.packageName)
-            if (uid > 0) {
+            if (uid != null && uid > 0) {
                 rules.add(
                     baseRule.copy(
                         userId = listOf(uid)
@@ -3183,7 +3435,7 @@ class ConfigRepository(private val context: Context) {
             val baseRule = toRouteRule(semantic, defaultProxyTag)
             val packageNames = group.apps.map { it.packageName }
             if (packageNames.isNotEmpty()) {
-                val uids = packageNames.map { resolveUidByPackageName(it) }.filter { it > 0 }.distinct()
+                val uids = packageNames.mapNotNull { resolveUidByPackageName(it) }.filter { it > 0 }.distinct()
                 if (uids.isNotEmpty()) {
                     rules.add(
                         baseRule.copy(
@@ -3251,6 +3503,23 @@ class ConfigRepository(private val context: Context) {
             rule.copy(action = "route", server = server)
 
         fun dnsReject(rule: DnsRule): DnsRule = rule.copy(action = "reject", method = "default")
+
+        fun parseDomainList(input: String): List<String> {
+            return input
+                .split("\n", "\r", ";")
+                .flatMap { rawEntry ->
+                    val entry = rawEntry.trim()
+                    when {
+                        entry.isEmpty() -> emptyList()
+                        entry.contains(",") && !entry.contains(".") -> {
+                            entry.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+                        }
+
+                        else -> listOf(entry)
+                    }
+                }
+                .distinct()
+        }
 
         val fakeipQueryTypes = listOf("A", "AAAA")
 
@@ -3326,7 +3595,6 @@ class ConfigRepository(private val context: Context) {
         val remoteServer = buildDnsServer(
             address = remoteDnsAddr,
             tag = "remote",
-            detour = "PROXY",
             domainStrategy = mapDnsStrategy(settings.remoteDnsStrategy),
             domainResolver = remoteResolver
         )
@@ -3373,7 +3641,7 @@ class ConfigRepository(private val context: Context) {
                             semantic,
                             settings.fakeDnsEnabled,
                             directServerTag,
-                            proxyServerTag
+                            if (semantic == OutboundSemantic.Proxy) "remote" else proxyServerTag
                         ) ?: return
                         dnsRulesByServer.getOrPut(serverTag) { mutableListOf() }.add(rule)
                     }
@@ -3436,7 +3704,7 @@ class ConfigRepository(private val context: Context) {
                         semantic,
                         settings.fakeDnsEnabled,
                         directServerTag,
-                        proxyServerTag
+                        if (semantic == OutboundSemantic.Proxy) "remote" else proxyServerTag
                     ) ?: return
                     dnsRuleSetRulesByServer.getOrPut(serverTag) {
                         mutableListOf()
@@ -3486,7 +3754,7 @@ class ConfigRepository(private val context: Context) {
                         semantic,
                         settings.fakeDnsEnabled,
                         directServerTag,
-                        proxyServerTag
+                        if (semantic == OutboundSemantic.Proxy) "remote" else proxyServerTag
                     ) ?: return
                     packageRulesByServer.getOrPut(serverTag) { mutableListOf() }.add(rule)
                 }
@@ -3584,24 +3852,16 @@ class ConfigRepository(private val context: Context) {
 
         if (settings.fakeDnsEnabled) {
             val fakeIpExcludeDomains = buildList {
-                settings.fakeIpExcludeDomains
-                    .split(",")
-                    .map { it.trim() }
-                    .filter { it.isNotEmpty() }
-                    .forEach { add(it) }
-                val defaultExcludes = listOf(
-                    "accounts.google.com",
-                    "oauth.googleusercontent.com",
-                    "appleid.apple.com",
-                    "idmsa.apple.com",
-                    "login.microsoftonline.com",
-                    "login.live.com",
-                    "lan",
-                    "local",
-                    "localhost",
-                    "localdomain",
-                    "arpa"
-                )
+                parseDomainList(settings.fakeIpExcludeDomains).forEach { add(it) }
+                val defaultExcludes = settings.fakeDnsExcludedDomains
+                    .takeIf { it.isNotBlank() }
+                    ?.split("\n", "\r")
+                    ?.map { it.trim() }
+                    ?.filter { it.isNotEmpty() }
+                    ?: AppSettings.DEFAULT_FAKE_DNS_EXCLUDED_DOMAINS
+                        .split("\n", "\r")
+                        .map { it.trim() }
+                        .filter { it.isNotEmpty() }
                 defaultExcludes.filter { it !in this }.forEach { add(it) }
             }.distinct()
 
@@ -4495,8 +4755,10 @@ class ConfigRepository(private val context: Context) {
 
     fun cleanup() {
         scope.cancel()
+        cacheCleanupScheduler.shutdownNow()
         nodeIdCache.clear()
         configCache.clear()
+        configCacheAccessTimes.clear()
         profileNodes.clear()
         savedNodeLatencies.clear()
         inFlightLatencyTests.clear()

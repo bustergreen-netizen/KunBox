@@ -427,7 +427,13 @@ class NodeLinkParser(private val gson: Gson) {
             }
 
             if (aid != 0) {
-                Log.d("NodeLinkParser", "VMess node '$ps' uses legacy protocol (alterId=$aid)")
+                Log.w(
+                    "NodeLinkParser",
+                    "VMess node '$ps' uses legacy MD5 authentication (alterId=$aid). " +
+                        "This protocol is insecure and vulnerable to replay attacks. " +
+                        "Please migrate to AEAD (alterId=0) or " +
+                        "use VLESS/XTLS."
+                )
             }
 
             return Outbound(

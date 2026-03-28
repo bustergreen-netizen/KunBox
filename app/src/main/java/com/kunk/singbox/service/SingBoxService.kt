@@ -2391,18 +2391,7 @@ class SingBoxService : VpnService() {
         }
         super.onDestroy()
 
-        // Kill process to fully reset Go runtime state and prevent zombie states.
-        // This ensures clean restart if system decides to recreate the service.
-        Log.i(TAG, "SingBoxService destroyed. Halting process ${android.os.Process.myPid()}.")
-
-        // 同步取消通知，防止 halt(0) 后通知残留
-        runCatching {
-            val nm = getSystemService(android.app.NotificationManager::class.java)
-            nm.cancel(com.kunk.singbox.service.notification.VpnNotificationManager.NOTIFICATION_ID)
-            stopForeground(STOP_FOREGROUND_REMOVE)
-        }
-
-        Runtime.getRuntime().halt(0)
+        Log.i(TAG, "SingBoxService cleanup complete, pid=${android.os.Process.myPid()}.")
     }
 
     override fun onRevoke() {

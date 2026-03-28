@@ -20,14 +20,30 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.lang.ref.WeakReference
 
+sealed class RecoveryResult {
+    data object AlreadyConnected : RecoveryResult()
+
+    data class Recovering(
+        val startTime: Long,
+        val expectedDuration: Long
+    ) : RecoveryResult()
+
+    data class Failed(
+        val reason: String,
+        val throwable: Throwable? = null
+    ) : RecoveryResult()
+}
+
 @Suppress("TooManyFunctions")
 object SingBoxRemote {
     private const val TAG = "SingBoxRemote"
 
     private const val RECONNECT_DELAY_MS = 100L
     private const val MAX_RECONNECT_ATTEMPTS = 10
+    private const val RECONNECT_BACKOFF_MAX = 60000L
 
     private const val CALLBACK_TIMEOUT_MS = 8_000L
+    private const val RECOVERY_EXPECTED_DURATION_MS = 5_000L
 
     private val _state = MutableStateFlow(ServiceState.STOPPED)
     val state: StateFlow<ServiceState> = _state.asStateFlow()
@@ -89,6 +105,9 @@ object SingBoxRemote {
     @Volatile
     private var pendingReconnect: Runnable? = null
 
+    @Volatile
+    private var pendingRecoveryCallback: ((RecoveryResult) -> Unit)? = null
+
     private val mainHandler = Handler(Looper.getMainLooper())
 
     private val callback = object : ISingBoxServiceCallback.Stub() {
@@ -99,7 +118,36 @@ object SingBoxRemote {
             val oldState = _state.value
             updateState(st, activeLabel, lastError, manuallyStopped)
             Log.i(TAG, "[UI] Callback received: $oldState -> $st, activeLabel=$activeLabel")
+
+            when (st) {
+                ServiceState.RUNNING -> completePendingRecovery(RecoveryResult.AlreadyConnected)
+                ServiceState.STOPPED -> {
+                    if (connectionActive) {
+                        failPendingRecovery("Recovery stopped before reaching RUNNING")
+                    }
+                }
+
+                else -> Unit
+            }
         }
+    }
+
+    private fun startPendingRecovery(callback: ((RecoveryResult) -> Unit)?, startTime: Long): RecoveryResult.Recovering {
+        pendingRecoveryCallback = callback
+        return RecoveryResult.Recovering(
+            startTime = startTime,
+            expectedDuration = RECOVERY_EXPECTED_DURATION_MS
+        )
+    }
+
+    private fun completePendingRecovery(result: RecoveryResult) {
+        val callback = pendingRecoveryCallback ?: return
+        pendingRecoveryCallback = null
+        callback.invoke(result)
+    }
+
+    private fun failPendingRecovery(reason: String, throwable: Throwable? = null) {
+        completePendingRecovery(RecoveryResult.Failed(reason, throwable))
     }
 
     private fun updateState(
@@ -163,15 +211,12 @@ object SingBoxRemote {
         val isActive = VpnStateStore.getActive()
         val mode = VpnStateStore.getMode()
 
-        return when (pending) {
-            "starting" -> ServiceState.STARTING
-            "stopping" -> ServiceState.STOPPING
-            else -> when {
-                isActive -> ServiceState.RUNNING
-                mode == VpnStateStore.CoreMode.PROXY -> ServiceState.RUNNING
-                hasVpnTransport -> ServiceState.RUNNING
-                else -> ServiceState.STOPPED
-            }
+        return when {
+            pending == "starting" -> ServiceState.STARTING
+            pending == "stopping" -> ServiceState.STOPPING
+            isActive -> ServiceState.RUNNING
+            mode == VpnStateStore.CoreMode.PROXY && hasVpnTransport -> ServiceState.RUNNING
+            else -> ServiceState.STOPPED
         }
     }
 
@@ -217,7 +262,7 @@ object SingBoxRemote {
 
     private fun rebindAndNotifyLifecycle(context: Context, isForeground: Boolean, version: Long) {
         pendingAppLifecycle = isForeground
-        pendingLifecycleVersion = version
+        pendingLifecycleVersion = (version) and Long.MAX_VALUE
         sentLifecycleVersion = minOf(sentLifecycleVersion, version - 1)
         if (!connectionActive) {
             rebind(context)
@@ -328,6 +373,17 @@ object SingBoxRemote {
                 ?: ServiceState.STOPPED
             updateState(st, s.activeLabel.orEmpty(), s.lastError.orEmpty(), s.isManuallyStopped)
             Log.i(TAG, "State synced: $st, running=${_isRunning.value}")
+
+            when (st) {
+                ServiceState.RUNNING -> completePendingRecovery(RecoveryResult.AlreadyConnected)
+                ServiceState.STOPPED -> {
+                    if (connectionActive) {
+                        failPendingRecovery("Recovery synced STOPPED state from service")
+                    }
+                }
+
+                else -> Unit
+            }
         }.onFailure {
             Log.e(TAG, "Failed to sync state from service", it)
         }
@@ -352,12 +408,29 @@ object SingBoxRemote {
     }
 
     private fun scheduleReconnect() {
+        val ctx = contextRef?.get() ?: return
+
         if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
-            Log.w(TAG, "Max reconnect attempts reached")
+            val backoffAttempts = reconnectAttempts - MAX_RECONNECT_ATTEMPTS
+            val backoffDelay = minOf(
+                RECONNECT_DELAY_MS * (1L shl minOf(backoffAttempts, 6)),
+                RECONNECT_BACKOFF_MAX
+            )
+            Log.w(TAG, "Max reconnect attempts reached, scheduling retry #$reconnectAttempts in ${backoffDelay}ms")
+            reconnectAttempts++
+            clearPendingReconnect()
+
+            val reconnectTask = Runnable {
+                if (connectionActive && !bound && contextRef?.get() != null) {
+                    Log.i(TAG, "Reconnect backoff attempt #$reconnectAttempts")
+                    doBindService(ctx)
+                }
+            }
+            pendingReconnect = reconnectTask
+            mainHandler.postDelayed(reconnectTask, backoffDelay)
             return
         }
 
-        val ctx = contextRef?.get() ?: return
         reconnectAttempts++
         val delay = RECONNECT_DELAY_MS * reconnectAttempts
         clearPendingReconnect()
@@ -382,6 +455,7 @@ object SingBoxRemote {
                 bound = false
                 service = null
                 binder = null
+                failPendingRecovery("bindService returned false")
                 scheduleReconnect()
             }
         }.onFailure {
@@ -389,6 +463,7 @@ object SingBoxRemote {
             bound = false
             service = null
             binder = null
+            failPendingRecovery("Failed to bind service", it)
             scheduleReconnect()
         }
     }
@@ -534,31 +609,35 @@ object SingBoxRemote {
         syncStateFromStore()
     }
 
-    /**
-     */
-    fun instantRecovery(context: Context) {
-
+    fun instantRecovery(
+        context: Context,
+        callback: ((RecoveryResult) -> Unit)?
+    ): RecoveryResult {
         syncStateFromStore()
         Log.i(TAG, "instantRecovery: Phase 1 done, state=${_state.value}")
 
         contextRef = WeakReference(context.applicationContext)
 
         if (!connectionActive) {
-
+            val recovering = startPendingRecovery(callback, System.currentTimeMillis())
+            callback?.invoke(recovering)
             Log.i(TAG, "instantRecovery: IPC not active, connecting (not rebinding)")
             connect(context)
-            return
+            return recovering
         }
 
         if (!bound || service == null) {
-
+            val recovering = startPendingRecovery(callback, System.currentTimeMillis())
+            callback?.invoke(recovering)
             Log.i(TAG, "instantRecovery: connection in progress, skip rebind")
-            return
+            return recovering
         }
 
         mainHandler.post {
             val s = service ?: run {
                 Log.w(TAG, "instantRecovery: service became null, rebinding")
+                val recovering = startPendingRecovery(callback, System.currentTimeMillis())
+                callback?.invoke(recovering)
                 rebind(context)
                 return@post
             }
@@ -570,12 +649,22 @@ object SingBoxRemote {
 
             if (ok) {
                 Log.i(TAG, "instantRecovery: Phase 2 AIDL verify ok")
+                callback?.invoke(RecoveryResult.AlreadyConnected)
                 return@post
             }
 
             Log.w(TAG, "instantRecovery: AIDL verify failed, rebinding")
+            val recovering = startPendingRecovery(callback, System.currentTimeMillis())
+            callback?.invoke(recovering)
             rebind(context)
         }
+
+        return RecoveryResult.AlreadyConnected
+    }
+
+    @Deprecated("Use instantRecovery(context, callback) to observe async recovery result")
+    fun instantRecovery(context: Context) {
+        instantRecovery(context, callback = null)
     }
 
     fun isBound(): Boolean = connectionActive && bound && service != null
@@ -592,7 +681,7 @@ object SingBoxRemote {
      */
     fun notifyAppLifecycle(isForeground: Boolean) {
         val version = pendingLifecycleVersion + 1
-        pendingLifecycleVersion = version
+        pendingLifecycleVersion = (version) and Long.MAX_VALUE
         pendingAppLifecycle = isForeground
 
         val s = service

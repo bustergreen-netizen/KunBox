@@ -108,15 +108,17 @@ object OutboundFixer {
                 type = "selector",
                 outbounds = newOutbounds,
                 default = newOutbounds.firstOrNull(),
-                interruptExistConnections = false,
+                interruptExistConnections = result.interruptExistConnections ?: false,
                 url = null,
                 interval = null,
                 tolerance = null
             )
         }
 
-        // Fix Selector empty outbounds
+        // Selector 的 outbounds 不应为空，但为了防止配置错误导致服务无法启动，
+        // 添加 "direct" 作为 fallback
         if (result.type == "selector" && result.outbounds.isNullOrEmpty()) {
+            Log.w(TAG, "Selector has empty outbounds, adding 'direct' as fallback")
             result = result.copy(outbounds = listOf("direct"))
         }
 
@@ -166,7 +168,7 @@ object OutboundFixer {
 
             val currentAlpn = tlsForXhttp?.alpn
             val shouldFixXhttpAlpn = tlsForXhttp != null &&
-                (currentAlpn == null || currentAlpn.isEmpty() || currentAlpn != listOf("h2"))
+                (currentAlpn.isNullOrEmpty() || currentAlpn != listOf("h2"))
 
             if (normalizedPath != rawPath || shouldFixXhttpSni || shouldFixXhttpAlpn) {
                 var updated = result.copy(
@@ -580,10 +582,8 @@ object OutboundFixer {
 
     @Suppress("CyclomaticComplexMethod")
     private fun fixNaive(outbound: Outbound): Outbound {
-        val preferredNetwork = outbound.network?.trim()?.lowercase()
-        val normalizedNetwork = when (preferredNetwork) {
-            "", null -> "h2"
-            "h2", "quic" -> preferredNetwork
+        val normalizedNetwork = when (outbound.network?.trim()?.lowercase()) {
+            "h2", "quic" -> outbound.network?.trim()
             else -> "h2"
         }
         val useQuic = normalizedNetwork == "quic" || outbound.quic == true
@@ -692,19 +692,24 @@ object OutboundFixer {
         val trimmed = path.trim().ifEmpty { "/" }
         val withLeadingSlash = if (trimmed.startsWith("/")) trimmed else "/$trimmed"
 
+        // 验证路径格式: 必须是有效的 HTTP 路径
+        // 允许: /, /path, /path/to/resource
+        // 允许带查询: /path?query=value
+        // 不允许: scheme://host/path (这应该是完整 URL)
+        if (withLeadingSlash.contains("://")) {
+            Log.w(TAG, "XHTTP path appears to be a full URL: $withLeadingSlash, extracting path only")
+            // 尝试提取路径部分
+            return withLeadingSlash.substringAfter("://")
+                .substringAfter("/", missingDelimiterValue = "/")
+                .let { if (it.startsWith("/")) it else "/$it" }
+        }
+
         return withLeadingSlash
     }
 
     /**
      */
     private fun convertPortRangeFormat(portSpec: String): String {
-        return portSpec.split(",").joinToString(",") { part ->
-            val trimmed = part.trim()
-            if (trimmed.contains("-") && !trimmed.contains(":")) {
-                trimmed.replace("-", ":")
-            } else {
-                trimmed
-            }
-        }
+        return portSpec.trim()
     }
 }

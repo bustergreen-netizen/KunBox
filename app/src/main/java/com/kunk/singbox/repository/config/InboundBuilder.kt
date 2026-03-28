@@ -2,6 +2,7 @@ package com.kunk.singbox.repository.config
 
 import com.kunk.singbox.model.AppSettings
 import com.kunk.singbox.model.Inbound
+import com.kunk.singbox.model.TunAddressConfig
 import com.kunk.singbox.model.TunStack
 
 /**
@@ -12,6 +13,7 @@ object InboundBuilder {
      */
     fun build(settings: AppSettings, effectiveTunStack: TunStack): List<Inbound> {
         val inbounds = mutableListOf<Inbound>()
+        val tunAddress = settings.tunAddress ?: TunAddressConfig.DEFAULT
 
         if (settings.proxyPort > 0) {
             inbounds.add(
@@ -32,7 +34,7 @@ object InboundBuilder {
                     type = "tun",
                     tag = "tun-in",
                     interfaceName = settings.tunInterfaceName,
-                    addressRaw = listOf("172.19.0.1/30", "fd00::1/126"),
+                    addressRaw = listOf(tunAddress.ipv4, tunAddress.ipv6),
                     mtu = settings.tunMtu,
                     autoRoute = false,
                     strictRoute = false,

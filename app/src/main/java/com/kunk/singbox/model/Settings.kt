@@ -4,6 +4,17 @@ import androidx.annotation.StringRes
 import com.google.gson.annotations.SerializedName
 import com.kunk.singbox.R
 
+data class TunAddressConfig(
+    @SerializedName("ipv4") val ipv4: String = DEFAULT_IPV4,
+    @SerializedName("ipv6") val ipv6: String = DEFAULT_IPV6
+) {
+    companion object {
+        const val DEFAULT_IPV4 = "172.19.0.1/30"
+        const val DEFAULT_IPV6 = "fd00::1/126"
+        val DEFAULT = TunAddressConfig()
+    }
+}
+
 /**
  */
 data class AppSettings(
@@ -23,6 +34,7 @@ data class AppSettings(
     // Note: For existing installs, Gson may deserialize missing boolean fields as false.
     @SerializedName("tunMtuAuto") val tunMtuAuto: Boolean = true,
     @SerializedName("tunInterfaceName") val tunInterfaceName: String = "tun0",
+    @SerializedName("tunAddress") val tunAddress: TunAddressConfig? = null,
     @SerializedName("autoRoute") val autoRoute: Boolean = false,
     @SerializedName("strictRoute") val strictRoute: Boolean = true,
     @SerializedName("endpointIndependentNat") val endpointIndependentNat: Boolean = true,
@@ -42,6 +54,7 @@ data class AppSettings(
     @SerializedName("fakeDnsEnabled") val fakeDnsEnabled: Boolean = false,
     @SerializedName("fakeIpRange") val fakeIpRange: String = "198.18.0.0/15",
     @SerializedName("fakeIpExcludeDomains") val fakeIpExcludeDomains: String = "",
+    @SerializedName("fakeDnsExcludedDomains") val fakeDnsExcludedDomains: String = "",
     @SerializedName("dnsStrategy") val dnsStrategy: DnsStrategy = DnsStrategy.PREFER_IPV4,
     @SerializedName("remoteDnsStrategy") val remoteDnsStrategy: DnsStrategy = DnsStrategy.AUTO,
     @SerializedName("directDnsStrategy") val directDnsStrategy: DnsStrategy = DnsStrategy.AUTO,
@@ -94,6 +107,9 @@ data class AppSettings(
         const val DEFAULT_LOCAL_DNS = "https://dns.alidns.com/dns-query"
         const val DEFAULT_REMOTE_DNS = "https://1.1.1.1/dns-query"
         const val LEGACY_LOCAL_DNS = "local"
+        const val DEFAULT_FAKE_DNS_EXCLUDED_DOMAINS = "accounts.google.com\noauth.googleusercontent.com\n" +
+            "appleid.apple.com\nidmsa.apple.com\nlogin.microsoftonline.com\nlogin.live.com\n" +
+            "lan\nlocal\nlocalhost\nlocaldomain\narpa"
     }
 }
 

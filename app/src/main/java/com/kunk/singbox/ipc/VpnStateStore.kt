@@ -10,6 +10,7 @@ import com.tencent.mmkv.MMKV
  */
 @Suppress("TooManyFunctions")
 object VpnStateStore {
+    private const val TAG = "VpnStateStore"
     private const val MMKV_ID = "vpn_state"
 
     private const val KEY_VPN_ACTIVE = "vpn_active"
@@ -190,9 +191,27 @@ object VpnStateStore {
         mmkv.encode(KEY_TRAFFIC_CLEAR_TIMESTAMP, timestamp)
     }
 
-    /**
-     */
     fun clear() {
+        Log.i(TAG, "Clearing VPN config state keys")
+        clearConfig()
+    }
+
+    fun clearAll() {
+        Log.w(TAG, "Clearing all VPN state store data")
         mmkv.clearAll()
+    }
+
+    fun clearConfig() {
+        mmkv.removeValueForKey(KEY_VPN_ACTIVE)
+        mmkv.removeValueForKey(KEY_VPN_PENDING)
+        mmkv.removeValueForKey(KEY_VPN_ACTIVE_LABEL)
+        mmkv.removeValueForKey(KEY_VPN_LAST_ERROR)
+        mmkv.removeValueForKey(KEY_VPN_MANUALLY_STOPPED)
+        mmkv.removeValueForKey(KEY_CORE_MODE)
+        mmkv.removeValueForKey(KEY_LAST_APP_MODE)
+        mmkv.removeValueForKey(KEY_LAST_ALLOWLIST_HASH)
+        mmkv.removeValueForKey(KEY_LAST_BLOCKLIST_HASH)
+        mmkv.removeValueForKey(KEY_LAST_TUN_SETTINGS_HASH)
+        mmkv.removeValueForKey(KEY_LAST_MANUAL_STOP_AT_MS)
     }
 }

@@ -1,5 +1,7 @@
 ﻿package com.kunk.singbox.ipc
 
+import android.os.Handler
+import android.os.Looper
 import android.os.RemoteCallbackList
 import android.os.SystemClock
 import android.util.Log
@@ -9,16 +11,21 @@ import com.kunk.singbox.service.ServiceState
 import com.kunk.singbox.service.manager.BackgroundPowerManager
 import com.kunk.singbox.service.manager.ServiceStateHolder
 import com.kunk.singbox.service.manager.UrlTestTagMatcher
+import java.lang.ref.WeakReference
+import java.util.concurrent.locks.ReentrantLock
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
+import kotlin.concurrent.withLock
 import kotlinx.coroutines.runBlocking
 
 object SingBoxIpcHub {
     private const val TAG = "SingBoxIpcHub"
 
     private const val MIN_BROADCAST_INTERVAL_MS = 50L
+
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     private val broadcastScheduler = ScheduledThreadPoolExecutor(1).apply {
         removeOnCancelPolicy = true
@@ -45,15 +52,21 @@ object SingBoxIpcHub {
 
     private val callbacks = RemoteCallbackList<ISingBoxServiceCallback>()
 
+    private val stateNames = ServiceState.entries.map { it.name }.toTypedArray()
+
     private fun getStateName(ordinal: Int): String =
-        ServiceState.values().getOrNull(ordinal)?.name ?: "UNKNOWN"
+        stateNames.getOrNull(ordinal) ?: "UNKNOWN"
 
     private val lastBroadcastAtMs = AtomicLong(0L)
     private val broadcastPending = AtomicBoolean(false)
     private val broadcasting = AtomicBoolean(false)
+    private val broadcastLock = ReentrantLock()
 
     @Volatile
     private var powerManager: BackgroundPowerManager? = null
+
+    @Volatile
+    private var serviceRef: WeakReference<SingBoxIpcService>? = null
 
     private val lastStateUpdateAtMs = AtomicLong(0L)
     private val lastBackgroundAtMs = AtomicLong(0L)
@@ -63,8 +76,35 @@ object SingBoxIpcHub {
         Log.d(TAG, "PowerManager ${if (manager != null) "set" else "cleared"}")
     }
 
+    fun registerService(service: SingBoxIpcService) {
+        synchronized(this) {
+            serviceRef?.clear()
+            serviceRef = WeakReference(service)
+        }
+        log("SingBoxIpcService registered")
+    }
+
+    fun unregisterService() {
+        synchronized(this) {
+            serviceRef?.clear()
+            serviceRef = null
+        }
+        log("SingBoxIpcService unregistered")
+    }
+
+    fun onServiceBinderDied() {
+        synchronized(this) {
+            serviceRef?.clear()
+            serviceRef = null
+        }
+        Log.w(TAG, "SingBoxIpcService binder died")
+        runCatching {
+            logRepo.addLog("WARN [IPC] SingBoxIpcService binder died")
+        }
+    }
+
     fun onAppLifecycle(isForeground: Boolean) {
-        val vpnState = ServiceState.values().getOrNull(stateOrdinal)?.name ?: "UNKNOWN"
+        val vpnState = stateNames.getOrNull(stateOrdinal) ?: "UNKNOWN"
         log("onAppLifecycle: isForeground=$isForeground, vpnState=$vpnState")
 
         if (isForeground) {
@@ -94,7 +134,7 @@ object SingBoxIpcHub {
         val updateStart = SystemClock.elapsedRealtime()
 
         state?.let {
-            val oldState = ServiceState.values().getOrNull(stateOrdinal)?.name ?: "UNKNOWN"
+            val oldState = stateNames.getOrNull(stateOrdinal) ?: "UNKNOWN"
             stateOrdinal = it.ordinal
             log("state update: $oldState -> ${it.name}")
             VpnStateStore.setActive(it == ServiceState.RUNNING)
@@ -113,16 +153,20 @@ object SingBoxIpcHub {
         }
 
         lastStateUpdateAtMs.set(SystemClock.elapsedRealtime())
-        broadcastPending.set(true)
-        scheduleBroadcastIfNeeded()
+        broadcastLock.withLock {
+            broadcastPending.set(true)
+            scheduleBroadcastIfNeededLocked()
+        }
 
         Log.d(TAG, "[IPC] update completed in ${SystemClock.elapsedRealtime() - updateStart}ms")
     }
 
     fun registerCallback(callback: ISingBoxServiceCallback) {
         callbacks.register(callback)
-        runCatching {
-            callback.onStateChanged(stateOrdinal, activeLabel, lastError, manuallyStopped)
+        mainHandler.post {
+            runCatching {
+                callback.onStateChanged(stateOrdinal, activeLabel, lastError, manuallyStopped)
+            }
         }
     }
 
@@ -131,6 +175,12 @@ object SingBoxIpcHub {
     }
 
     private fun scheduleBroadcastIfNeeded() {
+        broadcastLock.withLock {
+            scheduleBroadcastIfNeededLocked()
+        }
+    }
+
+    private fun scheduleBroadcastIfNeededLocked() {
         if (broadcasting.compareAndSet(false, true)) {
             broadcastScheduler.execute { drainOrReschedule() }
         }
@@ -138,9 +188,17 @@ object SingBoxIpcHub {
 
     private fun drainOrReschedule() {
         try {
-            val now = SystemClock.elapsedRealtime()
-            val elapsed = now - lastBroadcastAtMs.get()
-            val remaining = MIN_BROADCAST_INTERVAL_MS - elapsed
+            val remaining = broadcastLock.withLock {
+                val now = SystemClock.elapsedRealtime()
+                val elapsed = now - lastBroadcastAtMs.get()
+                val delayMs = MIN_BROADCAST_INTERVAL_MS - elapsed
+
+                if (delayMs <= 0L) {
+                    broadcastPending.set(false)
+                }
+
+                delayMs
+            }
 
             if (remaining > 0) {
                 broadcastScheduler.schedule(
@@ -150,8 +208,6 @@ object SingBoxIpcHub {
                 )
                 return
             }
-
-            broadcastPending.set(false)
 
             val snapshot = StateSnapshot(stateOrdinal, activeLabel, lastError, manuallyStopped)
 
@@ -173,23 +229,20 @@ object SingBoxIpcHub {
                 callbacks.finishBroadcast()
             }
 
-            lastBroadcastAtMs.set(SystemClock.elapsedRealtime())
-
-            if (broadcastPending.get()) {
-                broadcastScheduler.execute { drainOrReschedule() }
-                return
-            }
-
-            broadcasting.set(false)
-
-            if (broadcastPending.get() && broadcasting.compareAndSet(false, true)) {
-                broadcastScheduler.execute { drainOrReschedule() }
+            broadcastLock.withLock {
+                lastBroadcastAtMs.set(SystemClock.elapsedRealtime())
+                broadcasting.set(false)
+                if (broadcastPending.get()) {
+                    scheduleBroadcastIfNeededLocked()
+                }
             }
         } catch (t: Throwable) {
             Log.e(TAG, "drainOrReschedule failed", t)
-            broadcasting.set(false)
-            if (broadcastPending.get() && broadcasting.compareAndSet(false, true)) {
-                broadcastScheduler.execute { drainOrReschedule() }
+            broadcastLock.withLock {
+                broadcasting.set(false)
+                if (broadcastPending.get()) {
+                    scheduleBroadcastIfNeededLocked()
+                }
             }
         }
     }

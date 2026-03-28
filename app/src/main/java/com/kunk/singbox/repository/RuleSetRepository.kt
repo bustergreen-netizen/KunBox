@@ -322,9 +322,10 @@ class RuleSetRepository(private val context: Context) {
 
                 if (isValid) {
                     if (!replaceRuleSetFile(tempFile, targetFile)) {
-                        tempFile.delete()
+                        Log.e(TAG, "Failed to replace rule set file, keeping temp file for retry: ${tempFile.name}")
                         return false
                     }
+                    tempFile.delete()
                     Log.i(TAG, "Rule set downloaded and verified successfully: ${targetFile.name}")
                     return true
                 } else {
@@ -347,9 +348,18 @@ class RuleSetRepository(private val context: Context) {
             return false
         }
 
-        if (targetFile.exists() && !targetFile.renameTo(backupFile)) {
-            Log.e(TAG, "Failed to backup existing rule set before replace: ${targetFile.name}")
-            return false
+        if (targetFile.exists()) {
+            try {
+                targetFile.copyTo(backupFile, overwrite = true)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to create rule set backup before replace: ${targetFile.name}", e)
+                return false
+            }
+
+            if (!targetFile.delete()) {
+                Log.e(TAG, "Failed to remove existing rule set before replace: ${targetFile.name}")
+                return false
+            }
         }
 
         if (tempFile.renameTo(targetFile)) {
@@ -360,8 +370,12 @@ class RuleSetRepository(private val context: Context) {
         }
 
         Log.e(TAG, "Failed to replace rule set file: ${targetFile.name}")
-        if (backupFile.exists() && !backupFile.renameTo(targetFile)) {
-            Log.e(TAG, "Failed to restore original rule set after replace failure: ${targetFile.name}")
+        if (backupFile.exists()) {
+            try {
+                backupFile.copyTo(targetFile, overwrite = true)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to restore original rule set after replace failure: ${targetFile.name}", e)
+            }
         }
         return false
     }
