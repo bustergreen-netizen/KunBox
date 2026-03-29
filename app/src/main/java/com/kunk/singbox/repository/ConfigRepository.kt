@@ -80,14 +80,17 @@ class ConfigRepository(private val context: Context) {
         val isRemembered: Boolean
     )
 
+    internal data class SubscriptionAttemptTimeoutBudget(
+        val connectTimeoutSeconds: Long,
+        val readTimeoutSeconds: Long,
+        val writeTimeoutSeconds: Long,
+        val callTimeoutSeconds: Long
+    )
+
     @Suppress("TooManyFunctions")
     companion object {
         private const val TAG = "ConfigRepository"
         private const val PARALLEL_CONCURRENCY = 8
-        private const val SUBSCRIPTION_CONNECT_TIMEOUT_SECONDS = 5L
-        private const val SUBSCRIPTION_READ_TIMEOUT_SECONDS = 8L
-        private const val SUBSCRIPTION_WRITE_TIMEOUT_SECONDS = 8L
-        private const val SUBSCRIPTION_CALL_TIMEOUT_SECONDS = 10L
         private const val SUBSCRIPTION_FAILURE_THRESHOLD = 1
         private const val SUBSCRIPTION_CIRCUIT_BREAKER_WINDOW_MS = 10 * 60 * 1000L
         private const val CONFIG_CACHE_EXPIRY_MS = 30 * 60 * 1000L
@@ -268,6 +271,16 @@ class ConfigRepository(private val context: Context) {
             }
         }
 
+        internal fun buildSubscriptionAttemptUserAgents(
+            preferredUserAgent: String?,
+            circuitBrokenUserAgents: Set<String>
+        ): List<String> {
+            return filterCircuitBrokenUserAgents(
+                userAgents = prioritizeUserAgents(preferredUserAgent),
+                circuitBrokenUserAgents = circuitBrokenUserAgents
+            )
+        }
+
         internal fun filterCircuitBrokenUserAgents(
             userAgents: List<String>,
             circuitBrokenUserAgents: Set<String>
@@ -287,6 +300,28 @@ class ConfigRepository(private val context: Context) {
             }
             val message = exception.message.orEmpty().lowercase()
             return "failed to connect" in message || "timeout" in message
+        }
+
+        internal fun resolveSubscriptionUpdateBudgetSeconds(configuredTimeoutSeconds: Int): Long {
+            return configuredTimeoutSeconds.takeIf { it > 0 }?.toLong()
+                ?: AppSettings().subscriptionUpdateTimeout.toLong()
+        }
+
+        internal fun resolveSubscriptionAttemptTimeoutBudget(
+            totalBudgetSeconds: Long,
+            elapsedMs: Long
+        ): SubscriptionAttemptTimeoutBudget? {
+            val safeTotalBudgetSeconds = totalBudgetSeconds.coerceAtLeast(1L)
+            val remainingMs = (safeTotalBudgetSeconds * 1000L) - elapsedMs
+            if (remainingMs <= 0L) return null
+
+            val remainingSeconds = ((remainingMs + 999L) / 1000L).coerceAtLeast(1L)
+            return SubscriptionAttemptTimeoutBudget(
+                connectTimeoutSeconds = remainingSeconds,
+                readTimeoutSeconds = remainingSeconds,
+                writeTimeoutSeconds = remainingSeconds,
+                callTimeoutSeconds = remainingSeconds
+            )
         }
 
         internal fun resolveAppRuleOutboundMode(mode: RuleSetOutboundMode?): RuleSetOutboundMode {
@@ -344,6 +379,52 @@ class ConfigRepository(private val context: Context) {
             validTags: Set<String>
         ): List<RuleSet> {
             return filterAppliedRemoteRuleSets(ruleSets, validTags)
+        }
+
+        internal fun launchSubscriptionDnsPreResolve(
+            scope: CoroutineScope,
+            profileId: String,
+            enabled: Boolean,
+            onStarted: () -> Unit = {},
+            onFinished: () -> Unit = {},
+            preResolve: suspend () -> Boolean
+        ): Job? {
+            if (!enabled) {
+                return null
+            }
+
+            Log.d(
+                TAG,
+                "Subscription update main flow finished for profile $profileId; " +
+                    "scheduling background DNS pre-resolve"
+            )
+            return scope.launch {
+                onStarted()
+                Log.d(TAG, "Background DNS pre-resolve started for profile $profileId")
+                val success = runCatching { preResolve() }
+                    .getOrElse { e ->
+                        Log.w(TAG, "Background DNS pre-resolve crashed for profile $profileId", e)
+                        false
+                    }
+                if (success) {
+                    Log.d(TAG, "Background DNS pre-resolve completed for profile $profileId")
+                } else {
+                    Log.d(TAG, "Background DNS pre-resolve failed for profile $profileId")
+                }
+                onFinished()
+            }
+        }
+
+        internal fun resolveSubscriptionUpdateStage(
+            stageName: String?
+        ): SubscriptionUpdateStage? {
+            return when (stageName) {
+                "requesting" -> SubscriptionUpdateStage.Requesting
+                "parsing" -> SubscriptionUpdateStage.Parsing
+                "saving" -> SubscriptionUpdateStage.Saving
+                "dns_background" -> SubscriptionUpdateStage.DnsBackground
+                else -> null
+            }
         }
 
         private fun toRouteRule(semantic: OutboundSemantic, selectorTag: String): RouteRule {
@@ -745,12 +826,12 @@ class ConfigRepository(private val context: Context) {
         )
     }
 
-    private fun getSubscriptionClient(): OkHttpClient {
+    private fun getSubscriptionClient(timeoutBudget: SubscriptionAttemptTimeoutBudget): OkHttpClient {
         return NetworkClient.createClientWithoutRetry(
-            connectTimeoutSeconds = SUBSCRIPTION_CONNECT_TIMEOUT_SECONDS,
-            readTimeoutSeconds = SUBSCRIPTION_READ_TIMEOUT_SECONDS,
-            writeTimeoutSeconds = SUBSCRIPTION_WRITE_TIMEOUT_SECONDS,
-            callTimeoutSeconds = SUBSCRIPTION_CALL_TIMEOUT_SECONDS
+            connectTimeoutSeconds = timeoutBudget.connectTimeoutSeconds,
+            readTimeoutSeconds = timeoutBudget.readTimeoutSeconds,
+            writeTimeoutSeconds = timeoutBudget.writeTimeoutSeconds,
+            callTimeoutSeconds = timeoutBudget.callTimeoutSeconds
         )
     }
 
@@ -768,17 +849,17 @@ class ConfigRepository(private val context: Context) {
         )
     }
 
-    private fun getSubscriptionProxyClient(): OkHttpClient? {
+    private fun getSubscriptionProxyClient(timeoutBudget: SubscriptionAttemptTimeoutBudget): OkHttpClient? {
         val settings = cachedSettings ?: AppSettings()
         if (!VpnStateStore.getActive() || settings.proxyPort <= 0) {
             return null
         }
         return NetworkClient.createClientWithProxy(
             proxyPort = settings.proxyPort,
-            connectTimeoutSeconds = SUBSCRIPTION_CONNECT_TIMEOUT_SECONDS,
-            readTimeoutSeconds = SUBSCRIPTION_READ_TIMEOUT_SECONDS,
-            writeTimeoutSeconds = SUBSCRIPTION_WRITE_TIMEOUT_SECONDS,
-            callTimeoutSeconds = SUBSCRIPTION_CALL_TIMEOUT_SECONDS
+            connectTimeoutSeconds = timeoutBudget.connectTimeoutSeconds,
+            readTimeoutSeconds = timeoutBudget.readTimeoutSeconds,
+            writeTimeoutSeconds = timeoutBudget.writeTimeoutSeconds,
+            callTimeoutSeconds = timeoutBudget.callTimeoutSeconds
         )
     }
 
@@ -903,10 +984,11 @@ class ConfigRepository(private val context: Context) {
     }
 
     private fun buildSubscriptionUserAgents(url: String): List<String> {
-        val prioritized = prioritizeUserAgents(getRememberedSubscriptionUserAgent(url))
-        val host = extractSubscriptionHost(url) ?: return prioritized
+        val rememberedUserAgent = getRememberedSubscriptionUserAgent(url)
+        val host = extractSubscriptionHost(url)
+            ?: return buildSubscriptionAttemptUserAgents(rememberedUserAgent, emptySet())
         val circuitBrokenUserAgents = getCircuitBrokenUserAgents(host)
-        return filterCircuitBrokenUserAgents(prioritized, circuitBrokenUserAgents)
+        return buildSubscriptionAttemptUserAgents(rememberedUserAgent, circuitBrokenUserAgents)
     }
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -1150,13 +1232,22 @@ class ConfigRepository(private val context: Context) {
         }
     }
 
+    private fun setProfileUpdateStage(profileId: String, stage: SubscriptionUpdateStage?) {
+        _profiles.update { list ->
+            list.map { profile ->
+                if (profile.id == profileId) profile.copy(updateStage = stage) else profile
+            }
+        }
+    }
+
     private suspend fun preResolveDomainsForProfileBestEffort(
         profileId: String,
         config: SingBoxConfig,
         dnsServer: String?
-    ) {
-        runCatching {
+    ): Boolean {
+        return runCatching {
             preResolveDomainsForProfile(profileId, config, dnsServer)
+            true
         }.onFailure { e ->
             when (e) {
                 is java.net.UnknownHostException -> {
@@ -1172,7 +1263,7 @@ class ConfigRepository(private val context: Context) {
                     Log.e(TAG, "DNS pre-resolve failed for profile $profileId", e)
                 }
             }
-        }
+        }.getOrDefault(false)
     }
 
     private fun rollbackTransientProfileFile(profileId: String) {
@@ -1876,7 +1967,8 @@ class ConfigRepository(private val context: Context) {
         client: OkHttpClient,
         url: String,
         context: SubscriptionAttemptContext,
-        onProgress: (String) -> Unit
+        onProgress: (String) -> Unit,
+        onStageChanged: (SubscriptionUpdateStage) -> Unit
     ): FetchResult? {
         val startedAt = System.currentTimeMillis()
         val request = buildSubscriptionRequest(url, context.userAgent)
@@ -1905,6 +1997,7 @@ class ConfigRepository(private val context: Context) {
                 throw Exception("Subscription response body is empty")
             }
 
+            onStageChanged(SubscriptionUpdateStage.Parsing)
             onProgress("Parsing subscription response...")
 
             val contentType = response.header("Content-Type")
@@ -1919,18 +2012,35 @@ class ConfigRepository(private val context: Context) {
         }
     }
 
+    @Suppress("LongMethod")
     private fun fetchAndParseSubscription(
         url: String,
-        onProgress: (String) -> Unit = {}
+        onProgress: (String) -> Unit = {},
+        onStageChanged: (SubscriptionUpdateStage) -> Unit = {}
     ): FetchResult? {
         var lastError: Exception? = null
         val host = extractSubscriptionHost(url) ?: "unknown"
         val rememberedUserAgent = getRememberedSubscriptionUserAgent(url)
         val userAgents = buildSubscriptionUserAgents(url)
-        val client = getSubscriptionProxyClient() ?: getSubscriptionClient()
+        val totalBudgetSeconds = resolveSubscriptionUpdateBudgetSeconds(
+            (cachedSettings ?: AppSettings()).subscriptionUpdateTimeout
+        )
+        val startedAt = System.currentTimeMillis()
 
         for ((index, userAgent) in userAgents.withIndex()) {
+            val elapsedMs = System.currentTimeMillis() - startedAt
+            val timeoutBudget = resolveSubscriptionAttemptTimeoutBudget(totalBudgetSeconds, elapsedMs)
+            if (timeoutBudget == null) {
+                Log.w(
+                    TAG,
+                    "Subscription request budget exhausted: host=$host, " +
+                        "attempts=$index/${userAgents.size}, budget=${totalBudgetSeconds}s"
+                )
+                break
+            }
+
             try {
+                onStageChanged(SubscriptionUpdateStage.Requesting)
                 onProgress("Trying subscription request with User-Agent (${index + 1}/${userAgents.size})...")
                 val attemptContext = SubscriptionAttemptContext(
                     host = host,
@@ -1938,10 +2048,11 @@ class ConfigRepository(private val context: Context) {
                     isRemembered = rememberedUserAgent.equals(userAgent, ignoreCase = true)
                 )
                 val fetchResult = executeSubscriptionAttempt(
-                    client = client,
+                    client = getSubscriptionProxyClient(timeoutBudget) ?: getSubscriptionClient(timeoutBudget),
                     url = url,
                     context = attemptContext,
-                    onProgress = onProgress
+                    onProgress = onProgress,
+                    onStageChanged = onStageChanged
                 )
                 if (fetchResult != null) {
                     rememberSuccessfulSubscriptionUserAgent(url, userAgent)
@@ -1964,7 +2075,10 @@ class ConfigRepository(private val context: Context) {
             }
         }
 
-        lastError?.let { Log.e(TAG, "All User-Agent attempts failed", it) }
+        lastError?.let {
+            Log.e(TAG, "All User-Agent attempts failed", it)
+            throw it
+        }
         return null
     }
     @Suppress("LongMethod", "CognitiveComplexMethod", "CyclomaticComplexMethod")
@@ -2924,6 +3038,7 @@ class ConfigRepository(private val context: Context) {
         )
     }
 
+    @Suppress("LongMethod", "CognitiveComplexMethod")
     suspend fun updateProfile(profileId: String): SubscriptionUpdateResult {
         val profile = _profiles.value.find { it.id == profileId }
             ?: return SubscriptionUpdateResult.Failed("Unknown Profile", "Profile not found")
@@ -2934,7 +3049,14 @@ class ConfigRepository(private val context: Context) {
 
         _profiles.update { list ->
             list.map {
-                if (it.id == profileId) it.copy(updateStatus = UpdateStatus.Updating) else it
+                if (it.id == profileId) {
+                    it.copy(
+                        updateStatus = UpdateStatus.Updating,
+                        updateStage = SubscriptionUpdateStage.Requesting
+                    )
+                } else {
+                    it
+                }
             }
         }
 
@@ -2945,10 +3067,19 @@ class ConfigRepository(private val context: Context) {
         }
         _profiles.update { list ->
             list.map {
-                if (it.id == profileId) it.copy(
-                    updateStatus = if (result is SubscriptionUpdateResult.Failed) UpdateStatus.Failed else UpdateStatus.Success,
-                    lastUpdated = if (result is SubscriptionUpdateResult.Failed) it.lastUpdated else System.currentTimeMillis()
-                ) else it
+                if (it.id == profileId) {
+                    it.copy(
+                        updateStatus = if (result is SubscriptionUpdateResult.Failed) UpdateStatus.Failed else UpdateStatus.Success,
+                        lastUpdated = if (result is SubscriptionUpdateResult.Failed) it.lastUpdated else System.currentTimeMillis(),
+                        updateStage = when {
+                            result is SubscriptionUpdateResult.Failed -> null
+                            profile.dnsPreResolve -> it.updateStage
+                            else -> null
+                        }
+                    )
+                } else {
+                    it
+                }
             }
         }
         profileResetJobs.remove(profileId)?.cancel()
@@ -2957,7 +3088,14 @@ class ConfigRepository(private val context: Context) {
             _profiles.update { list ->
                 list.map {
                     if (it.id == profileId && it.updateStatus != UpdateStatus.Updating) {
-                        it.copy(updateStatus = UpdateStatus.Idle)
+                        it.copy(
+                            updateStatus = UpdateStatus.Idle,
+                            updateStage = if (it.updateStage == SubscriptionUpdateStage.DnsBackground) {
+                                SubscriptionUpdateStage.DnsBackground
+                            } else {
+                                null
+                            }
+                        )
                     } else {
                         it
                     }
@@ -2972,7 +3110,10 @@ class ConfigRepository(private val context: Context) {
         return result
     }
 
-    private suspend fun importFromSubscriptionUpdate(profile: ProfileUi): SubscriptionUpdateResult = withContext(Dispatchers.IO) {
+    @Suppress("LongMethod", "CognitiveComplexMethod")
+    private suspend fun importFromSubscriptionUpdate(
+        profile: ProfileUi
+    ): SubscriptionUpdateResult = withContext(Dispatchers.IO) {
         try {
             val oldNodes = profileNodes[profile.id] ?: emptyList()
             val oldNodeNames = oldNodes.map { it.name }.toSet()
@@ -2981,7 +3122,11 @@ class ConfigRepository(private val context: Context) {
                 return@withContext SubscriptionUpdateResult.Failed(profile.name, "Subscription URL is empty")
             }
 
-            val fetchResult = fetchAndParseSubscription(profileUrl) { }
+            val fetchResult = fetchAndParseSubscription(
+                url = profileUrl,
+                onProgress = {},
+                onStageChanged = { stage -> setProfileUpdateStage(profile.id, stage) }
+            )
                 ?: return@withContext SubscriptionUpdateResult.Failed(profile.name, "Failed to fetch subscription")
 
             val config = fetchResult.config
@@ -2992,6 +3137,7 @@ class ConfigRepository(private val context: Context) {
             val newNodeNames = newNodes.map { it.name }.toSet()
             val addedNodes = newNodeNames - oldNodeNames
             val removedNodes = oldNodeNames - newNodeNames
+            setProfileUpdateStage(profile.id, SubscriptionUpdateStage.Saving)
             writeConfigFileOrThrow(profile.id, deduplicatedConfig)
 
             cacheConfig(profile.id, deduplicatedConfig)
@@ -3015,24 +3161,51 @@ class ConfigRepository(private val context: Context) {
             }
 
             saveProfiles()
-            if (profile.dnsPreResolve) {
+            val updateResult = buildSubscriptionUpdateSuccessResult(
+                profileName = profile.name,
+                addedNodes = addedNodes,
+                removedNodes = removedNodes,
+                totalCount = newNodes.size
+            )
+
+            launchSubscriptionDnsPreResolve(
+                scope = scope,
+                profileId = profile.id,
+                enabled = profile.dnsPreResolve,
+                onStarted = {
+                    setProfileUpdateStage(profile.id, SubscriptionUpdateStage.DnsBackground)
+                },
+                onFinished = {
+                    setProfileUpdateStage(profile.id, null)
+                }
+            ) {
                 preResolveDomainsForProfileBestEffort(profile.id, deduplicatedConfig, profile.dnsServer)
             }
-            if (addedNodes.isNotEmpty() || removedNodes.isNotEmpty()) {
-                SubscriptionUpdateResult.SuccessWithChanges(
-                    profileName = profile.name,
-                    addedCount = addedNodes.size,
-                    removedCount = removedNodes.size,
-                    totalCount = newNodes.size
-                )
-            } else {
-                SubscriptionUpdateResult.SuccessNoChanges(
-                    profileName = profile.name,
-                    totalCount = newNodes.size
-                )
-            }
+
+            updateResult
         } catch (e: Exception) {
             SubscriptionUpdateResult.Failed(profile.name, e.message ?: "Subscription update failed")
+        }
+    }
+
+    private fun buildSubscriptionUpdateSuccessResult(
+        profileName: String,
+        addedNodes: Set<String>,
+        removedNodes: Set<String>,
+        totalCount: Int
+    ): SubscriptionUpdateResult {
+        return if (addedNodes.isNotEmpty() || removedNodes.isNotEmpty()) {
+            SubscriptionUpdateResult.SuccessWithChanges(
+                profileName = profileName,
+                addedCount = addedNodes.size,
+                removedCount = removedNodes.size,
+                totalCount = totalCount
+            )
+        } else {
+            SubscriptionUpdateResult.SuccessNoChanges(
+                profileName = profileName,
+                totalCount = totalCount
+            )
         }
     }
 
@@ -3448,6 +3621,7 @@ class ConfigRepository(private val context: Context) {
         return rules
     }
 
+    @Suppress("LongMethod")
     private fun buildAppRoutingRules(
         settings: AppSettings,
         defaultProxyTag: String,

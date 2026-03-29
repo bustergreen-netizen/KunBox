@@ -23,8 +23,17 @@ data class ProfileUi(
     @SerializedName("usedTraffic") val usedTraffic: Long = 0,
 
     @SerializedName("dnsPreResolve") val dnsPreResolve: Boolean = false,
-    @SerializedName("dnsServer") val dnsServer: String? = null
+    @SerializedName("dnsServer") val dnsServer: String? = null,
+    @Transient val updateStage: SubscriptionUpdateStage? = null
 )
+
+@Keep
+enum class SubscriptionUpdateStage(@StringRes val labelRes: Int) {
+    Requesting(R.string.subscription_update_stage_requesting),
+    Parsing(R.string.subscription_update_stage_parsing),
+    Saving(R.string.subscription_update_stage_saving),
+    DnsBackground(R.string.subscription_update_stage_dns_background)
+}
 
 @Keep
 enum class ProfileType {
