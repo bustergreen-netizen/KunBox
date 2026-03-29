@@ -480,6 +480,7 @@ fun ProfilesScreen(
                         isEnabled = profile.enabled,
                         isUpdating = profile.updateStatus == UpdateStatus.Updating,
                         updateStatus = profile.updateStatus,
+                        updateStage = profile.updateStage,
                         expireDate = profile.expireDate,
                         totalTraffic = profile.totalTraffic,
                         usedTraffic = profile.usedTraffic,

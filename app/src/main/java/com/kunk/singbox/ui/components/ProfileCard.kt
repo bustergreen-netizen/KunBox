@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.ImportExport
 import androidx.compose.material.icons.rounded.MoreVert
+import com.kunk.singbox.model.SubscriptionUpdateStage
 import com.kunk.singbox.model.UpdateStatus
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -59,6 +60,7 @@ fun ProfileCard(
     isEnabled: Boolean,
     isUpdating: Boolean,
     updateStatus: UpdateStatus = UpdateStatus.Idle,
+    updateStage: SubscriptionUpdateStage? = null,
     expireDate: Long = 0,
     totalTraffic: Long = 0,
     usedTraffic: Long = 0,
@@ -210,6 +212,21 @@ fun ProfileCard(
                                 .padding(horizontal = 4.dp, vertical = 1.dp)
                         )
                     }
+                }
+
+                if (updateStage != null) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = stringResource(updateStage.labelRes),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .background(
+                                MaterialTheme.colorScheme.primaryContainer,
+                                RoundedCornerShape(6.dp)
+                            )
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(4.dp))

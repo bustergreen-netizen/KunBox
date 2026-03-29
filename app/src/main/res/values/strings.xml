@@ -724,6 +724,11 @@
     <!-- Subscription Update Messages -->
     <string name="subscription_update_success_with_changes">更新成功 (%1$s, %2$d 个节点)</string>
     <string name="subscription_update_success_no_changes">更新完成，无变化 (%d 个节点)</string>
+    <string name="subscription_update_success_background_dns">%1$s，DNS 预解析已转入后台</string>
+    <string name="subscription_update_stage_requesting">请求中</string>
+    <string name="subscription_update_stage_parsing">解析中</string>
+    <string name="subscription_update_stage_saving">保存中</string>
+    <string name="subscription_update_stage_dns_background">后台 DNS 处理中</string>
     <string name="ruleset_update_network_error">更新失败，请检查网络</string>
 
     <!-- App Groups -->
