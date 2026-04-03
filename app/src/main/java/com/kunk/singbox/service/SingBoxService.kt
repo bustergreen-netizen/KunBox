@@ -410,11 +410,16 @@ class SingBoxService : VpnService() {
                 get() = coreManager.isStopping
             override fun getCommandClient() = commandManager.getCommandClient()
             override fun getSelectedOutbound(groupTag: String) = commandManager.getSelectedOutbound(groupTag)
-            override suspend fun urlTestGroup(groupTag: String, expectedTags: Set<String>): Map<String, Int> {
+            override suspend fun urlTestGroup(
+                groupTag: String,
+                expectedTags: Set<String>,
+                onProgress: ((Map<String, Int>) -> Unit)?
+            ): Map<String, Int> {
                 return commandManager.urlTestGroup(
                     groupTag = groupTag,
                     timeoutMs = 10000L,
-                    expectedTags = expectedTags
+                    expectedTags = expectedTags,
+                    onProgress = onProgress
                 )
             }
 

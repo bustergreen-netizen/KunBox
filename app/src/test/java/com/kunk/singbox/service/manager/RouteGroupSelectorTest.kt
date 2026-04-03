@@ -129,6 +129,54 @@ class RouteGroupSelectorTest {
     }
 
     @Test
+    fun testResolveFirstValidSelectionDecisionReturnsBestConcreteCandidate() {
+        val decision = RouteGroupSelector.resolveFirstValidSelectionDecision(
+            candidates = listOf("node-a", "node-b"),
+            urlTestResults = mapOf(
+                "node-a" to 180,
+                "node-b" to 95
+            ),
+            currentSelectedTag = "P:HK#AUTO",
+            firstValidSwitchApplied = false
+        )
+
+        assertEquals("node-b", decision.targetTag)
+        assertTrue(decision.consumeFirstValidResult)
+    }
+
+    @Test
+    fun testResolveFirstValidSelectionDecisionConsumesFirstResultWithoutSwitchWhenAlreadyOnCandidate() {
+        val decision = RouteGroupSelector.resolveFirstValidSelectionDecision(
+            candidates = listOf("node-a", "node-b"),
+            urlTestResults = mapOf("node-a" to 88),
+            currentSelectedTag = " node-a ",
+            firstValidSwitchApplied = false
+        )
+
+        assertNull(decision.targetTag)
+        assertTrue(decision.consumeFirstValidResult)
+    }
+
+    @Test
+    fun testResolveFirstValidSelectionDecisionDoesNothingAfterFirstSwitchApplied() {
+        val decision = RouteGroupSelector.resolveFirstValidSelectionDecision(
+            candidates = listOf("node-a", "node-b"),
+            urlTestResults = mapOf("node-b" to 70),
+            currentSelectedTag = "node-a",
+            firstValidSwitchApplied = true
+        )
+
+        assertNull(decision.targetTag)
+        assertFalse(decision.consumeFirstValidResult)
+    }
+
+    @Test
+    fun testShouldSwitchToTagUsesNormalizedComparison() {
+        assertFalse(RouteGroupSelector.shouldSwitchToTag("  node a  ", "node a"))
+        assertTrue(RouteGroupSelector.shouldSwitchToTag("node-a", "node-b"))
+    }
+
+    @Test
     fun testShouldNotifyFallbackWhenSwitchSucceededFirstTime() {
         val shouldNotify = RouteGroupSelector.shouldNotifyFallback(
             currentSelected = "node-a",
