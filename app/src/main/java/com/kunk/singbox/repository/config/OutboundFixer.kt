@@ -206,7 +206,9 @@ object OutboundFixer {
                 result = updated
             }
 
-            if (result.packetEncoding == "xudp") {
+            if (result.type == "vless" && result.packetEncoding.isNullOrBlank()) {
+                result = result.copy(packetEncoding = "")
+            } else if (result.packetEncoding == "xudp") {
                 result = result.copy(packetEncoding = "")
             }
         }

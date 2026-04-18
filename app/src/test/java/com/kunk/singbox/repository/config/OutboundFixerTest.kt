@@ -231,6 +231,22 @@ class OutboundFixerTest {
     }
 
     @Test
+    fun testBuildForRuntimeClearsImplicitXudpForVlessXhttp() {
+        val outbound = Outbound(
+            type = "vless",
+            tag = "xhttp-node",
+            server = "xhttp.example.com",
+            serverPort = 443,
+            uuid = "uuid",
+            transport = com.kunk.singbox.model.TransportConfig(type = "xhttp", path = "/x")
+        )
+
+        val runtime = OutboundFixer.buildForRuntimeWithDialConfigForTest(outbound)
+
+        assertEquals("", runtime?.packetEncoding)
+    }
+
+    @Test
     fun testFixPreservesOuterSelectorDefaultForRouteGroup() {
         val outbound = Outbound(
             type = "selector",
