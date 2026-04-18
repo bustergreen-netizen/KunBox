@@ -177,6 +177,12 @@ class RouteGroupSelectorTest {
     }
 
     @Test
+    fun testSelectorTagForRpcPreservesOriginalCase() {
+        assertEquals("P:cf", RouteGroupSelector.selectorTagForRpc("P:cf"))
+        assertEquals("P:鹰", RouteGroupSelector.selectorTagForRpc("P:鹰"))
+    }
+
+    @Test
     fun testShouldNotifyFallbackWhenSwitchSucceededFirstTime() {
         val shouldNotify = RouteGroupSelector.shouldNotifyFallback(
             currentSelected = "node-a",

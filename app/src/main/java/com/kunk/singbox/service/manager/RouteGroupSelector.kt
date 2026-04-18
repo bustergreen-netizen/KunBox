@@ -204,6 +204,10 @@ class RouteGroupSelector(
             return resolveCandidateTag(currentSelectedTag, listOf(targetTag)) != targetTag
         }
 
+        internal fun selectorTagForRpc(groupTag: String): String {
+            return groupTag
+        }
+
         internal fun resolveFirstValidSelectionDecision(
             candidates: Collection<String>,
             urlTestResults: Map<String, Int>,
@@ -697,11 +701,7 @@ class RouteGroupSelector(
         bestTag: String
     ): Boolean {
         return runCatching {
-            try {
-                client.selectOutbound(groupTag, bestTag)
-            } catch (_: Exception) {
-                client.selectOutbound(groupTag.lowercase(), bestTag)
-            }
+            client.selectOutbound(selectorTagForRpc(groupTag), bestTag)
             Log.i(TAG, "Route group '$groupTag' switched from '${currentSelected ?: "(none)"}' to '$bestTag'")
             true
         }.onFailure { e ->

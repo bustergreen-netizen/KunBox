@@ -43,7 +43,7 @@ object NodeLinkExporter {
         val params = mutableListOf<String>()
 
         params.add("type=${outbound.transport?.type ?: "tcp"}")
-        params.add("encryption=none")
+        params.add("encryption=${encodeUrlComponent(outbound.encryption ?: "none")}")
 
         outbound.flow?.let { params.add("flow=$it") }
 

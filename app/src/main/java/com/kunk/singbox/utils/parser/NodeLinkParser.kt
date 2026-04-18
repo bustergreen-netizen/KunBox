@@ -483,6 +483,8 @@ class NodeLinkParser(private val gson: Gson) {
             val flow = firstParam(params, "flow")?.takeIf { it.isNotBlank() }
             val packetEncoding = firstParam(params, "packetEncoding", "packet-encoding")
                 ?.takeIf { it.isNotBlank() }
+            val encryption = firstParam(params, "encryption")
+                ?.takeIf { it.isNotBlank() && !it.equals("none", ignoreCase = true) }
 
             val tlsConfig = when (security) {
                 "tls" -> TlsConfig(
@@ -542,7 +544,8 @@ class NodeLinkParser(private val gson: Gson) {
                 flow = flow,
                 tls = tlsConfig,
                 transport = transport,
-                packetEncoding = packetEncoding
+                packetEncoding = packetEncoding,
+                encryption = encryption
             )
         } catch (e: Exception) {
             Log.e("NodeLinkParser", "Failed to parse VLESS link", e)

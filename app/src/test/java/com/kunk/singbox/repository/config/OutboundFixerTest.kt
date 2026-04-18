@@ -213,6 +213,24 @@ class OutboundFixerTest {
     }
 
     @Test
+    fun testBuildForRuntimePreservesVlessCustomEncryption() {
+        val outbound = Outbound(
+            type = "vless",
+            tag = "encrypted-xhttp",
+            server = "xhttp.example.com",
+            serverPort = 443,
+            uuid = "uuid",
+            flow = "xtls-rprx-vision",
+            encryption = "mlkem768x25519plus.native.0rtt.sample"
+        )
+
+        val runtime = OutboundFixer.buildForRuntimeWithDialConfigForTest(outbound)
+
+        assertEquals("vless", runtime?.type)
+        assertEquals("mlkem768x25519plus.native.0rtt.sample", runtime?.encryption)
+    }
+
+    @Test
     fun testFixPreservesOuterSelectorDefaultForRouteGroup() {
         val outbound = Outbound(
             type = "selector",

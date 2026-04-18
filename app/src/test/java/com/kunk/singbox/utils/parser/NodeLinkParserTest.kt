@@ -249,6 +249,23 @@ class NodeLinkParserTest {
         assertEquals(true, outbound?.transport?.noSSEHeader)
     }
 
+    @Test
+    fun testParseVLessWithCustomEncryptionAndXhttp() {
+        val link =
+            "vless://uuid@xhttp.example.com:443?security=reality&sni=apple.com&pbk=public-key-123" +
+                "&sid=short-id-123&fp=chrome&flow=xtls-rprx-vision&type=xhttp" +
+                "&path=node-xh&mode=auto&encryption=mlkem768x25519plus.native.0rtt.sample#EncryptedXHTTPNode"
+
+        val outbound = parser.parse(link)
+
+        assertNotNull(outbound)
+        assertEquals("vless", outbound?.type)
+        assertEquals("xhttp", outbound?.transport?.type)
+        assertEquals("xtls-rprx-vision", outbound?.flow)
+        assertEquals("mlkem768x25519plus.native.0rtt.sample", outbound?.encryption)
+        assertEquals("apple.com", outbound?.tls?.serverName)
+    }
+
     // ==================== Trojan ====================
 
     @Test

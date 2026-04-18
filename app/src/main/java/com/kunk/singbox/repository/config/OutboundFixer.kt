@@ -435,6 +435,7 @@ object OutboundFixer {
                 uuid = fixed.uuid,
                 flow = fixed.flow,
                 packetEncoding = fixed.packetEncoding,
+                encryption = fixed.encryption,
                 tls = fixed.tls,
                 transport = fixed.transport,
                 network = fixed.network,

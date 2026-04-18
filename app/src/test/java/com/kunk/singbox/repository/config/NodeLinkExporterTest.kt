@@ -3,6 +3,7 @@ package com.kunk.singbox.repository.config
 import com.google.gson.Gson
 import com.kunk.singbox.model.Outbound
 import com.kunk.singbox.model.TlsConfig
+import com.kunk.singbox.model.TransportConfig
 import com.kunk.singbox.model.UdpOverTcpConfig
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -64,5 +65,27 @@ class NodeLinkExporterTest {
         assertTrue(link!!.contains("network=quic"))
         assertTrue(link.contains("congestion_control=bbr"))
         assertFalse(link.contains("congestion_control=cubic"))
+    }
+
+    @Test
+    fun exportVlessShouldPreserveCustomEncryption() {
+        val outbound = Outbound(
+            type = "vless",
+            tag = "Encrypted XHTTP",
+            server = "xhttp.example.com",
+            serverPort = 443,
+            uuid = "uuid",
+            flow = "xtls-rprx-vision",
+            encryption = "mlkem768x25519plus.native.0rtt.sample",
+            tls = TlsConfig(enabled = true, serverName = "apple.com"),
+            transport = TransportConfig(type = "xhttp", path = "/node-xh", mode = "auto")
+        )
+
+        val link = NodeLinkExporter.export(outbound, gson)
+
+        assertNotNull(link)
+        assertTrue(link!!.contains("encryption=mlkem768x25519plus.native.0rtt.sample"))
+        assertTrue(link.contains("type=xhttp"))
+        assertTrue(link.contains("flow=xtls-rprx-vision"))
     }
 }

@@ -186,6 +186,7 @@ data class Outbound(
     @SerializedName("alter_id") val alterId: Int? = null, // 0=AEAD, >0=legacy VMess MD5
     @SerializedName("flow") val flow: String? = null,
     @SerializedName("packet_encoding") val packetEncoding: String? = null,
+    @SerializedName("encryption") val encryption: String? = null,
 
     @SerializedName("up_mbps") val upMbps: Int? = null,
     @SerializedName("down_mbps") val downMbps: Int? = null,

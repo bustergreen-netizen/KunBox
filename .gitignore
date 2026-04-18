@@ -81,3 +81,4 @@ OPENWORLD_MIGRATION_PLAN.md
 .gstack/
 \.sisyphus
 .kotlin/
+app/graphify-out/cache
