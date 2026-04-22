@@ -108,26 +108,48 @@ class RuleSetViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun getBuiltInRuleSets(): List<HubRuleSet> {
-        val githubUrl = "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set"
-        val baseUrl = "https://ghp.ci/$githubUrl"
-        val commonRules = listOf(
+        val geositeUrl = "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set"
+        val geositeBaseUrl = "https://ghp.ci/$geositeUrl"
+        val geositeRules = listOf(
             "google", "youtube", "twitter", "facebook", "instagram", "tiktok",
             "telegram", "whatsapp", "discord", "github", "microsoft", "apple",
             "amazon", "netflix", "spotify", "bilibili", "zhihu", "baidu",
             "tencent", "alibaba", "jd", "taobao", "weibo", "douyin",
             "cn", "geolocation-cn", "geolocation-!cn", "private", "category-ads-all"
         )
-        return commonRules.map { name ->
+
+        val geoipUrl = "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set"
+        val geoipBaseUrl = "https://ghp.ci/$geoipUrl"
+        val geoipRules = listOf(
+            "cn", "us", "ru", "jp", "kr", "sg", "hk", "tw",
+            "apple", "google", "microsoft", "facebook", "twitter", "amazon", "cloudflare"
+        )
+
+        val geositeRuleSets = geositeRules.map { name ->
             val fullName = if (name == "category-ads-all") "geosite-category-ads-all" else "geosite-$name"
             HubRuleSet(
                 name = fullName,
                 ruleCount = 0,
                 tags = listOf("Built-in", "geosite"),
                 description = "Commonly used rule sets",
-                sourceUrl = "$baseUrl/$fullName.json",
-                binaryUrl = "$baseUrl/$fullName.srs"
+                sourceUrl = "$geositeBaseUrl/$fullName.json",
+                binaryUrl = "$geositeBaseUrl/$fullName.srs"
             )
         }
+
+        val geoipRuleSets = geoipRules.map { name ->
+            val fullName = "geoip-$name"
+            HubRuleSet(
+                name = fullName,
+                ruleCount = 0,
+                tags = listOf("Built-in", "geoip"),
+                description = "Commonly used IP rule sets",
+                sourceUrl = "$geoipBaseUrl/$fullName.json",
+                binaryUrl = "$geoipBaseUrl/$fullName.srs"
+            )
+        }
+
+        return geositeRuleSets + geoipRuleSets
     }
 
     private fun fetchFromSagerNet(currentSettings: AppSettings): List<HubRuleSet> {
