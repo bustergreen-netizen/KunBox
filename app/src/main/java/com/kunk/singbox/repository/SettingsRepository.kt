@@ -394,6 +394,41 @@ class SettingsRepository(private val context: Context) {
                 }
 
                 var rawUrl = updatedUrl
+
+                // Fix corrupted URLs: https://ghp.ci/https://raw.githubusercontent.com/...
+                val proxyPrefixes = listOf(
+                    "https://ghp.ci/",
+                    "https://mirror.ghproxy.com/",
+                    "https://ghproxy.com/",
+                    "https://ghproxy.net/",
+                    "https://ghfast.top/",
+                    "https://gh-proxy.com/"
+                )
+
+                for (proxy in proxyPrefixes) {
+                    if (rawUrl.startsWith(proxy)) {
+                        val afterProxy = rawUrl.removePrefix(proxy)
+                        if (afterProxy.startsWith("http://") || afterProxy.startsWith("https://")) {
+                            // Extract clean path from corrupted URL
+                            val withoutProtocol = afterProxy
+                                .removePrefix("https://")
+                                .removePrefix("http://")
+                            val firstSlash = withoutProtocol.indexOf('/')
+                            if (firstSlash > 0) {
+                                rawUrl = "/" + withoutProtocol.substring(firstSlash)
+                            } else {
+                                rawUrl = "/" + withoutProtocol
+                            }
+                        } else if (afterProxy.startsWith("/")) {
+                            rawUrl = afterProxy
+                        } else {
+                            rawUrl = afterProxy
+                        }
+                        break
+                    }
+                }
+
+                // Handle CDN format
                 if (rawUrl.startsWith(cdnPrefix)) {
                     val path = rawUrl.removePrefix(cdnPrefix)
                     val parts = path.split("@", limit = 2)
@@ -402,24 +437,20 @@ class SettingsRepository(private val context: Context) {
                         val branchPath = parts[1]
                         rawUrl = "$rawPrefix$userRepo/$branchPath"
                     }
-                } else {
-                    val oldMirrors = listOf(
-                        "https://ghp.ci/",
-                        "https://mirror.ghproxy.com/",
-                        "https://ghproxy.com/",
-                        "https://ghproxy.net/",
-                        "https://ghfast.top/",
-                        "https://gh-proxy.com/"
-                    )
-                    for (mirror in oldMirrors) {
-                        if (rawUrl.startsWith(mirror)) {
-                            if (rawUrl.contains("raw.githubusercontent.com")) {
-                                rawUrl = rawUrl.removePrefix(mirror)
-                            } else {
-                                rawUrl = rawUrl.replace(mirror, rawPrefix)
-                            }
-                            break
-                        }
+                }
+
+                // Handle remaining raw.githubusercontent.com URLs
+                if (rawUrl.contains("raw.githubusercontent.com") && !rawUrl.startsWith(rawPrefix)) {
+                    val path = rawUrl.substringAfter("raw.githubusercontent.com/")
+                    if (path.startsWith("http://") || path.startsWith("https://")) {
+                        val cleanPath = path
+                            .removePrefix("https://")
+                            .removePrefix("http://")
+                        rawUrl = rawPrefix + cleanPath
+                    } else if (path.contains("raw.githubusercontent.com/")) {
+                        rawUrl = rawPrefix + path.substringAfter("raw.githubusercontent.com/")
+                    } else {
+                        rawUrl = rawPrefix + path
                     }
                 }
 

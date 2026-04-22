@@ -395,12 +395,14 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun addRuleSet(ruleSet: RuleSet, onResult: (Boolean, String) -> Unit = { _, _ -> }) {
         viewModelScope.launch {
+            @Suppress("CyclomaticComplexMethod", "LongMethod", "CognitiveComplexMethod")
             fun normalizeRuleSetUrl(url: String, mirrorUrl: String): String {
                 val rawPrefix = "https://raw.githubusercontent.com/"
                 val cdnPrefix = "https://cdn.jsdelivr.net/gh/"
 
                 var rawUrl = url
 
+                // Handle CDN format first
                 if (rawUrl.startsWith(cdnPrefix)) {
                     val path = rawUrl.removePrefix(cdnPrefix)
                     val parts = path.split("@", limit = 2)
@@ -409,30 +411,51 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                         val branchPath = parts[1]
                         rawUrl = "$rawPrefix$userRepo/$branchPath"
                     }
-                } else {
+                }
 
-                    val oldMirrors = listOf(
-                        "https://ghp.ci/",
-                        "https://mirror.ghproxy.com/",
-                        "https://ghproxy.com/",
-                        "https://ghproxy.net/",
-                        "https://ghfast.top/",
-                        "https://gh-proxy.com/"
-                    )
+                // Handle proxy/mirror URLs that wrap the original URL
+                val proxyPrefixes = listOf(
+                    "https://ghp.ci/",
+                    "https://mirror.ghproxy.com/",
+                    "https://ghproxy.com/",
+                    "https://ghproxy.net/",
+                    "https://ghfast.top/",
+                    "https://gh-proxy.com/"
+                )
 
-                    for (mirror in oldMirrors) {
-                        if (rawUrl.startsWith(mirror)) {
-                            if (rawUrl.contains("raw.githubusercontent.com")) {
-                                rawUrl = rawUrl.removePrefix(mirror)
+                for (proxy in proxyPrefixes) {
+                    if (rawUrl.startsWith(proxy)) {
+                        val afterProxy = rawUrl.removePrefix(proxy)
+                        if (afterProxy.startsWith("http://") || afterProxy.startsWith("https://")) {
+                            val withoutProtocol = afterProxy
+                                .removePrefix("https://")
+                                .removePrefix("http://")
+                            val firstSlash = withoutProtocol.indexOf('/')
+                            if (firstSlash > 0) {
+                                rawUrl = "/" + withoutProtocol.substring(firstSlash)
                             } else {
-                                rawUrl = rawUrl.replace(mirror, rawPrefix)
+                                rawUrl = "/" + withoutProtocol
                             }
-                            break
+                        } else if (afterProxy.startsWith("/")) {
+                            rawUrl = afterProxy
+                        } else {
+                            rawUrl = afterProxy
                         }
+                        break
                     }
+                }
 
-                    if (rawUrl.contains("raw.githubusercontent.com") && !rawUrl.startsWith(rawPrefix)) {
-                        val path = rawUrl.substringAfter("raw.githubusercontent.com/")
+                // If still contains raw.githubusercontent.com but not as proper prefix, extract clean path
+                if (rawUrl.contains("raw.githubusercontent.com")) {
+                    val path = rawUrl.substringAfter("raw.githubusercontent.com/")
+                    if (path.startsWith("http://") || path.startsWith("https://")) {
+                        val cleanPath = path
+                            .removePrefix("https://")
+                            .removePrefix("http://")
+                        rawUrl = rawPrefix + cleanPath
+                    } else if (path.contains("raw.githubusercontent.com/")) {
+                        rawUrl = rawPrefix + path.substringAfter("raw.githubusercontent.com/")
+                    } else {
                         rawUrl = rawPrefix + path
                     }
                 }
@@ -501,12 +524,14 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             val currentSets = repository.getRuleSets().toMutableList()
             val addedRuleSets = mutableListOf<RuleSet>()
 
+            @Suppress("CyclomaticComplexMethod", "LongMethod", "CognitiveComplexMethod")
             fun normalizeRuleSetUrl(url: String, mirrorUrl: String): String {
                 val rawPrefix = "https://raw.githubusercontent.com/"
                 val cdnPrefix = "https://cdn.jsdelivr.net/gh/"
 
                 var rawUrl = url
 
+                // Handle CDN format first
                 if (rawUrl.startsWith(cdnPrefix)) {
                     val path = rawUrl.removePrefix(cdnPrefix)
                     val parts = path.split("@", limit = 2)
@@ -515,30 +540,51 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                         val branchPath = parts[1]
                         rawUrl = "$rawPrefix$userRepo/$branchPath"
                     }
-                } else {
+                }
 
-                    val oldMirrors = listOf(
-                        "https://ghp.ci/",
-                        "https://mirror.ghproxy.com/",
-                        "https://ghproxy.com/",
-                        "https://ghproxy.net/",
-                        "https://ghfast.top/",
-                        "https://gh-proxy.com/"
-                    )
+                // Handle proxy/mirror URLs that wrap the original URL
+                val proxyPrefixes = listOf(
+                    "https://ghp.ci/",
+                    "https://mirror.ghproxy.com/",
+                    "https://ghproxy.com/",
+                    "https://ghproxy.net/",
+                    "https://ghfast.top/",
+                    "https://gh-proxy.com/"
+                )
 
-                    for (mirror in oldMirrors) {
-                        if (rawUrl.startsWith(mirror)) {
-                            if (rawUrl.contains("raw.githubusercontent.com")) {
-                                rawUrl = rawUrl.removePrefix(mirror)
+                for (proxy in proxyPrefixes) {
+                    if (rawUrl.startsWith(proxy)) {
+                        val afterProxy = rawUrl.removePrefix(proxy)
+                        if (afterProxy.startsWith("http://") || afterProxy.startsWith("https://")) {
+                            val withoutProtocol = afterProxy
+                                .removePrefix("https://")
+                                .removePrefix("http://")
+                            val firstSlash = withoutProtocol.indexOf('/')
+                            if (firstSlash > 0) {
+                                rawUrl = "/" + withoutProtocol.substring(firstSlash)
                             } else {
-                                rawUrl = rawUrl.replace(mirror, rawPrefix)
+                                rawUrl = "/" + withoutProtocol
                             }
-                            break
+                        } else if (afterProxy.startsWith("/")) {
+                            rawUrl = afterProxy
+                        } else {
+                            rawUrl = afterProxy
                         }
+                        break
                     }
+                }
 
-                    if (rawUrl.contains("raw.githubusercontent.com") && !rawUrl.startsWith(rawPrefix)) {
-                        val path = rawUrl.substringAfter("raw.githubusercontent.com/")
+                // If still contains raw.githubusercontent.com but not as proper prefix, extract clean path
+                if (rawUrl.contains("raw.githubusercontent.com")) {
+                    val path = rawUrl.substringAfter("raw.githubusercontent.com/")
+                    if (path.startsWith("http://") || path.startsWith("https://")) {
+                        val cleanPath = path
+                            .removePrefix("https://")
+                            .removePrefix("http://")
+                        rawUrl = rawPrefix + cleanPath
+                    } else if (path.contains("raw.githubusercontent.com/")) {
+                        rawUrl = rawPrefix + path.substringAfter("raw.githubusercontent.com/")
+                    } else {
                         rawUrl = rawPrefix + path
                     }
                 }

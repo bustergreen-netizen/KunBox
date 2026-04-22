@@ -154,7 +154,8 @@ class RuleSetViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun fetchGeositeFromSagerNet(currentSettings: AppSettings): List<HubRuleSet> {
-        val rawUrl = "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set"
+        // Use path-only format, not full URL
+        val rawUrl = "/SagerNet/sing-geosite/rule-set"
         val url = "https://api.github.com/repos/SagerNet/sing-geosite/git/trees/rule-set?recursive=1"
         return try {
             val request = Request.Builder()
@@ -171,7 +172,8 @@ class RuleSetViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun fetchGeoipFromSagerNet(currentSettings: AppSettings): List<HubRuleSet> {
-        val rawUrl = "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set"
+        // Use path-only format, not full URL
+        val rawUrl = "/SagerNet/sing-geoip/rule-set"
         val url = "https://api.github.com/repos/SagerNet/sing-geoip/git/trees/rule-set?recursive=1"
         return try {
             val request = Request.Builder()
@@ -207,6 +209,8 @@ class RuleSetViewModel(application: Application) : AndroidViewModel(application)
             val srsFiles = treeResponse.tree
                 .filter { it.type == "blob" && it.path.endsWith(".srs") }
 
+            // rawUrl is path-only like "/SagerNet/sing-geosite/rule-set", prepend proxy base
+            val proxyBase = "https://ghp.ci"
             srsFiles.map { file ->
                 val fileName = file.path.substringAfterLast("/")
                 val nameWithoutExt = fileName.substringBeforeLast(".srs")
@@ -216,8 +220,8 @@ class RuleSetViewModel(application: Application) : AndroidViewModel(application)
                     ruleCount = 0,
                     tags = listOf("Official", "geosite"),
                     description = "SagerNet Official Rule Set",
-                    sourceUrl = "https://ghp.ci/$rawUrl/$sourcePath",
-                    binaryUrl = "https://ghp.ci/$rawUrl/${file.path}"
+                    sourceUrl = "$proxyBase$rawUrl/$sourcePath",
+                    binaryUrl = "$proxyBase$rawUrl/${file.path}"
                 )
             }
         }
@@ -243,6 +247,8 @@ class RuleSetViewModel(application: Application) : AndroidViewModel(application)
             val srsFiles = treeResponse.tree
                 .filter { it.type == "blob" && it.path.endsWith(".srs") }
 
+            // rawUrl is path-only like "/SagerNet/sing-geoip/rule-set", prepend proxy base
+            val proxyBase = "https://ghp.ci"
             srsFiles.map { file ->
                 val fileName = file.path.substringAfterLast("/")
                 val nameWithoutExt = fileName.substringBeforeLast(".srs")
@@ -252,8 +258,8 @@ class RuleSetViewModel(application: Application) : AndroidViewModel(application)
                     ruleCount = 0,
                     tags = listOf("Official", "geoip"),
                     description = "SagerNet Official Rule Set",
-                    sourceUrl = "https://ghp.ci/$rawUrl/$sourcePath",
-                    binaryUrl = "https://ghp.ci/$rawUrl/${file.path}"
+                    sourceUrl = "$proxyBase$rawUrl/$sourcePath",
+                    binaryUrl = "$proxyBase$rawUrl/${file.path}"
                 )
             }
         }
