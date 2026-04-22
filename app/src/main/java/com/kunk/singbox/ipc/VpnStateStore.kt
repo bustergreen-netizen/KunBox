@@ -256,12 +256,14 @@ object VpnStateStore {
      * Preserves manuallyStopped and all config hashes to maintain manual-stop semantics
      * and avoid unnecessary re-computation of settings.
      */
-    fun clearRuntimeState() {
+    fun clearRuntimeState(preserveLastError: Boolean = false) {
         Log.i(TAG, "Clearing transient runtime state")
         mmkv.removeValueForKey(KEY_VPN_ACTIVE)
         mmkv.removeValueForKey(KEY_VPN_PENDING)
         mmkv.removeValueForKey(KEY_VPN_ACTIVE_LABEL)
-        mmkv.removeValueForKey(KEY_VPN_LAST_ERROR)
+        if (!preserveLastError) {
+            mmkv.removeValueForKey(KEY_VPN_LAST_ERROR)
+        }
         clearAutoFailoverRuntimeState()
     }
 

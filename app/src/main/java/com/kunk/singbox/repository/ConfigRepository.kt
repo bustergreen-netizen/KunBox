@@ -129,6 +129,15 @@ class ConfigRepository(private val context: Context) {
         private const val RULE_SET_SNIFF_BYTES = 512
         private const val RULE_SET_TEXT_PARSE_LIMIT_BYTES = 256 * 1024L
 
+        private const val RULE_SET_IP_THRESHOLD = 0.6
+
+        private val REGEX_IP_CIDR = Regex("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}" +
+            "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/([0-9]|[1-2][0-9]|3[0-2])\$")
+        private val REGEX_IPV6_CIDR = Regex("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}/" +
+            "([0-9]|[1-9][0-9]|1[0-2][0-8])\$")
+        private val REGEX_DOMAIN_LINE = Regex("^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\\." +
+            "[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\\.[a-zA-Z]{2,}\$")
+
         private val TYPE_SAVED_PROFILES_DATA = object : TypeToken<SavedProfilesData>() {}.type
         private val TYPE_OUTBOUND_LIST = object : TypeToken<List<Outbound>>() {}.type
         private const val MAX_NODE_ID_CACHE_SIZE = 2000
@@ -479,6 +488,121 @@ class ConfigRepository(private val context: Context) {
             validTags: Set<String>
         ): List<RuleSet> {
             return filterAppliedRemoteRuleSets(ruleSets, validTags)
+        }
+
+        enum class RuleSetRuleType {
+            IP,
+            DOMAIN,
+            MIXED,
+            UNKNOWN
+        }
+
+        @JvmStatic
+        internal fun detectRuleSetRuleTypeForTest(file: java.io.File): RuleSetRuleType {
+            return detectRuleSetRuleTypeFromFile(file)
+        }
+
+        @JvmStatic
+        fun detectRuleSetRuleTypeStatic(file: java.io.File): RuleSetRuleType {
+            return detectRuleSetRuleTypeFromFile(file)
+        }
+
+        private fun detectRuleSetRuleTypeFromFile(file: java.io.File): RuleSetRuleType {
+            if (!file.exists() || file.length() < RULE_SET_MIN_SIZE_BYTES) {
+                return RuleSetRuleType.UNKNOWN
+            }
+            return try {
+                val sample = readRuleSetSampleFromFile(file)
+                if (sample.isEmpty()) return RuleSetRuleType.UNKNOWN
+
+                val text = if (isLikelyTextRuleSetFromBytes(sample)) {
+                    sample.toString(Charsets.UTF_8)
+                } else {
+                    return RuleSetRuleType.IP
+                }
+
+                detectRuleTypeFromTextContent(text)
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to detect rule set type: ${file.name}", e)
+                RuleSetRuleType.UNKNOWN
+            }
+        }
+
+        private fun detectRuleTypeFromTextContent(text: String): RuleSetRuleType {
+            val lines = text.lineSequence()
+                .map { it.trim() }
+                .filter { it.isNotEmpty() && !it.startsWith("#") && !it.startsWith("//") }
+                .take(100)
+                .toList()
+
+            if (lines.isEmpty()) return RuleSetRuleType.UNKNOWN
+
+            var ipLineCount = 0
+            var domainLineCount = 0
+
+            for (line in lines) {
+                when {
+                    isIpRuleLineContent(line) -> ipLineCount++
+                    isDomainRuleLineContent(line) -> domainLineCount++
+                }
+            }
+
+            val total = ipLineCount + domainLineCount
+            if (total == 0) return RuleSetRuleType.UNKNOWN
+
+            val ipRatio = ipLineCount.toFloat() / total
+            val domainRatio = domainLineCount.toFloat() / total
+
+            return when {
+                ipRatio >= RULE_SET_IP_THRESHOLD -> RuleSetRuleType.IP
+                domainRatio >= RULE_SET_IP_THRESHOLD -> RuleSetRuleType.DOMAIN
+                ipRatio > 0 && domainRatio > 0 -> RuleSetRuleType.MIXED
+                else -> RuleSetRuleType.UNKNOWN
+            }
+        }
+
+        private fun isIpRuleLineContent(line: String): Boolean {
+            if (REGEX_IP_CIDR.matches(line) || REGEX_IPV6_CIDR.matches(line)) {
+                return true
+            }
+            val prefixes = listOf("ip-cidr:", "ip:", "geoip:")
+            for (prefix in prefixes) {
+                if (line.startsWith(prefix, ignoreCase = true)) {
+                    val content = line.removePrefix(prefix).trim()
+                    return REGEX_IP_CIDR.matches(content) || REGEX_IPV6_CIDR.matches(content)
+                }
+            }
+            return false
+        }
+
+        private fun isDomainRuleLineContent(line: String): Boolean {
+            if (REGEX_DOMAIN_LINE.matches(line)) {
+                return true
+            }
+            val domainPrefixes = listOf("domain:", "geosite:", "domain-keyword:", "domain-suffix:", "domain-regex:")
+            for (prefix in domainPrefixes) {
+                if (line.startsWith(prefix, ignoreCase = true)) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        private fun readRuleSetSampleFromFile(file: java.io.File): ByteArray {
+            return file.inputStream().use { input ->
+                val buffer = ByteArray(RULE_SET_SNIFF_BYTES)
+                val read = input.read(buffer)
+                if (read > 0) buffer.copyOf(read) else ByteArray(0)
+            }
+        }
+
+        private fun isLikelyTextRuleSetFromBytes(sample: ByteArray): Boolean {
+            if (sample.any { it == 0.toByte() }) return false
+            val printableBytes = sample.count { byte ->
+                val code = byte.toInt() and 0xff
+                code == 9 || code == 10 || code == 13 || code in 32..126
+            }
+            return printableBytes >= sample.size * 3 / 4
         }
 
         internal fun launchSubscriptionDnsPreResolve(
@@ -4187,6 +4311,18 @@ class ConfigRepository(private val context: Context) {
             .forEach { ruleSet ->
                 val tag = ruleSet.tag
                 if (tag.isBlank() || tag !in validRuleSetTags) return@forEach
+
+                val ruleSetConfig = validRuleSets.find { it.tag == tag }
+                val ruleSetPath = ruleSetConfig?.path ?: return@forEach
+                val ruleSetFile = File(ruleSetPath)
+                val ruleType = detectRuleSetRuleTypeStatic(ruleSetFile)
+
+                // Only add domain-based or mixed rulesets to DNS rules.
+                // Pure IP rulesets (like GeoIP) should only be used in Route rules.
+                if (ruleType == RuleSetRuleType.IP) {
+                    Log.d(TAG, "Skipping IP-only ruleset in DNS rules: $tag")
+                    return@forEach
+                }
 
                 val semantic = resolveOutboundSemantic(
                     mode = resolveRuleSetOutboundMode(ruleSet.outboundMode),

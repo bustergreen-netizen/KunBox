@@ -123,6 +123,30 @@ object SingBoxRemote {
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
+    internal data class DisconnectedStopState(
+        val preserveLastError: Boolean,
+        val lastError: String,
+        val manuallyStopped: Boolean
+    )
+
+    internal fun resolveDisconnectedStopState(
+        storedLastError: String,
+        storedManuallyStopped: Boolean
+    ): DisconnectedStopState {
+        return DisconnectedStopState(
+            preserveLastError = storedManuallyStopped,
+            lastError = if (storedManuallyStopped) storedLastError else "",
+            manuallyStopped = storedManuallyStopped
+        )
+    }
+
+    internal fun shouldReconnectAfterServiceLoss(
+        systemVpn: Boolean,
+        storedManuallyStopped: Boolean
+    ): Boolean {
+        return systemVpn && !storedManuallyStopped
+    }
+
     private val callback = object : ISingBoxServiceCallback.Stub() {
         override fun onStateChanged(state: Int, activeLabel: String?, lastError: String?, manuallyStopped: Boolean) {
             lastCallbackReceivedAtMs = SystemClock.elapsedRealtime()
@@ -202,6 +226,15 @@ object SingBoxRemote {
         updateState(state, storedLabel, storedError, storedManuallyStopped)
     }
 
+    private fun syncStoppedStateAfterDisconnect() {
+        val stopState = resolveDisconnectedStopState(
+            storedLastError = VpnStateStore.getLastError(),
+            storedManuallyStopped = VpnStateStore.isManuallyStopped()
+        )
+        VpnStateStore.clearRuntimeState(preserveLastError = stopState.preserveLastError)
+        updateState(ServiceState.STOPPED, "", stopState.lastError, stopState.manuallyStopped)
+    }
+
     private val deathRecipient = object : IBinder.DeathRecipient {
         override fun binderDied() {
             Log.w(TAG, "Binder died, delegating to backoff reconnect")
@@ -212,9 +245,10 @@ object SingBoxRemote {
             mainHandler.post {
                 val ctx = contextRef?.get()
                 if (ctx != null && !SagerConnection_restartingApp) {
-                    if (!hasSystemVpn(ctx)) {
-                        VpnStateStore.clearRuntimeState()
-                        updateState(ServiceState.STOPPED, "", "", false)
+                    val systemVpn = hasSystemVpn(ctx)
+                    val storedManuallyStopped = VpnStateStore.isManuallyStopped()
+                    if (!shouldReconnectAfterServiceLoss(systemVpn, storedManuallyStopped)) {
+                        syncStoppedStateAfterDisconnect()
                     } else {
                         // 统一走指数退避重连逻辑，避免极端情况下的重连风暴
                         scheduleReconnect()
@@ -404,15 +438,15 @@ object SingBoxRemote {
 
             val ctx = contextRef?.get()
             val systemVpn = ctx != null && hasSystemVpn(ctx)
-            if (systemVpn) {
+            val storedManuallyStopped = VpnStateStore.isManuallyStopped()
+            if (shouldReconnectAfterServiceLoss(systemVpn, storedManuallyStopped)) {
                 Log.i(
                     TAG,
                     "Service disconnected but system VPN present, keeping state and reconnecting"
                 )
                 scheduleReconnect()
             } else {
-                VpnStateStore.clearRuntimeState()
-                updateState(ServiceState.STOPPED, "", "", false)
+                syncStoppedStateAfterDisconnect()
             }
         }
     }

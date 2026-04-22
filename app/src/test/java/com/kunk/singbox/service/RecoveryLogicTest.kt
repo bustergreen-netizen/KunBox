@@ -411,6 +411,93 @@ class RecoveryLogicTest {
     }
 
     @Test
+    fun userReturnRecoveryRequiresRunnableState() {
+        assertTrue(
+            SingBoxService.shouldAllowUserReturnRecovery(
+                isRunning = true,
+                isStarting = false,
+                isStopping = false,
+                isManuallyStopped = false
+            )
+        )
+
+        assertFalse(
+            SingBoxService.shouldAllowUserReturnRecovery(
+                isRunning = true,
+                isStarting = false,
+                isStopping = true,
+                isManuallyStopped = false
+            )
+        )
+
+        assertFalse(
+            SingBoxService.shouldAllowUserReturnRecovery(
+                isRunning = true,
+                isStarting = false,
+                isStopping = false,
+                isManuallyStopped = true
+            )
+        )
+    }
+
+    @Test
+    fun recoveryExecutionRequiresRunnableState() {
+        assertTrue(
+            SingBoxService.shouldAllowRecoveryExecution(
+                isRunning = true,
+                isStarting = false,
+                isStopping = false,
+                isManuallyStopped = false
+            )
+        )
+        assertFalse(
+            SingBoxService.shouldAllowRecoveryExecution(
+                isRunning = false,
+                isStarting = false,
+                isStopping = false,
+                isManuallyStopped = false
+            )
+        )
+        assertFalse(
+            SingBoxService.shouldAllowRecoveryExecution(
+                isRunning = true,
+                isStarting = false,
+                isStopping = true,
+                isManuallyStopped = false
+            )
+        )
+        assertFalse(
+            SingBoxService.shouldAllowRecoveryExecution(
+                isRunning = true,
+                isStarting = false,
+                isStopping = false,
+                isManuallyStopped = true
+            )
+        )
+    }
+
+    @Test
+    fun recoveryInvalidStateSummaryIncludesTerminalStopFlags() {
+        assertEquals(
+            "running=true, starting=false, stopping=true, manuallyStopped=true",
+            SingBoxService.buildRecoveryInvalidStateSummary(
+                isRunning = true,
+                isStarting = false,
+                isStopping = true,
+                isManuallyStopped = true
+            )
+        )
+        assertNull(
+            SingBoxService.buildRecoveryInvalidStateSummary(
+                isRunning = true,
+                isStarting = false,
+                isStopping = false,
+                isManuallyStopped = false
+            )
+        )
+    }
+
+    @Test
     fun networkTypeChangedFallbackEscalatesSoftRecoveryFirst() {
         assertEquals(
             SingBoxService.NetworkTypeChangedFallbackAction.ESCALATE_HARD,

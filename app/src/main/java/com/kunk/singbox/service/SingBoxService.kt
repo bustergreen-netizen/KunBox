@@ -225,6 +225,7 @@ class SingBoxService : VpnService() {
     private val lastRemoteStateUpdateAtMs = AtomicLong(0L)
     @Volatile private var remoteStateUpdateJob: Job? = null
 
+    @Suppress("TooManyFunctions")
     companion object {
         private const val TAG = "SingBoxService"
 
@@ -347,7 +348,53 @@ class SingBoxService : VpnService() {
             isStopping: Boolean,
             isManuallyStopped: Boolean
         ): Boolean {
-            return !isRunning || isStarting || isStopping || isManuallyStopped
+            return !shouldAllowRecoveryExecution(
+                isRunning = isRunning,
+                isStarting = isStarting,
+                isStopping = isStopping,
+                isManuallyStopped = isManuallyStopped
+            )
+        }
+
+        internal fun shouldAllowRecoveryExecution(
+            isRunning: Boolean,
+            isStarting: Boolean,
+            isStopping: Boolean,
+            isManuallyStopped: Boolean
+        ): Boolean {
+            return isRunning && !isStarting && !isStopping && !isManuallyStopped
+        }
+
+        internal fun buildRecoveryInvalidStateSummary(
+            isRunning: Boolean,
+            isStarting: Boolean,
+            isStopping: Boolean,
+            isManuallyStopped: Boolean
+        ): String? {
+            if (shouldAllowRecoveryExecution(
+                    isRunning = isRunning,
+                    isStarting = isStarting,
+                    isStopping = isStopping,
+                    isManuallyStopped = isManuallyStopped
+                )
+            ) {
+                return null
+            }
+            return "running=$isRunning, starting=$isStarting, stopping=$isStopping, manuallyStopped=$isManuallyStopped"
+        }
+
+        internal fun shouldAllowUserReturnRecovery(
+            isRunning: Boolean,
+            isStarting: Boolean,
+            isStopping: Boolean,
+            isManuallyStopped: Boolean
+        ): Boolean {
+            return shouldAllowRecoveryExecution(
+                isRunning = isRunning,
+                isStarting = isStarting,
+                isStopping = isStopping,
+                isManuallyStopped = isManuallyStopped
+            )
         }
 
         internal fun determineNetworkTypeChangedFallbackAction(
@@ -549,6 +596,15 @@ class SingBoxService : VpnService() {
             callbacks = object : BackgroundPowerManager.Callbacks {
                 override val isVpnRunning: Boolean
                     get() = isRunning
+
+                override val isVpnStarting: Boolean
+                    get() = isStarting
+
+                override val isVpnStopping: Boolean
+                    get() = this@SingBoxService.isStopping
+
+                override val isManuallyStopped: Boolean
+                    get() = ServiceStateHolder.isManuallyStopped
 
                 override fun requestCoreNetworkRecovery(reason: String, force: Boolean) {
                     this@SingBoxService.requestCoreNetworkReset(reason, force)
@@ -1432,6 +1488,19 @@ class SingBoxService : VpnService() {
 
     @Suppress("CognitiveComplexMethod", "LongMethod")
     private fun submitRecoveryRequest(request: RecoveryRequest) {
+        val invalidState = recoveryInvalidStateSummary()
+        if (invalidState != null) {
+            logRecoveryEvent(
+                event = "skipped_invalid_state",
+                request = request,
+                mode = null,
+                merged = request.merged,
+                skipped = true,
+                outcome = "invalid_state($invalidState)"
+            )
+            return
+        }
+
         synchronized(this) {
             // 2025-fix-v7: APP_FOREGROUND + force 走快车道，不进合并窗口
             // 直接 wake + resetNetwork，跳过 800ms 合并等待和多级探测
@@ -1516,6 +1585,28 @@ class SingBoxService : VpnService() {
     ): RecoveryRequest {
         val winning = chooseHigherPriorityRecovery(existing, incoming)
         return if (winning.merged) winning else winning.copy(merged = true)
+    }
+
+    private fun cancelPendingRecoveryWork() {
+        recoveryMergeJob?.cancel()
+        recoveryMergeJob = null
+        pendingMergeRequest = null
+        pendingRecoveryRequest = null
+
+        foregroundHardFallbackJob?.cancel()
+        foregroundHardFallbackJob = null
+
+        networkTypeChangedFallbackJob?.cancel()
+        networkTypeChangedFallbackJob = null
+    }
+
+    private fun recoveryInvalidStateSummary(): String? {
+        return buildRecoveryInvalidStateSummary(
+            isRunning = isRunning,
+            isStarting = isStarting,
+            isStopping = isStopping,
+            isManuallyStopped = isManuallyStopped
+        )
     }
 
     private data class RecoveryDebounceContext(
@@ -1637,6 +1728,19 @@ class SingBoxService : VpnService() {
             recoveryInFlight = true
         }
         try {
+            val invalidState = recoveryInvalidStateSummary()
+            if (invalidState != null) {
+                logRecoveryEvent(
+                    event = "skipped_invalid_state",
+                    request = request,
+                    mode = null,
+                    merged = request.merged,
+                    skipped = true,
+                    outcome = "invalid_state($invalidState)"
+                )
+                return
+            }
+
             val recoveryProfile = getRecoveryProfile()
             val forceDowngraded = shouldDowngradeForceForHysteria2(
                 profile = recoveryProfile,
@@ -1759,6 +1863,19 @@ class SingBoxService : VpnService() {
     }
 
     private fun executeForegroundFastRecovery(request: RecoveryRequest) {
+        val invalidState = recoveryInvalidStateSummary()
+        if (invalidState != null) {
+            logRecoveryEvent(
+                event = "foreground_fast_recovery_skipped_state",
+                request = request,
+                mode = BoxWrapperManager.RecoveryMode.SOFT,
+                merged = false,
+                skipped = true,
+                outcome = "invalid_state($invalidState)"
+            )
+            return
+        }
+
         val startMs = SystemClock.elapsedRealtime()
         val isHy2 = isSelectedHysteria2Outbound()
 
@@ -1804,9 +1921,9 @@ class SingBoxService : VpnService() {
     }
 
     private fun evaluateForegroundFallbackState(): ForegroundFallbackState {
-        val stateSkipOutcome = "state_running=$isRunning," +
-            "isStarting=$isStarting,isStopping=$isStopping,isManuallyStopped=$isManuallyStopped"
-        val shouldSkipByState = !isRunning || isStarting || isStopping || isManuallyStopped
+        val invalidState = recoveryInvalidStateSummary()
+        val stateSkipOutcome = invalidState?.let { "state_$it" } ?: ""
+        val shouldSkipByState = invalidState != null
 
         val now = SystemClock.elapsedRealtime()
         val elapsed = now - lastForegroundHardFallbackAtMs.get()
@@ -1971,8 +2088,7 @@ class SingBoxService : VpnService() {
     }
 
     private fun buildNetworkTypeChangedStateSkip(): NetworkTypeChangedFallbackState? {
-        val stateSkipOutcome = "state_running=$isRunning," +
-            "isStarting=$isStarting,isStopping=$isStopping,isManuallyStopped=$isManuallyStopped"
+        val stateSkipOutcome = recoveryInvalidStateSummary()?.let { "state_$it" } ?: ""
         val shouldSkipByState = shouldSkipNetworkTypeChangedFallbackByState(
             isRunning = isRunning,
             isStarting = isStarting,
@@ -2862,7 +2978,7 @@ class SingBoxService : VpnService() {
         }
     }
 
-    private fun stopVpn(stopService: Boolean) {
+    private fun stopVpn(stopService: Boolean, broadcastStoppingState: Boolean = true) {
         // 状态同步检查（保留在 Service 中，因为涉及多线程同步）
         synchronized(this) {
             stopSelfRequested = stopSelfRequested || stopService
@@ -2872,8 +2988,14 @@ class SingBoxService : VpnService() {
             isStopping = true
         }
 
+        cancelPendingRecoveryWork()
+
         // 更新状态
-        updateServiceState(ServiceState.STOPPING)
+        if (broadcastStoppingState) {
+            updateServiceState(ServiceState.STOPPING)
+        } else {
+            requestRemoteStateUpdate(force = true)
+        }
         notificationManager.setSuppressUpdates(true)
         notificationManager.cancelNotification()
         updateTileState()
@@ -2976,8 +3098,7 @@ class SingBoxService : VpnService() {
         backgroundPowerManager.cleanup()
 
         screenStateManager.unregisterActivityLifecycleCallbacks(application)
-        foregroundHardFallbackJob?.cancel()
-        foregroundHardFallbackJob = null
+        cancelPendingRecoveryWork()
 
         // Ensure critical state is saved synchronously before we potentially halt
         if (!isManuallyStopped) {
@@ -3026,11 +3147,13 @@ class SingBoxService : VpnService() {
     override fun onRevoke() {
         Log.i(TAG, "onRevoke called -> stopVpn(stopService=true)")
         isManuallyStopped = true
+        VpnStateStore.setManuallyStopped(true)
         // Another VPN took over. Persist OFF state immediately so QS tile won't stay active.
         VpnTileService.persistVpnState(applicationContext, false)
         VpnTileService.persistVpnPending(applicationContext, "")
         setLastError("VPN revoked by system (another VPN may have started)")
         updateServiceState(ServiceState.STOPPED)
+        requestRemoteStateUpdate(force = true)
         updateTileState()
 
         // 记录日志，告知用户原因
@@ -3050,7 +3173,7 @@ class SingBoxService : VpnService() {
         }
 
         // 停止服务
-        stopVpn(stopService = true)
+        stopVpn(stopService = true, broadcastStoppingState = false)
         super.onRevoke()
     }
 

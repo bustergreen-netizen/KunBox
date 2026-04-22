@@ -102,11 +102,23 @@ object SingBoxIpcHub {
             serviceRef?.clear()
             serviceRef = null
         }
-        VpnStateStore.clearRuntimeState()
+        VpnStateStore.clearRuntimeState(
+            preserveLastError = shouldPreserveLastErrorOnBinderDied(
+                lastError = lastError,
+                manuallyStopped = manuallyStopped
+            )
+        )
         Log.w(TAG, "SingBoxIpcService binder died")
         runCatching {
             logRepo.addLog("WARN [IPC] SingBoxIpcService binder died")
         }
+    }
+
+    internal fun shouldPreserveLastErrorOnBinderDied(
+        lastError: String,
+        manuallyStopped: Boolean
+    ): Boolean {
+        return manuallyStopped && lastError.isNotBlank()
     }
 
     fun onAppLifecycle(isForeground: Boolean) {

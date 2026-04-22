@@ -73,6 +73,17 @@ class SingBoxRemoteStateTest {
     }
 
     @Test
+    fun `stale vpn mode without pending or transport returns STOPPED`() {
+        val result = SingBoxRemote.resolvePersistedStateFromValues(
+            pending = "",
+            isActive = false,
+            mode = VpnStateStore.CoreMode.VPN,
+            hasVpnTransport = false
+        )
+        assertEquals(ServiceState.STOPPED, result)
+    }
+
+    @Test
     fun `all false returns STOPPED`() {
         val result = SingBoxRemote.resolvePersistedStateFromValues(
             pending = "",
@@ -103,5 +114,51 @@ class SingBoxRemoteStateTest {
             hasVpnTransport = true
         )
         assertEquals(ServiceState.RUNNING, result)
+    }
+
+    @Test
+    fun `disconnected stop state preserves revoke terminal error`() {
+        val result = SingBoxRemote.resolveDisconnectedStopState(
+            storedLastError = "VPN revoked by system (another VPN may have started)",
+            storedManuallyStopped = true
+        )
+
+        assertTrue(result.preserveLastError)
+        assertEquals("VPN revoked by system (another VPN may have started)", result.lastError)
+        assertTrue(result.manuallyStopped)
+    }
+
+    @Test
+    fun `disconnected stop state clears transient error for non terminal stop`() {
+        val result = SingBoxRemote.resolveDisconnectedStopState(
+            storedLastError = "temporary failure",
+            storedManuallyStopped = false
+        )
+
+        assertFalse(result.preserveLastError)
+        assertEquals("", result.lastError)
+        assertFalse(result.manuallyStopped)
+    }
+
+    @Test
+    fun `service loss reconnects only when vpn still exists and stop was not terminal`() {
+        assertTrue(
+            SingBoxRemote.shouldReconnectAfterServiceLoss(
+                systemVpn = true,
+                storedManuallyStopped = false
+            )
+        )
+        assertFalse(
+            SingBoxRemote.shouldReconnectAfterServiceLoss(
+                systemVpn = true,
+                storedManuallyStopped = true
+            )
+        )
+        assertFalse(
+            SingBoxRemote.shouldReconnectAfterServiceLoss(
+                systemVpn = false,
+                storedManuallyStopped = false
+            )
+        )
     }
 }

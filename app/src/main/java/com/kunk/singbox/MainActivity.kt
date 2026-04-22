@@ -49,6 +49,7 @@ import com.kunk.singbox.model.AppLanguage
 import com.kunk.singbox.utils.LocaleHelper
 import com.kunk.singbox.utils.DeepLinkHandler
 import com.kunk.singbox.ipc.SingBoxRemote
+import com.kunk.singbox.ipc.VpnStateStore
 import com.kunk.singbox.service.VpnTileService
 import com.kunk.singbox.ui.components.AppNotificationManager
 import com.kunk.singbox.ui.components.AppNavBar
@@ -227,15 +228,22 @@ fun SingBoxApp() {
     }
 
     LaunchedEffect(settings?.autoConnect, connectionState) {
-        if (settings?.autoConnect == true &&
-            connectionState == ConnectionState.Idle &&
-            !isRunning &&
-            !isStarting &&
-            !manuallyStopped
-        ) {
+        fun shouldAutoConnect(persistedManuallyStopped: Boolean): Boolean {
+            return settings?.autoConnect == true &&
+                connectionState == ConnectionState.Idle &&
+                !isRunning &&
+                !isStarting &&
+                !manuallyStopped &&
+                !persistedManuallyStopped
+        }
+
+        val persistedManuallyStopped = VpnStateStore.isManuallyStopped()
+        val shouldAutoConnectNow = shouldAutoConnect(persistedManuallyStopped)
+        if (shouldAutoConnectNow) {
             // Delay a bit to ensure everything is initialized
             delay(1000)
-            if (connectionState == ConnectionState.Idle && !isRunning) {
+            val shouldAutoConnectAfterDelay = shouldAutoConnect(VpnStateStore.isManuallyStopped())
+            if (shouldAutoConnectAfterDelay) {
                 dashboardViewModel.toggleConnection()
             }
         }

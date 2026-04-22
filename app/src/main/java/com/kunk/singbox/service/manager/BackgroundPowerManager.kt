@@ -1,8 +1,9 @@
-﻿package com.kunk.singbox.service.manager
+package com.kunk.singbox.service.manager
 
 import android.os.SystemClock
 import android.util.Log
 import com.kunk.singbox.repository.LogRepository
+import com.kunk.singbox.service.SingBoxService
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -28,6 +29,24 @@ class BackgroundPowerManager(
         private const val FORCE_RECOVERY_AWAY_MS_SCREEN_ON = 8_000L
 
         private const val RETURN_RECOVERY_COALESCE_MS = 2_500L
+
+        internal fun buildReturnRecoveryStateSkipReason(
+            isVpnRunning: Boolean,
+            isVpnStarting: Boolean,
+            isVpnStopping: Boolean,
+            isManuallyStopped: Boolean
+        ): String? {
+            val invalidState = SingBoxService.buildRecoveryInvalidStateSummary(
+                isRunning = isVpnRunning,
+                isStarting = isVpnStarting,
+                isStopping = isVpnStopping,
+                isManuallyStopped = isManuallyStopped
+            )
+            if (invalidState == null) {
+                return null
+            }
+            return "recovery not allowed ($invalidState)"
+        }
     }
 
     /**
@@ -41,6 +60,12 @@ class BackgroundPowerManager(
      */
     interface Callbacks {
         val isVpnRunning: Boolean
+
+        val isVpnStarting: Boolean
+
+        val isVpnStopping: Boolean
+
+        val isManuallyStopped: Boolean
 
         fun suspendNonEssentialProcesses()
 
@@ -202,9 +227,17 @@ class BackgroundPowerManager(
         awayDurationMs: Long
     ) {
         val cb = callbacks
+        val stateSkipReason = cb?.let {
+            buildReturnRecoveryStateSkipReason(
+                isVpnRunning = it.isVpnRunning,
+                isVpnStarting = it.isVpnStarting,
+                isVpnStopping = it.isVpnStopping,
+                isManuallyStopped = it.isManuallyStopped
+            )
+        }
         val skipReason = when {
             cb == null -> "callbacks is null"
-            !cb.isVpnRunning -> "vpn not running"
+            stateSkipReason != null -> stateSkipReason
             awayDurationMs < MIN_RECOVERY_AWAY_MS -> {
                 "away ${awayDurationMs}ms < ${MIN_RECOVERY_AWAY_MS}ms"
             }
@@ -236,8 +269,6 @@ class BackgroundPowerManager(
         cb?.requestCoreNetworkRecovery(source, force = forceRecovery)
     }
 
-    /**
-     */
     private fun shouldCoalesceReturnRecovery(source: String): Boolean {
         val lastAt = lastReturnRecoveryAtMs
         val elapsed = SystemClock.elapsedRealtime() - lastAt

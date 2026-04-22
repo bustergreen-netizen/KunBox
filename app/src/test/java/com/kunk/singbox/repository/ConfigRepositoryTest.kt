@@ -1251,4 +1251,113 @@ class ConfigRepositoryTest {
 
         assertTrue(filtered.isEmpty())
     }
+
+    @Test
+    fun testDetectRuleSetRuleTypeIpRules() {
+        val tempFile =
+            createTempRuleSetFile("""
+            1.0.1.0/24
+            1.0.2.0/23
+            192.168.0.0/16
+            10.0.0.0/8
+            """.trimIndent())
+
+        val ruleType = ConfigRepository.detectRuleSetRuleTypeForTest(tempFile)
+        assertEquals(ConfigRepository.RuleSetRuleType.IP, ruleType)
+    }
+
+    @Test
+    fun testDetectRuleSetRuleTypeDomainRules() {
+        val tempFile =
+            createTempRuleSetFile("""
+            domain:google.com
+            domain:facebook.com
+            geosite:youtube
+            domain:twitter.com
+            """.trimIndent())
+
+        val ruleType = ConfigRepository.detectRuleSetRuleTypeForTest(tempFile)
+        assertEquals(ConfigRepository.RuleSetRuleType.DOMAIN, ruleType)
+    }
+
+    @Test
+    fun testDetectRuleSetRuleTypeMixedRules() {
+        val tempFile =
+            createTempRuleSetFile("""
+            1.0.1.0/24
+            domain:google.com
+            192.168.0.0/16
+            geosite:youtube
+            """.trimIndent())
+
+        val ruleType = ConfigRepository.detectRuleSetRuleTypeForTest(tempFile)
+        assertEquals(ConfigRepository.RuleSetRuleType.MIXED, ruleType)
+    }
+
+    @Test
+    fun testDetectRuleSetRuleTypeWithIpCidrPrefix() {
+        val tempFile =
+            createTempRuleSetFile("""
+            ip-cidr:1.0.1.0/24
+            ip-cidr:1.0.2.0/23
+            geoip:cn
+            """.trimIndent())
+
+        val ruleType = ConfigRepository.detectRuleSetRuleTypeForTest(tempFile)
+        assertEquals(ConfigRepository.RuleSetRuleType.IP, ruleType)
+    }
+
+    @Test
+    fun testDetectRuleSetRuleTypeWithDomainPrefix() {
+        val tempFile =
+            createTempRuleSetFile("""
+            domain:google.com
+            domain-suffix:facebook.com
+            domain-keyword:twitter
+            """.trimIndent())
+
+        val ruleType = ConfigRepository.detectRuleSetRuleTypeForTest(tempFile)
+        assertEquals(ConfigRepository.RuleSetRuleType.DOMAIN, ruleType)
+    }
+
+    @Test
+    fun testDetectRuleSetRuleTypeIpv6Rules() {
+        val tempFile =
+            createTempRuleSetFile("""
+            2001:db8::/32
+            fe80::/10
+            ::1/128
+            """.trimIndent())
+
+        val ruleType = ConfigRepository.detectRuleSetRuleTypeForTest(tempFile)
+        assertEquals(ConfigRepository.RuleSetRuleType.IP, ruleType)
+    }
+
+    @Test
+    fun testDetectRuleSetRuleTypeEmptyFile() {
+        val tempFile = createTempRuleSetFile("")
+
+        val ruleType = ConfigRepository.detectRuleSetRuleTypeForTest(tempFile)
+        assertEquals(ConfigRepository.RuleSetRuleType.UNKNOWN, ruleType)
+    }
+
+    @Test
+    fun testDetectRuleSetRuleTypeOnlyComments() {
+        val tempFile =
+            createTempRuleSetFile("""
+            # This is a comment
+            // Another comment
+            ! Yet another
+            """.trimIndent())
+
+        val ruleType = ConfigRepository.detectRuleSetRuleTypeForTest(tempFile)
+        assertEquals(ConfigRepository.RuleSetRuleType.UNKNOWN, ruleType)
+    }
+
+    private fun createTempRuleSetFile(content: String): java.io.File {
+        val tempFile = java.io.File.createTempFile("ruleset_test_", ".srs")
+        tempFile.writeText(content)
+        tempFile.deleteOnExit()
+        return tempFile
+    }
 }
