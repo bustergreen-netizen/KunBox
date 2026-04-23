@@ -95,7 +95,20 @@ class NodeLinkParserTest {
 
     @Test
     fun testParseVMessHttpTransportKeepsHttp() {
-        val vmessJson = """{"v":"2","ps":"http vmess","add":"18.225.57.7","port":"32721","id":"c31a559b-8285-4b11-db99-d1edfc2b2b70","aid":"0","net":"http","host":"","path":"","tls":""}"""
+        val vmessJson = """
+            {
+              "v":"2",
+              "ps":"http vmess",
+              "add":"18.225.57.7",
+              "port":"32721",
+              "id":"c31a559b-8285-4b11-db99-d1edfc2b2b70",
+              "aid":"0",
+              "net":"http",
+              "host":"",
+              "path":"",
+              "tls":""
+            }
+        """.trimIndent()
         val encoded = java.util.Base64.getEncoder().encodeToString(vmessJson.toByteArray())
         val link = "vmess://$encoded"
 

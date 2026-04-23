@@ -2,13 +2,6 @@
 
 # KunBox for Android
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.0-purple.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
-[![Compose](https://img.shields.io/badge/Jetpack%20Compose-Material3-4285F4.svg?style=flat&logo=android)](https://developer.android.com/jetpack/compose)
-[![Sing-box](https://img.shields.io/badge/Core-Sing--box-success.svg?style=flat)](https://github.com/SagerNet/sing-box)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat)](LICENSE)
-[![Telegram](https://img.shields.io/badge/Telegram-Chat-blue?style=flat&logo=telegram)](https://t.me/+EKxpszVkOBc1MGJl)
-[![Downloads](https://img.shields.io/github/downloads/roseforljh/KunBox/total.svg?style=flat&logo=github)](https://github.com/roseforljh/KunBox/releases)
-
 > **OLED Hyper-Minimalist**
 >
 > 专为追求极致性能与视觉纯粹主义者打造的下一代 Android 代理客户端。
@@ -18,24 +11,6 @@
 
 **[English](README.md)**
 
-</div>
-
----
-
-## 📱 视觉预览
-
-<div align="center">
-  <img src="https://beone.kuz7.com/p/bTJJUBRl5tjaUX5kWJ5JBnrCK-IWOGwzx32fL8mGuB0" width="30%" alt="首页概览" />
-  &nbsp;&nbsp;
-  <img src="https://beone.kuz7.com/p/J47jgAo14XU34TXAyXwo-8zaAIWoKfqUytzI0UGzpws" width="30%" alt="节点列表" />
-  &nbsp;&nbsp;
-  <img src="https://beone.kuz7.com/p/jK9YTrZ6ZOITiSNxLBfHZtbKRdCu2o88vK62t1qNGgI" width="30%" alt="演示动画" />
-</div>
-<br/>
-<div align="center">
-  <img src="https://beone.kuz7.com/p/1kkW3veYE4cjVrDUUUMVfVL2jKPpGl6ccavhge8ilpU" width="30%" />
-  &nbsp;&nbsp;
-  <img src="https://beone.kuz7.com/p/nP4l6zRX1T4eWQMHKN4b0VOVYeau7B5r3vW44NmE7xk" width="30%" />
 </div>
 
 ---
@@ -115,8 +90,11 @@
 | **TUIC v5** | `TUIC` | `tuic://` | 0-RTT, BBR 拥塞控制, QUIC 传输 |
 | **WireGuard** | `WG` | `wireguard://` | 内核级 VPN 隧道, 预共享密钥 (PSK) |
 | **SSH** | `SSH` | `ssh://` | 安全隧道代理, Private Key 认证 |
+| **HTTP(S)** | `HTTP(S)` | `http(s)://` | HTTP/HTTPS 代理支持 |
+| **SOCKS5** | `SOCKS5` | `socks5://` | SOCKS5 代理支持 |
 | **AnyTLS** | `AnyTLS` | `anytls://` | 通用 TLS 包装, 流量伪装 |
 | **Naive** | `Naive` | `naive+https://` | 原生 sing-box Naive 协议支持 |
+| **xHTTP** | `xHTTP` | `xhttp://` | xHTTP 传输协议支持 |
 
 ### 订阅生态支持
 - **Sing-box JSON**: 原生支持，特性最全。

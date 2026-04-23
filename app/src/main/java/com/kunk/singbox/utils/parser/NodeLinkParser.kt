@@ -75,6 +75,65 @@ class NodeLinkParser(private val gson: Gson) {
         return params
     }
 
+    private data class TuicCredentials(
+        val uuid: String,
+        val password: String
+    )
+
+    private data class TuicTlsOptions(
+        val disableSni: Boolean,
+        val serverName: String?,
+        val insecure: Boolean,
+        val alpn: List<String>?,
+        val fingerprint: String?
+    )
+
+    private data class TuicTransportOptions(
+        val congestionControl: String,
+        val udpRelayMode: String,
+        val zeroRtt: Boolean
+    )
+
+    private fun parseTuicCredentials(userInfo: String, params: Map<String, String>): TuicCredentials {
+        val colonIndex = userInfo.indexOf(':')
+        val uuid = if (colonIndex > 0) userInfo.substring(0, colonIndex) else userInfo
+        val password = if (colonIndex > 0) {
+            userInfo.substring(colonIndex + 1)
+        } else {
+            params["password"] ?: params["token"] ?: uuid
+        }
+        return TuicCredentials(uuid = uuid, password = password)
+    }
+
+    private fun buildTuicTlsOptions(server: String?, params: Map<String, String>): TuicTlsOptions {
+        val disableSni = parseBooleanFlag(firstParam(params, "disable_sni", "disableSni")) == true
+        val serverName = if (disableSni) {
+            null
+        } else {
+            defaultTlsServerName(explicitServerName = firstParam(params, "sni"), server = server)
+        }
+        val insecure = listOf("insecure", "allow_insecure", "allowInsecure").any {
+            params[it] == "1"
+        }
+        val alpn = params["alpn"]?.split(",")?.filter { it.isNotBlank() }
+        val fingerprint = params["fp"]?.takeIf { it.isNotBlank() }
+        return TuicTlsOptions(
+            disableSni = disableSni,
+            serverName = serverName,
+            insecure = insecure,
+            alpn = alpn,
+            fingerprint = fingerprint
+        )
+    }
+
+    private fun buildTuicTransportOptions(params: Map<String, String>): TuicTransportOptions {
+        return TuicTransportOptions(
+            congestionControl = params["congestion_control"] ?: params["congestion"] ?: "bbr",
+            udpRelayMode = params["udp_relay_mode"] ?: "native",
+            zeroRtt = params["reduce_rtt"] == "1" || params["zero_rtt"] == "1"
+        )
+    }
+
     private fun isIpLiteral(value: String?): Boolean {
         if (value.isNullOrBlank()) return false
         val candidate = value.trim().removeSurrounding("[", "]")
@@ -929,64 +988,30 @@ class NodeLinkParser(private val gson: Gson) {
             val name = java.net.URLDecoder.decode(uri.fragment ?: "TUIC Node", "UTF-8")
             val server = uri.host
             val port = if (uri.port > 0) uri.port else 443
-
-            val userInfo = uri.userInfo ?: ""
-            val colonIndex = userInfo.indexOf(':')
-            val uuid = if (colonIndex > 0) userInfo.substring(0, colonIndex) else userInfo
-            var password = if (colonIndex > 0) userInfo.substring(colonIndex + 1) else ""
-
-            val params = mutableMapOf<String, String>()
-            uri.query?.split("&")?.forEach { param ->
-                val parts = param.split("=", limit = 2)
-                if (parts.size == 2) {
-                    try {
-                        params[parts[0]] = java.net.URLDecoder.decode(parts[1], "UTF-8")
-                    } catch (e: Exception) {
-                        params[parts[0]] = parts[1]
-                    }
-                }
-            }
-
-            if (password.isBlank()) {
-                password = params["password"] ?: params["token"] ?: uuid
-            }
-
-            val disableSni = parseBooleanFlag(
-                firstParam(params, "disable_sni", "disableSni")
-            ) == true
-            val sni = if (disableSni) {
-                null
-            } else {
-                defaultTlsServerName(
-                    explicitServerName = firstParam(params, "sni"),
-                    server = server
-                )
-            }
-            val insecure = params["insecure"] == "1" || params["allow_insecure"] == "1" || params["allowInsecure"] == "1"
-            val alpnList = params["alpn"]?.split(",")?.filter { it.isNotBlank() }
-            val fingerprint = params["fp"]?.takeIf { it.isNotBlank() }
-
-            val congestionControl = params["congestion_control"] ?: params["congestion"] ?: "bbr"
-            val udpRelayMode = params["udp_relay_mode"] ?: "native"
-            val zeroRtt = params["reduce_rtt"] == "1" || params["zero_rtt"] == "1"
+            val params = parseQueryParams(uri.query)
+            val credentials = parseTuicCredentials(uri.userInfo ?: "", params)
+            val tlsOptions = buildTuicTlsOptions(server, params)
+            val transportOptions = buildTuicTransportOptions(params)
 
             return Outbound(
                 type = "tuic",
                 tag = name,
                 server = server,
                 serverPort = port,
-                uuid = uuid,
-                password = password,
-                congestionControl = congestionControl,
-                udpRelayMode = udpRelayMode,
-                zeroRttHandshake = zeroRtt,
-                disableSni = if (disableSni) true else null,
+                uuid = credentials.uuid,
+                password = credentials.password,
+                congestionControl = transportOptions.congestionControl,
+                udpRelayMode = transportOptions.udpRelayMode,
+                zeroRttHandshake = transportOptions.zeroRtt,
+                disableSni = if (tlsOptions.disableSni) true else null,
                 tls = TlsConfig(
                     enabled = true,
-                    serverName = sni,
-                    insecure = insecure,
-                    alpn = alpnList,
-                    utls = fingerprint?.let { UtlsConfig(enabled = true, fingerprint = it) }
+                    serverName = tlsOptions.serverName,
+                    insecure = tlsOptions.insecure,
+                    alpn = tlsOptions.alpn,
+                    utls = tlsOptions.fingerprint?.let {
+                        UtlsConfig(enabled = true, fingerprint = it)
+                    }
                 )
             )
         } catch (e: Exception) {

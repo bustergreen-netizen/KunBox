@@ -334,8 +334,23 @@ class VpnTileService : TileService() {
                 val configResult = configRepository.generateConfigFile()
 
                 if (configResult != null) {
-
-                    VpnServiceManager.startVpn(this@VpnTileService, settings.tunEnabled).getOrThrow()
+                    val command = VpnServiceManager.buildStartCommand(
+                        tunMode = settings.tunEnabled,
+                        configPath = configResult.path,
+                        cleanCache = true
+                    )
+                    val intent = Intent(this@VpnTileService, command.serviceClass).apply {
+                        action = command.action
+                        command.configPath?.let { putExtra(SingBoxService.EXTRA_CONFIG_PATH, it) }
+                        if (command.cleanCache) {
+                            putExtra(SingBoxService.EXTRA_CLEAN_CACHE, true)
+                        }
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForegroundService(intent)
+                    } else {
+                        startService(intent)
+                    }
                 } else {
                     handleStartFailure(getString(R.string.dashboard_config_generation_failed))
                 }

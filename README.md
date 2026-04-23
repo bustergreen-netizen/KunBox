@@ -2,13 +2,6 @@
 
 # KunBox for Android
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.0-purple.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
-[![Compose](https://img.shields.io/badge/Jetpack%20Compose-Material3-4285F4.svg?style=flat&logo=android)](https://developer.android.com/jetpack/compose)
-[![Sing-box](https://img.shields.io/badge/Core-Sing--box-success.svg?style=flat)](https://github.com/SagerNet/sing-box)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat)](LICENSE)
-[![Telegram](https://img.shields.io/badge/Telegram-Chat-blue?style=flat&logo=telegram)](https://t.me/+EKxpszVkOBc1MGJl)
-[![Downloads](https://img.shields.io/github/downloads/roseforljh/KunBox/total.svg?style=flat&logo=github)](https://github.com/roseforljh/KunBox/releases)
-
 > **OLED Hyper-Minimalist**
 >
 > A next-generation Android proxy client designed for those who pursue ultimate performance and visual purity.
@@ -18,24 +11,6 @@
 
 **[中文文档](README_CN.md)**
 
-</div>
-
----
-
-## 📱 Visual Preview
-
-<div align="center">
-  <img src="https://beone.kuz7.com/p/bTJJUBRl5tjaUX5kWJ5JBnrCK-IWOGwzx32fL8mGuB0" width="30%" alt="Dashboard" />
-  &nbsp;&nbsp;
-  <img src="https://beone.kuz7.com/p/J47jgAo14XU34TXAyXwo-8zaAIWoKfqUytzI0UGzpws" width="30%" alt="Nodes List" />
-  &nbsp;&nbsp;
-  <img src="https://beone.kuz7.com/p/jK9YTrZ6ZOITiSNxLBfHZtbKRdCu2o88vK62t1qNGgI" width="30%" alt="Demo Animation" />
-</div>
-<br/>
-<div align="center">
-  <img src="https://beone.kuz7.com/p/1kkW3veYE4cjVrDUUUMVfVL2jKPpGl6ccavhge8ilpU" width="30%" />
-  &nbsp;&nbsp;
-  <img src="https://beone.kuz7.com/p/nP4l6zRX1T4eWQMHKN4b0VOVYeau7B5r3vW44NmE7xk" width="30%" />
 </div>
 
 ---
@@ -115,8 +90,11 @@ We've built a comprehensive protocol support network, compatible with most proxy
 | **TUIC v5** | `TUIC` | `tuic://` | 0-RTT, BBR congestion control, QUIC transport |
 | **WireGuard** | `WG` | `wireguard://` | Kernel-level VPN tunnel, Pre-shared Key (PSK) |
 | **SSH** | `SSH` | `ssh://` | Secure tunnel proxy, Private Key authentication |
+| **HTTP(S)** | `HTTP(S)` | `http(s)://` | HTTP/HTTPS proxy support |
+| **SOCKS5** | `SOCKS5` | `socks5://` | SOCKS5 proxy support |
 | **AnyTLS** | `AnyTLS` | `anytls://` | Universal TLS wrapper, Traffic obfuscation |
 | **Naive** | `Naive` | `naive+https://` | Native sing-box Naive protocol support |
+| **xHTTP** | `xHTTP` | `xhttp://` | xHTTP transport protocol support |
 
 ### Subscription Ecosystem Support
 - **Sing-box JSON**: Native support with full features.

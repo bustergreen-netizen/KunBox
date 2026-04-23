@@ -18,6 +18,13 @@ import com.kunk.singbox.service.SingBoxService
 object VpnServiceManager {
     private const val TAG = "VpnServiceManager"
 
+    data class StartCommand(
+        val serviceClass: Class<*>,
+        val action: String,
+        val configPath: String? = null,
+        val cleanCache: Boolean = false
+    )
+
     @Volatile
     private var cachedTunEnabled: Boolean? = null
 
@@ -94,23 +101,40 @@ object VpnServiceManager {
         return startVpn(context, tunEnabled)
     }
 
+    fun buildStartCommand(
+        tunMode: Boolean,
+        configPath: String? = null,
+        cleanCache: Boolean = false
+    ): StartCommand {
+        return if (tunMode) {
+            StartCommand(
+                serviceClass = SingBoxService::class.java,
+                action = SingBoxService.ACTION_START,
+                configPath = configPath,
+                cleanCache = cleanCache
+            )
+        } else {
+            StartCommand(
+                serviceClass = ProxyOnlyService::class.java,
+                action = ProxyOnlyService.ACTION_START,
+                configPath = configPath,
+                cleanCache = cleanCache
+            )
+        }
+    }
+
     /**
      *
      */
     fun startVpn(context: Context, tunMode: Boolean): Result<Unit> {
         Log.d(TAG, "startVpn: tunMode=$tunMode")
 
-        val serviceClass = if (tunMode) {
-            SingBoxService::class.java
-        } else {
-            ProxyOnlyService::class.java
-        }
-
-        val intent = Intent(context, serviceClass).apply {
-            action = if (tunMode) {
-                SingBoxService.ACTION_START
-            } else {
-                ProxyOnlyService.ACTION_START
+        val command = buildStartCommand(tunMode)
+        val intent = Intent(context, command.serviceClass).apply {
+            action = command.action
+            command.configPath?.let { putExtra(SingBoxService.EXTRA_CONFIG_PATH, it) }
+            if (command.cleanCache) {
+                putExtra(SingBoxService.EXTRA_CLEAN_CACHE, true)
             }
         }
 
