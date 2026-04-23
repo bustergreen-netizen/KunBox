@@ -172,6 +172,10 @@ class ProfilesViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun reorderProfiles(newProfiles: List<ProfileUi>) {
+        configRepository.reorderProfiles(newProfiles)
+    }
+
     /**
      */
     fun importSubscription(

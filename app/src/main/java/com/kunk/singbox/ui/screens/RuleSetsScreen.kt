@@ -54,8 +54,6 @@ import com.kunk.singbox.viewmodel.SettingsViewModel
 import com.kunk.singbox.model.RuleSetOutboundMode
 import com.kunk.singbox.model.NodeUi
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.withFrameNanos
-
 import androidx.compose.ui.draw.scale
 
 private val defaultRuleSetTags = setOf(
@@ -169,6 +167,7 @@ fun RuleSetsScreen(
 
     var draggingItemIndex by remember { mutableStateOf<Int?>(null) }
     var draggingItemOffset by remember { mutableStateOf(0f) }
+    var draggingItemId by remember { mutableStateOf<String?>(null) }
     var itemHeightPx by remember { mutableStateOf(0f) }
 
     val density = androidx.compose.ui.platform.LocalDensity.current
@@ -482,168 +481,160 @@ fun RuleSetsScreen(
                         )
                     }
                 }
-            } else {
-                items(ruleSets.size, key = { ruleSets[it].id }) { index ->
-                    val ruleSet = ruleSets[index]
+            }
+            items(ruleSets.size, key = { ruleSets[it].id }) { index ->
+                val ruleSet = ruleSets[index]
+                val isDraggingItem = draggingItemIndex == index
+                val isCurrentlyDragging = isDragging.value
+                val currentDraggingIndex = draggingItemIndex
+                val currentDragOffset = draggingItemOffset
 
-                    // Calculate visual offset based on drag state
-                    // We DO NOT swap the list during drag to avoid recomposition issues.
-                    // Instead, we visually shift items.
+                var targetTranslationY = 0f
+                var zIndex = 0f
+                if (!isSelectionMode && currentDraggingIndex != null && itemHeightPx > 0f) {
+                    if (index == currentDraggingIndex) {
+                        targetTranslationY = currentDragOffset
+                        zIndex = 1f
+                    } else {
+                        val dist = (currentDragOffset / itemHeightPx).toInt()
+                        val projectedIndex = (currentDraggingIndex + dist).coerceIn(0, ruleSets.lastIndex)
 
-                    val currentDraggingIndex = draggingItemIndex
-                    val currentDragOffset = draggingItemOffset
-
-                    // Calculate the "projected" index of the dragged item
-                    var translationY = 0f
-                    var zIndex = 0f
-
-                    if (currentDraggingIndex != null && itemHeightPx > 0) {
-                        if (index == currentDraggingIndex) {
-                            translationY = currentDragOffset
-                            zIndex = 1f
-                        } else {
-                            // Determine if this item should shift
-                            val dist = (currentDragOffset / itemHeightPx).toInt()
-                            val targetIndex = (currentDraggingIndex + dist).coerceIn(0, ruleSets.lastIndex)
-
-                            if (currentDraggingIndex < targetIndex) {
-                                // Dragging down: items between current and target shift UP
-                                if (index in (currentDraggingIndex + 1)..targetIndex) {
-                                    translationY = -itemHeightPx
-                                }
-                            } else if (currentDraggingIndex > targetIndex) {
-                                // Dragging up: items between target and current shift DOWN
-                                if (index in targetIndex until currentDraggingIndex) {
-                                    translationY = itemHeightPx
-                                }
+                        if (currentDraggingIndex < projectedIndex) {
+                            if (index in (currentDraggingIndex + 1)..projectedIndex) {
+                                targetTranslationY = -itemHeightPx
+                            }
+                        } else if (currentDraggingIndex > projectedIndex) {
+                            if (index in projectedIndex until currentDraggingIndex) {
+                                targetTranslationY = itemHeightPx
                             }
                         }
                     }
+                }
 
-                    Box(
-                        modifier = Modifier
-                            .zIndex(zIndex)
-                            .graphicsLayer {
-                                this.translationY = translationY
-                                if (index == currentDraggingIndex) {
-                                    scaleX = 1.02f
-                                    scaleY = 1.02f
-                                    shadowElevation = 8.dp.toPx()
-                                }
+                val dragScale by androidx.compose.animation.core.animateFloatAsState(
+                    targetValue = if (isDraggingItem && isCurrentlyDragging) 1.02f else 1f,
+                    animationSpec = androidx.compose.animation.core.spring(dampingRatio = 0.7f, stiffness = 420f),
+                    label = "dragScale"
+                )
+                val dragShadow by androidx.compose.animation.core.animateFloatAsState(
+                    targetValue = if (isDraggingItem && isCurrentlyDragging) 8f else 0f,
+                    animationSpec = androidx.compose.animation.core.spring(dampingRatio = 0.75f, stiffness = 420f),
+                    label = "dragShadow"
+                )
+                val dragAlpha by androidx.compose.animation.core.animateFloatAsState(
+                    targetValue = if (isDraggingItem && isCurrentlyDragging) 0.94f else 1f,
+                    animationSpec = androidx.compose.animation.core.spring(dampingRatio = 0.8f, stiffness = 500f),
+                    label = "dragAlpha"
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .zIndex(zIndex)
+                        .onGloballyPositioned { coordinates ->
+                            if (itemHeightPx == 0f) {
+                                val spacingPx = with(density) { 16.dp.toPx() }
+                                itemHeightPx = coordinates.size.height.toFloat() + spacingPx
                             }
-                            .onGloballyPositioned { coordinates ->
-                                if (itemHeightPx == 0f) {
-                                    val spacingPx = with(density) { 16.dp.toPx() }
-                                    itemHeightPx = coordinates.size.height.toFloat() + spacingPx
-                                }
+                        }
+                        .graphicsLayer {
+                            this.translationY = targetTranslationY
+                            scaleX = dragScale
+                            scaleY = dragScale
+                            shadowElevation = dragShadow
+                            alpha = dragAlpha
+                        }
+                        .then(
+                            if (!enablePlacementAnimation || suppressPlacementAnimation) {
+                                Modifier
+                            } else {
+                                Modifier.animateItem()
                             }
-                            .then(
-                                if (!enablePlacementAnimation || suppressPlacementAnimation) {
-                                    Modifier
-                                } else {
-                                    Modifier.animateItem()
+                        )
+                        .clickable(enabled = !isDraggingItem || !isCurrentlyDragging) {
+                            if (isSelectionMode) {
+                                toggleSelection(ruleSet.id)
+                            }
+                        }
+                        .pointerInput(index) {
+                            detectDragGesturesAfterLongPress(
+                                onDragStart = {
+                                    if (!isSelectionMode) {
+                                        draggingItemIndex = index
+                                        draggingItemId = ruleSet.id
+                                        draggingItemOffset = 0f
+                                        isDragging.value = true
+                                        haptic.performHapticFeedback(
+                                            androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress
+                                        )
+                                    }
+                                },
+                                onDragEnd = {
+                                    draggingItemIndex?.let { startIdx ->
+                                        val dist = if (itemHeightPx > 0f) {
+                                            kotlin.math.round(draggingItemOffset / itemHeightPx).toInt()
+                                        } else {
+                                            0
+                                        }
+                                        val endIdx = (startIdx + dist).coerceIn(0, ruleSets.lastIndex)
+
+                                        suppressPlacementAnimation = true
+
+                                        if (startIdx != endIdx) {
+                                            val item = ruleSets.removeAt(startIdx)
+                                            ruleSets.add(endIdx, item)
+                                            settingsViewModel.reorderRuleSets(ruleSets.toList())
+                                        }
+
+                                        draggingItemIndex = null
+                                        draggingItemId = null
+                                        draggingItemOffset = 0f
+                                        isDragging.value = false
+
+                                        scope.launch {
+                                            androidx.compose.runtime.withFrameNanos { }
+                                            suppressPlacementAnimation = false
+                                        }
+                                    }
+                                },
+                                onDragCancel = {
+                                    draggingItemIndex = null
+                                    draggingItemId = null
+                                    draggingItemOffset = 0f
+                                    isDragging.value = false
+                                    suppressPlacementAnimation = false
+                                },
+                                onDrag = { change, dragAmount ->
+                                    change.consume()
+                                    draggingItemOffset += dragAmount.y
                                 }
                             )
-                    ) {
-                        RuleSetItem(
-                            ruleSet = ruleSet,
-                            isSelectionMode = isSelectionMode,
-                            isSelected = selectedItems[ruleSet.id] ?: false,
-                            isDownloading = downloadingRuleSets.contains(ruleSet.tag),
-                            onClick = {
-                                if (isSelectionMode) {
-                                    toggleSelection(ruleSet.id)
-                                }
-                            },
-                            onToggle = { enabled ->
-                                settingsViewModel.updateRuleSet(ruleSet.copy(enabled = enabled))
-                            },
-                            onEditClick = { editingRuleSet = ruleSet },
-                            onDeleteClick = { settingsViewModel.deleteRuleSet(ruleSet.id) },
-                            onOutboundClick = {
-                                outboundEditingRuleSet = ruleSet
-                                showOutboundModeDialog = true
-                            },
-                            onInboundClick = {
-                                outboundEditingRuleSet = ruleSet
-                                showInboundDialog = true
-                            },
-                            modifier = Modifier
-                                .pointerInput(index) { // Key on index to ensure closure captures latest position
-                                    detectDragGesturesAfterLongPress(
-                                        onDragStart = {
-                                            if (!isSelectionMode) {
-                                                draggingItemIndex = index
-                                                draggingItemOffset = 0f
-                                                isDragging.value = true
-                                                haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
-                                            }
-                                        },
-                                        onDragEnd = {
-                                            draggingItemIndex?.let { startIdx ->
-                                                val dist = kotlin.math.round(draggingItemOffset / itemHeightPx).toInt()
-                                                val endIdx = (startIdx + dist).coerceIn(0, ruleSets.lastIndex)
-
-                                                // Disable placement animation for the drop frame so the card settles immediately.
-                                                suppressPlacementAnimation = true
-
-                                                // Preserve absolute scroll position (px) to prevent list "jump" after reordering.
-                                                // Anchoring by item-id causes a one-item "drop" when swapping with the first row.
-                                                val absScrollBefore = if (itemHeightPx > 0f) {
-                                                    listState.firstVisibleItemIndex * itemHeightPx + listState.firstVisibleItemScrollOffset
-                                                } else {
-                                                    null
-                                                }
-
-                                                if (startIdx != endIdx) {
-                                                    // Immediately update UI list state to reflect final position
-                                                    val item = ruleSets.removeAt(startIdx)
-                                                    ruleSets.add(endIdx, item)
-
-                                                    // Asynchronously sync with ViewModel
-                                                    settingsViewModel.reorderRuleSets(ruleSets.toList())
-                                                }
-
-                                                // Restore absolute scroll position (no animation).
-                                                // This keeps the page from visually shifting when items above the viewport change.
-                                                val abs = absScrollBefore
-                                                if (abs != null && itemHeightPx > 0f) {
-                                                    val targetIndex = (abs / itemHeightPx).toInt().coerceIn(0, ruleSets.lastIndex)
-                                                    val targetOffset = (abs - targetIndex * itemHeightPx).toInt().coerceAtLeast(0)
-                                                    scope.launch {
-                                                        listState.scrollToItem(targetIndex, targetOffset)
-                                                    }
-                                                }
-
-                                                // Reset drag state
-                                                draggingItemIndex = null
-                                                draggingItemOffset = 0f
-
-                                                // IMPORTANT: Reset isDragging AFTER clearing indices to ensure
-                                                // UI recomposes correctly without ghost overlays
-                                                isDragging.value = false
-
-                                                // Re-enable placement animation on next frame.
-                                                scope.launch {
-                                                    withFrameNanos { }
-                                                    suppressPlacementAnimation = false
-                                                }
-                                            }
-                                        },
-                                        onDragCancel = {
-                                            draggingItemIndex = null
-                                            draggingItemOffset = 0f
-                                            isDragging.value = false
-                                            suppressPlacementAnimation = false
-                                        },
-                                        onDrag = { change, dragAmount ->
-                                            change.consume()
-                                            draggingItemOffset += dragAmount.y
-                                        }
-                                    )
-                                }
-                        )
-                    }
+                        }
+                ) {
+                    RuleSetItem(
+                        ruleSet = ruleSet,
+                        isSelectionMode = isSelectionMode,
+                        isSelected = selectedItems[ruleSet.id] ?: false,
+                        isDownloading = downloadingRuleSets.contains(ruleSet.tag),
+                        onClick = {
+                            if (isSelectionMode) {
+                                toggleSelection(ruleSet.id)
+                            }
+                        },
+                        onToggle = { enabled ->
+                            settingsViewModel.updateRuleSet(ruleSet.copy(enabled = enabled))
+                        },
+                        onEditClick = { editingRuleSet = ruleSet },
+                        onDeleteClick = { settingsViewModel.deleteRuleSet(ruleSet.id) },
+                        onOutboundClick = {
+                            outboundEditingRuleSet = ruleSet
+                            showOutboundModeDialog = true
+                        },
+                        onInboundClick = {
+                            outboundEditingRuleSet = ruleSet
+                            showInboundDialog = true
+                        }
+                    )
                 }
             }
         }
