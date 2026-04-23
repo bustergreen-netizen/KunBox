@@ -714,12 +714,7 @@ fun ProfilesScreen(
                                     onDragEnd = {
                                         draggingItemIndex?.let { startIdx ->
                                             val dist = if (itemHeightPx > 0f) {
-                                                val progress = draggingItemOffset / itemHeightPx
-                                                when {
-                                                    progress > 0f -> kotlin.math.ceil(progress).toInt()
-                                                    progress < 0f -> kotlin.math.floor(progress).toInt()
-                                                    else -> 0
-                                                }
+                                                kotlin.math.round(draggingItemOffset / itemHeightPx).toInt()
                                             } else {
                                                 0
                                             }
