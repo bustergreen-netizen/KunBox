@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.13.2](https://github.com/roseforljh/KunBox/compare/v2.13.1...v2.13.2) (2026-04-25)
+
+
+### Bug Fixes
+
+* 修复 VLESS PQC 节点 DNS 失败 ([2050958](https://github.com/roseforljh/KunBox/commit/20509585e9f4d9c71cb2717af9a687bf6696702b))
+
 ## [2.13.1](https://github.com/roseforljh/KunBox/compare/v2.13.0...v2.13.1) (2026-04-24)
 
 
