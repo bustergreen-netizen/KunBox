@@ -24,6 +24,7 @@ import kotlinx.coroutines.sync.withLock
 class SettingsStore private constructor(context: Context) {
     companion object {
         private const val TAG = "SettingsStore"
+        private const val AUTO_ROUTE_MIGRATION_VERSION = 6
 
         @Volatile
         private var INSTANCE: SettingsStore? = null
@@ -86,6 +87,11 @@ class SettingsStore private constructor(context: Context) {
                         if (group.outboundMode != null) group else group.copy(outboundMode = RuleSetOutboundMode.PROXY)
                     }
                 )
+            }
+
+            if (version < AUTO_ROUTE_MIGRATION_VERSION && result.strictRoute && !result.autoRoute) {
+                result = result.copy(autoRoute = true)
+                Log.i(TAG, "Migrating legacy tun settings to enable autoRoute when strictRoute is enabled")
             }
 
             return result

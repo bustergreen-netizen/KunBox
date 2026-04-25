@@ -509,7 +509,10 @@ class StartupManager(
             if (newConfig.inbounds != null) {
                 val newInbounds = newConfig.inbounds.orEmpty().map { inbound ->
                     if (inbound.type == "tun") {
-                        inbound.copy(autoRoute = settings.autoRoute)
+                        inbound.copy(
+                            autoRoute = settings.autoRoute,
+                            strictRoute = settings.strictRoute
+                        )
                     } else {
                         inbound
                     }

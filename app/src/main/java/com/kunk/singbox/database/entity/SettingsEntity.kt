@@ -25,6 +25,6 @@ data class SettingsEntity(
     val updatedAt: Long = System.currentTimeMillis()
 ) {
     companion object {
-        const val CURRENT_VERSION = 5
+        const val CURRENT_VERSION = 6
     }
 }

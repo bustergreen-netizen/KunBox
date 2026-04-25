@@ -36,8 +36,8 @@ object InboundBuilder {
                     interfaceName = settings.tunInterfaceName,
                     addressRaw = settings.ipVersionMode.tunAddresses(tunAddress),
                     mtu = settings.tunMtu,
-                    autoRoute = false,
-                    strictRoute = false,
+                    autoRoute = settings.autoRoute,
+                    strictRoute = settings.strictRoute,
                     stack = effectiveTunStack.name.lowercase(),
                     endpointIndependentNat = settings.endpointIndependentNat,
                     gso = null

@@ -710,6 +710,17 @@ class ConfigRepository(private val context: Context) {
             return buildMulticastRejectRulesStatic(settings)
         }
 
+        internal fun buildHijackDnsRulesForTest(): List<RouteRule> {
+            return buildHijackDnsRulesStatic()
+        }
+
+        private fun buildHijackDnsRulesStatic(): List<RouteRule> {
+            return listOf(
+                RouteRule(inbound = listOf("tun-in"), port = listOf(53), action = "hijack-dns"),
+                RouteRule(protocolRaw = listOf("dns"), action = "hijack-dns")
+            )
+        }
+
         private fun buildBypassLanRulesStatic(settings: AppSettings): List<RouteRule> {
             return if (settings.bypassLan) {
                 listOf(RouteRule(ipIsPrivate = true, outbound = "direct"))
@@ -972,6 +983,100 @@ class ConfigRepository(private val context: Context) {
             proxyServerTag: String = if (fakeDnsEnabled) "fakeip-dns" else "remote"
         ): String? {
             return dnsServerTagForSemantic(semantic, fakeDnsEnabled, directServerTag, proxyServerTag)
+        }
+
+        internal fun resolveDnsServerTagForRuleSemanticForTest(
+            semantic: OutboundSemantic,
+            fakeDnsEnabled: Boolean,
+            directServerTag: String = "local",
+            proxyServerTag: String = if (fakeDnsEnabled) "fakeip-dns" else "remote"
+        ): String? {
+            return when (semantic) {
+                OutboundSemantic.Direct -> directServerTag
+                OutboundSemantic.Block -> null
+                OutboundSemantic.Proxy -> proxyServerTag
+                is OutboundSemantic.FallbackProxy -> proxyServerTag
+                is OutboundSemantic.RouteTag -> buildDynamicDnsServerTag(semantic.tag)
+            }
+        }
+
+        internal fun buildDnsRouteToProxyForTest(
+            fakeDnsEnabled: Boolean,
+            proxyServerTag: String,
+            rule: DnsRule
+        ): List<DnsRule> {
+            val fakeipQueryTypes = listOf("A", "AAAA")
+            fun dnsRouteTo(server: String, currentRule: DnsRule): DnsRule =
+                currentRule.copy(action = "route", server = server)
+
+            if (!fakeDnsEnabled) {
+                return listOf(dnsRouteTo(proxyServerTag, rule))
+            }
+            return listOf(
+                dnsRouteTo("fakeip-dns", rule.copy(queryType = fakeipQueryTypes)),
+                dnsRouteTo(proxyServerTag, rule.copy(queryType = null))
+            )
+        }
+
+        internal fun buildQuicBlockRuleForTest(settings: AppSettings): List<RouteRule> {
+            return if (settings.blockQuic) {
+                listOf(
+                    RouteRule(protocolRaw = listOf("quic"), action = "reject", outbound = "direct"),
+                    RouteRule(networkRaw = listOf("udp"), port = listOf(443), action = "reject", outbound = "direct")
+                )
+            } else {
+                emptyList()
+            }
+        }
+
+        internal fun buildTunFakeIpDnsRulesForTest(fakeDnsEnabled: Boolean): List<DnsRule> {
+            return buildTunFakeIpDnsRulesStatic(fakeDnsEnabled)
+        }
+
+        private fun buildTunFakeIpDnsRulesStatic(fakeDnsEnabled: Boolean): List<DnsRule> {
+            if (!fakeDnsEnabled) return emptyList()
+            return listOf(
+                DnsRule(
+                    queryType = listOf("A", "AAAA"),
+                    inbound = listOf("tun-in"),
+                    action = "route",
+                    server = "fakeip-dns"
+                )
+            )
+        }
+
+        internal fun resolveProxyDnsDetourTagForTest(
+            selectorTag: String,
+            outbounds: List<Outbound>
+        ): String {
+            fun resolveCurrent(tag: String): String {
+                val outbound = outbounds.firstOrNull { it.tag == tag } ?: return tag
+                return when (outbound.type) {
+                    "selector" -> resolveCurrent(outbound.default ?: outbound.outbounds?.firstOrNull() ?: tag)
+                    "urltest", "url-test" -> resolveCurrent(outbound.outbounds?.firstOrNull() ?: tag)
+                    else -> tag
+                }
+            }
+            return resolveCurrent(selectorTag)
+        }
+
+        internal fun resolveRunDnsFinalServerForTest(
+            routingMode: RoutingMode,
+            defaultRule: DefaultRule,
+            fakeDnsEnabled: Boolean,
+            proxyServerTag: String,
+            stableRemoteServerTag: String = "remote",
+            directServerTag: String = "local"
+        ): String {
+            return when (routingMode) {
+                RoutingMode.GLOBAL_PROXY -> stableRemoteServerTag
+                RoutingMode.GLOBAL_DIRECT -> directServerTag
+                RoutingMode.RULE -> when (defaultRule) {
+                    DefaultRule.PROXY -> stableRemoteServerTag
+                    DefaultRule.DIRECT -> directServerTag
+                    DefaultRule.BLOCK -> if (fakeDnsEnabled) stableRemoteServerTag else proxyServerTag
+                }
+            }
         }
 
         internal fun normalizeLocalDns(value: String?): String {
@@ -4203,6 +4308,25 @@ class ConfigRepository(private val context: Context) {
             getEffectiveTunStack(settings.tunStack)
         )
 
+    private fun resolveRunDnsFinalServer(
+        routingMode: RoutingMode,
+        defaultRule: DefaultRule,
+        fakeDnsEnabled: Boolean,
+        proxyServerTag: String,
+        stableRemoteServerTag: String = "remote",
+        directServerTag: String = "local"
+    ): String {
+        return when (routingMode) {
+            RoutingMode.GLOBAL_PROXY -> stableRemoteServerTag
+            RoutingMode.GLOBAL_DIRECT -> directServerTag
+            RoutingMode.RULE -> when (defaultRule) {
+                DefaultRule.PROXY -> stableRemoteServerTag
+                DefaultRule.DIRECT -> directServerTag
+                DefaultRule.BLOCK -> if (fakeDnsEnabled) stableRemoteServerTag else proxyServerTag
+            }
+        }
+    }
+
     @Suppress(
         "LongMethod",
         "CyclomaticComplexMethod",
@@ -4217,8 +4341,9 @@ class ConfigRepository(private val context: Context) {
         val dnsServers = mutableListOf<DnsServer>()
         val dnsRules = mutableListOf<DnsRule>()
 
-        val proxyServerTag = if (settings.fakeDnsEnabled) "fakeip-dns" else "remote"
-        val proxyFinalServerTag = "remote"
+        val proxyDetourTag = resolveCurrentProxyDnsDetourTag(outboundsContext.selectorTag, outboundsContext.outbounds)
+        val proxyServerTag = buildDynamicDnsServerTag(proxyDetourTag)
+        val proxyFinalServerTag = proxyServerTag
         val directServerTag = "local"
 
         fun dnsRouteTo(server: String, rule: DnsRule): DnsRule =
@@ -4250,7 +4375,8 @@ class ConfigRepository(private val context: Context) {
                 return listOf(dnsRouteTo(proxyServerTag, rule))
             }
             return listOf(
-                dnsRouteTo("fakeip-dns", rule.copy(queryType = fakeipQueryTypes))
+                dnsRouteTo("fakeip-dns", rule.copy(queryType = fakeipQueryTypes)),
+                dnsRouteTo(proxyServerTag, rule.copy(queryType = null))
             )
         }
 
@@ -4318,6 +4444,13 @@ class ConfigRepository(private val context: Context) {
             domainResolver = remoteResolver
         )
         dnsServers.add(remoteServer)
+        ensureDynamicRemoteDnsServers(
+            dnsServers = dnsServers,
+            semantics = listOf(OutboundSemantic.RouteTag(proxyDetourTag)),
+            remoteDnsAddr = remoteDnsAddr,
+            remoteStrategy = resolveDnsStrategy(settings.remoteDnsStrategy, settings.ipVersionMode),
+            remoteResolver = remoteResolver
+        )
 
         dnsRules.addAll(
             buildBootstrapDnsRules(
@@ -4355,7 +4488,7 @@ class ConfigRepository(private val context: Context) {
                             semantic,
                             settings.fakeDnsEnabled,
                             directServerTag,
-                            if (semantic == OutboundSemantic.Proxy) "remote" else proxyServerTag
+                            proxyServerTag
                         ) ?: return
                         dnsRulesByServer.getOrPut(serverTag) { mutableListOf() }.add(rule)
                     }
@@ -4418,7 +4551,7 @@ class ConfigRepository(private val context: Context) {
                         semantic,
                         settings.fakeDnsEnabled,
                         directServerTag,
-                        if (semantic == OutboundSemantic.Proxy) "remote" else proxyServerTag
+                        proxyServerTag
                     ) ?: return
                     dnsRuleSetRulesByServer.getOrPut(serverTag) {
                         mutableListOf()
@@ -4480,7 +4613,7 @@ class ConfigRepository(private val context: Context) {
                         semantic,
                         settings.fakeDnsEnabled,
                         directServerTag,
-                        if (semantic == OutboundSemantic.Proxy) "remote" else proxyServerTag
+                        proxyServerTag
                     ) ?: return
                     packageRulesByServer.getOrPut(serverTag) { mutableListOf() }.add(rule)
                 }
@@ -4595,12 +4728,7 @@ class ConfigRepository(private val context: Context) {
                 dnsRules.add(dnsRouteTo(proxyFinalServerTag, DnsRule(domain = fakeIpExcludeDomains)))
             }
         }
-        if (settings.fakeDnsEnabled) {
-            dnsRules.add(dnsRouteTo("fakeip-dns", DnsRule(
-                queryType = fakeipQueryTypes,
-                inbound = listOf("tun-in")
-            )))
-        }
+        dnsRules.addAll(buildTunFakeIpDnsRulesStatic(settings.fakeDnsEnabled))
 
         val fakeIpConfig = if (settings.fakeDnsEnabled) {
             buildFakeIpConfig(settings.fakeIpRange)
@@ -4608,16 +4736,12 @@ class ConfigRepository(private val context: Context) {
             null
         }
 
-        val finalServer = when (settings.routingMode) {
-            RoutingMode.GLOBAL_PROXY -> if (settings.fakeDnsEnabled) proxyFinalServerTag else proxyServerTag
-            RoutingMode.GLOBAL_DIRECT -> directServerTag
-            RoutingMode.RULE -> when (settings.defaultRule) {
-                DefaultRule.PROXY -> if (settings.fakeDnsEnabled) proxyFinalServerTag else proxyServerTag
-                DefaultRule.DIRECT -> directServerTag
-                // If default is block, we still default DNS to proxy side to reduce local DNS leakage.
-                DefaultRule.BLOCK -> if (settings.fakeDnsEnabled) proxyFinalServerTag else proxyServerTag
-            }
-        }
+        val finalServer = resolveRunDnsFinalServer(
+            routingMode = settings.routingMode,
+            defaultRule = settings.defaultRule,
+            fakeDnsEnabled = settings.fakeDnsEnabled,
+            proxyServerTag = proxyServerTag
+        )
 
         return DnsConfig(
             servers = dnsServers,
@@ -4638,6 +4762,18 @@ class ConfigRepository(private val context: Context) {
         val nodeTagResolver: (String?) -> String?,
         val nodeTagMap: Map<String, String>
     )
+
+    private fun resolveCurrentProxyDnsDetourTag(selectorTag: String, outbounds: List<Outbound>): String {
+        fun resolve(tag: String): String {
+            val outbound = outbounds.firstOrNull { it.tag == tag } ?: return tag
+            return when (outbound.type) {
+                "selector" -> resolve(outbound.default ?: outbound.outbounds?.firstOrNull() ?: tag)
+                "urltest", "url-test" -> resolve(outbound.outbounds?.firstOrNull() ?: tag)
+                else -> tag
+            }
+        }
+        return resolve(selectorTag)
+    }
 
     @Suppress("LongMethod", "CyclomaticComplexMethod", "CognitiveComplexMethod", "NestedBlockDepth")
     private fun buildRunOutbounds(
@@ -4988,7 +5124,7 @@ class ConfigRepository(private val context: Context) {
         val icmpEchoRules = buildIcmpEchoRules(settings)
         val customDomainRules = buildCustomDomainRules(settings, selectorTag, outbounds, nodeTagResolver)
         val defaultRuleCatchAll = buildDefaultRules(settings, selectorTag)
-        val hijackDnsRule = listOf(RouteRule(protocolRaw = listOf("dns"), action = "hijack-dns"))
+        val hijackDnsRule = buildHijackDnsRulesStatic()
         val sniffRule = listOf(RouteRule(inbound = listOf("tun-in", "mixed-in"), action = "sniff"))
 
         val allRules = when (settings.routingMode) {

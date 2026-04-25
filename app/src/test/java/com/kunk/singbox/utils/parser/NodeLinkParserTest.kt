@@ -301,6 +301,23 @@ class NodeLinkParserTest {
     }
 
     @Test
+    fun testParseRealVLessWebSocketPqcNodeNormalizesPathAndPreservesEncryption() {
+        val link = "vless://b6fd6867-c239-4d95-8a98-cb036d34fc21@34.150.59.170:39797" +
+            "?encryption=mlkem768x25519plus.native.0rtt.sample&flow=xtls-rprx-vision" +
+            "&type=ws&path=b6fd6867-c239-4d95-8a98-cb036d34fc21-vw#vl-ws-enc"
+
+        val outbound = parser.parse(link)
+        val runtime = outbound?.let { OutboundFixer.buildForRuntimeWithDialConfigForTest(it) }
+
+        assertNotNull(outbound)
+        assertNotNull(runtime)
+        assertEquals("ws", runtime?.transport?.type)
+        assertEquals("/b6fd6867-c239-4d95-8a98-cb036d34fc21-vw", runtime?.transport?.path)
+        assertNull(runtime?.packetEncoding)
+        assertEquals("mlkem768x25519plus.native.0rtt.sample", runtime?.encryption)
+    }
+
+    @Test
     fun testParseVLessWithReality() {
         val link = "vless://uuid@reality.example.com:443?security=reality&sni=www.microsoft.com&pbk=public-key-123&sid=short-id&fp=chrome&type=tcp#RealityNode"
         val outbound = parser.parse(link)
@@ -373,7 +390,27 @@ class NodeLinkParserTest {
         assertEquals("xhttp", outbound?.transport?.type)
         assertEquals("xtls-rprx-vision", outbound?.flow)
         assertEquals("mlkem768x25519plus.native.0rtt.sample", outbound?.encryption)
+        assertNull(outbound?.packetEncoding)
         assertEquals("apple.com", outbound?.tls?.serverName)
+    }
+
+    @Test
+    fun testRealVLessXhttpRealityNodePreservesXudpPacketEncodingForRuntime() {
+        val link = "vless://2edd765b-a895-46ab-a01c-c4719947546b@35.194.192.123:13324" +
+            "?type=xhttp&encryption=mlkem768x25519plus.native.0rtt.sample&flow=xtls-rprx-vision" +
+            "&security=reality&pbk=public-key-123&sid=94c5638d&sni=apple.com&fp=chrome" +
+            "&packetEncoding=xudp&path=%2F2edd765b-a895-46ab-a01c-c4719947546b-xh&mode=auto" +
+            "#TW-GCP-xhttp"
+        val outbound = parser.parse(link)
+        val runtime = outbound?.let { OutboundFixer.buildForRuntimeWithDialConfigForTest(it) }
+
+        assertNotNull(outbound)
+        assertNotNull(runtime)
+        assertEquals("xudp", outbound?.packetEncoding)
+        assertEquals("xudp", runtime?.packetEncoding)
+        assertEquals("xhttp", runtime?.transport?.type)
+        assertEquals("/2edd765b-a895-46ab-a01c-c4719947546b-xh", runtime?.transport?.path)
+        assertEquals("apple.com", runtime?.tls?.serverName)
     }
 
     // ==================== Trojan ====================
@@ -611,7 +648,7 @@ class NodeLinkParserTest {
     }
 
     @Test
-    fun testParseTuicWithDisableSniClearsServerName() {
+    fun testParseTuicWithDisableSniKeepsServerName() {
         val link = "tuic://uuid:password@tuic.example.com:443?sni=edge.example.com&disable_sni=1#TUICDisableSni"
         val outbound = parser.parse(link)
 
@@ -619,7 +656,7 @@ class NodeLinkParserTest {
         assertEquals("tuic", outbound?.type)
         assertEquals(true, outbound?.disableSni)
         assertEquals(true, outbound?.tls?.enabled)
-        assertNull(outbound?.tls?.serverName)
+        assertEquals("edge.example.com", outbound?.tls?.serverName)
     }
 
     @Test
@@ -644,7 +681,8 @@ class NodeLinkParserTest {
         assertNotNull(runtime)
         assertNull(runtime?.disableSni)
         assertEquals(true, runtime?.tls?.disableSni)
-        assertFalse(json.contains("\"server_name\""))
+        assertEquals("cdn4.eu.org", runtime?.tls?.serverName)
+        assertTrue(json.contains("\"server_name\":\"cdn4.eu.org\""))
     }
 
     @Test
@@ -659,7 +697,8 @@ class NodeLinkParserTest {
         assertNotNull(runtime)
         assertNull(runtime?.disableSni)
         assertEquals(true, runtime?.tls?.disableSni)
-        assertFalse(json.contains("\"server_name\""))
+        assertEquals("cdn4.eu.org", runtime?.tls?.serverName)
+        assertTrue(json.contains("\"server_name\":\"cdn4.eu.org\""))
     }
 
     // ==================== AnyTLS ====================

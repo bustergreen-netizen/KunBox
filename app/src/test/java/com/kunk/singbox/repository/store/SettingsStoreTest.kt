@@ -6,6 +6,7 @@ import com.kunk.singbox.model.AppInfo
 import com.kunk.singbox.model.AppRule
 import com.kunk.singbox.model.RuleSetOutboundMode
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SettingsStoreTest {
@@ -65,5 +66,16 @@ class SettingsStoreTest {
 
         assertEquals(RuleSetOutboundMode.PROXY, migrated.appRules.single().outboundMode)
         assertEquals(RuleSetOutboundMode.PROXY, migrated.appGroups.single().outboundMode)
+    }
+
+    @Test
+    fun testMigrateSettingsEnablesAutoRouteForLegacyTunSettings() {
+        val migrated = SettingsStore.migrateSettings(
+            version = 5,
+            settings = AppSettings(autoRoute = false, strictRoute = true)
+        )
+
+        assertTrue(migrated.autoRoute)
+        assertTrue(migrated.strictRoute)
     }
 }

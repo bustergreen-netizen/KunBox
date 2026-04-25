@@ -46,7 +46,8 @@ class NodeLinkParser(private val gson: Gson) {
             return WebSocketPathConfig(path = "/", maxEarlyData = null, earlyDataHeaderName = null)
         }
 
-        val normalized = rawPath.trim().ifEmpty { "/" }
+        val trimmed = rawPath.trim().ifEmpty { "/" }
+        val normalized = if (trimmed.startsWith("/")) trimmed else "/$trimmed"
         val questionIndex = normalized.indexOf('?')
         if (questionIndex == -1) {
             return WebSocketPathConfig(path = normalized, maxEarlyData = null, earlyDataHeaderName = null)
@@ -107,11 +108,7 @@ class NodeLinkParser(private val gson: Gson) {
 
     private fun buildTuicTlsOptions(server: String?, params: Map<String, String>): TuicTlsOptions {
         val disableSni = parseBooleanFlag(firstParam(params, "disable_sni", "disableSni")) == true
-        val serverName = if (disableSni) {
-            null
-        } else {
-            defaultTlsServerName(explicitServerName = firstParam(params, "sni"), server = server)
-        }
+        val serverName = defaultTlsServerName(explicitServerName = firstParam(params, "sni"), server = server)
         val insecure = listOf("insecure", "allow_insecure", "allowInsecure").any {
             params[it] == "1"
         }

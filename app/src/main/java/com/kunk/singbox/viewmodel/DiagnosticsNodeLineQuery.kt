@@ -120,6 +120,19 @@ internal class DiagnosticsNodeLineQueryRunner(
 
 private const val EXIT_PORTRAIT_ENDPOINT = "https://api.ip.sb/geoip"
 
+internal fun buildDnsQuerySuccessMessage(host: String, addresses: List<String>): String {
+    val ipList = addresses.joinToString("\n")
+    return "Domain: $host\n\n" +
+        "Result:\n$ipList\n\n" +
+        "Note: System DNS only. KunBox app is excluded from VPN, so this does not represent current node DNS."
+}
+
+internal fun buildDnsQueryFailureMessage(host: String, errorMessage: String?): String {
+    return "Domain: $host\n\n" +
+        "Failed: ${errorMessage ?: "unknown"}\n\n" +
+        "Note: System DNS only. KunBox app is excluded from VPN, so this does not represent current node DNS."
+}
+
 private data class NodeLineQueryData(
     val nodeResolution: NodeLineTarget,
     val activeLabel: String,

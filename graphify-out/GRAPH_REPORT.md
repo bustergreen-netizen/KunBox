@@ -1,21 +1,21 @@
 # Graph Report - .  (2026-04-25)
 
 ## Corpus Check
-- 205 files ， ~207,872 words
+- 205 files ， ~211,219 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3197 nodes ， 2994 edges ， 205 communities detected
+- 3240 nodes ， 3037 edges ， 205 communities detected
 - Extraction: 100% EXTRACTED ， 0% INFERRED ， 0% AMBIGUOUS
 - Token cost: 0 input ， 0 output
 
 ## God Nodes (most connected - your core abstractions)
-1. `ConfigRepository` - 150 edges
-2. `ConfigRepositoryTest` - 102 edges
+1. `ConfigRepository` - 152 edges
+2. `ConfigRepositoryTest` - 115 edges
 3. `SingBoxService` - 82 edges
 4. `SettingsViewModel` - 75 edges
 5. `SettingsRepository` - 65 edges
-6. `NodeLinkParserTest` - 55 edges
+6. `NodeLinkParserTest` - 57 edges
 7. `BoxWrapperManager` - 44 edges
 8. `VpnStateStore` - 43 edges
 9. `SingBoxRemote` - 42 edges
@@ -32,11 +32,11 @@ Nodes (1): ConfigRepository
 
 ### Community 1 - "Community 1"
 Cohesion: 0.02
-Nodes (9): ForegroundFallbackState, NetworkTypeChangedFallbackAction, NetworkTypeChangedFallbackState, NetworkTypeChangedRecoverySignal, RecoveryDebounceContext, RecoveryProfile, RecoveryReason, RecoveryRequest (+1 more)
+Nodes (1): ConfigRepositoryTest
 
 ### Community 2 - "Community 2"
 Cohesion: 0.02
-Nodes (1): ConfigRepositoryTest
+Nodes (9): ForegroundFallbackState, NetworkTypeChangedFallbackAction, NetworkTypeChangedFallbackState, NetworkTypeChangedRecoverySignal, RecoveryDebounceContext, RecoveryProfile, RecoveryReason, RecoveryRequest (+1 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.02
@@ -63,12 +63,12 @@ Cohesion: 0.03
 Nodes (5): ActiveConnection, SingBoxCore, StringIteratorImpl, TestCommandServerHandler, TestPlatformInterface
 
 ### Community 9 - "Community 9"
-Cohesion: 0.04
-Nodes (8): Callbacks, Cancelled, Failed, NeedPermission, ParallelInitResult, StartResult, StartupManager, Success
+Cohesion: 0.03
+Nodes (1): NodeLinkParserTest
 
 ### Community 10 - "Community 10"
 Cohesion: 0.04
-Nodes (1): NodeLinkParserTest
+Nodes (8): Callbacks, Cancelled, Failed, NeedPermission, ParallelInitResult, StartResult, StartupManager, Success
 
 ### Community 11 - "Community 11"
 Cohesion: 0.04
@@ -176,83 +176,83 @@ Nodes (2): ConnectManager, NetworkState
 
 ### Community 37 - "Community 37"
 Cohesion: 0.09
-Nodes (7): AppUpdateChecker, Error, GitHubRelease, ReleaseAsset, UpdateAvailable, UpdateCheckResult, UpToDate
+Nodes (1): VpnTunManager
 
 ### Community 38 - "Community 38"
 Cohesion: 0.09
-Nodes (4): LatencyResult, PreciseLatencyTester, Standard, TimingEventListener
+Nodes (7): AppUpdateChecker, Error, GitHubRelease, ReleaseAsset, UpdateAvailable, UpdateCheckResult, UpToDate
 
 ### Community 39 - "Community 39"
 Cohesion: 0.09
-Nodes (2): DiagnosticsViewModel, MatchResult
+Nodes (4): LatencyResult, PreciseLatencyTester, Standard, TimingEventListener
 
 ### Community 40 - "Community 40"
-Cohesion: 0.1
-Nodes (1): LogRepository
+Cohesion: 0.09
+Nodes (5): DiagnosticsNodeLineQueryRunner, IpSbGeoIpResponse, NodeExitPortrait, NodeLineQueryData, NodeLineTarget
 
 ### Community 41 - "Community 41"
-Cohesion: 0.1
-Nodes (1): OutboundFixer
+Cohesion: 0.09
+Nodes (2): DiagnosticsViewModel, MatchResult
 
 ### Community 42 - "Community 42"
 Cohesion: 0.1
-Nodes (1): VpnTunManager
+Nodes (1): LogRepository
 
 ### Community 43 - "Community 43"
 Cohesion: 0.1
-Nodes (10): Callback, DefaultNetworkListener, Get, Lost, NetworkMessage, Put, Reset, Start (+2 more)
+Nodes (1): OutboundFixer
 
 ### Community 44 - "Community 44"
 Cohesion: 0.1
-Nodes (8): BatchProbeResult, Error, ProbeManager, ProbeResult, ProbeTarget, QuickProbeResult, Success, Timeout
+Nodes (10): Callback, DefaultNetworkListener, Get, Lost, NetworkMessage, Put, Reset, Start (+2 more)
 
 ### Community 45 - "Community 45"
 Cohesion: 0.1
-Nodes (5): DiagnosticsNodeLineQueryRunner, IpSbGeoIpResponse, NodeExitPortrait, NodeLineQueryData, NodeLineTarget
+Nodes (1): OutboundFixerTest
 
 ### Community 46 - "Community 46"
 Cohesion: 0.1
-Nodes (6): Error, Idle, ImportState, Loading, ProfilesViewModel, Success
+Nodes (8): BatchProbeResult, Error, ProbeManager, ProbeResult, ProbeTarget, QuickProbeResult, Success, Timeout
 
 ### Community 47 - "Community 47"
-Cohesion: 0.11
-Nodes (17): BatchUpdateResult, ConnectionState, ConnectionStats, Failed, LogEntryUi, LogLevel, NodeUi, ProfileType (+9 more)
+Cohesion: 0.1
+Nodes (6): Error, Idle, ImportState, Loading, ProfilesViewModel, Success
 
 ### Community 48 - "Community 48"
 Cohesion: 0.11
-Nodes (3): DnsResolveStore, ResolvedEntry, Stats
+Nodes (17): BatchUpdateResult, ConnectionState, ConnectionStats, Failed, LogEntryUi, LogLevel, NodeUi, ProfileType (+9 more)
 
 ### Community 49 - "Community 49"
 Cohesion: 0.11
-Nodes (1): DataExportRepository
+Nodes (3): DnsResolveStore, ResolvedEntry, Stats
 
 ### Community 50 - "Community 50"
 Cohesion: 0.11
-Nodes (1): RuleSetRepository
+Nodes (1): DataExportRepository
 
 ### Community 51 - "Community 51"
 Cohesion: 0.11
-Nodes (6): BudgetState, NodeAutoFailoverPolicy, ProbeEvaluation, ProbeOutcome, QuarantinedNode, TriggerContext
+Nodes (1): RuleSetRepository
 
 ### Community 52 - "Community 52"
 Cohesion: 0.11
-Nodes (3): Listener, TrafficMonitor, TrafficSnapshot
+Nodes (6): BudgetState, NodeAutoFailoverPolicy, ProbeEvaluation, ProbeOutcome, QuarantinedNode, TriggerContext
 
 ### Community 53 - "Community 53"
 Cohesion: 0.11
-Nodes (4): NetworkCache, SettingsCache, StateCache, VpnStateCache
+Nodes (3): Listener, TrafficMonitor, TrafficSnapshot
 
 ### Community 54 - "Community 54"
 Cohesion: 0.11
-Nodes (1): NodesViewModel
+Nodes (4): NetworkCache, SettingsCache, StateCache, VpnStateCache
 
 ### Community 55 - "Community 55"
 Cohesion: 0.11
-Nodes (2): PermissionCallback, VpnConnectionManager
+Nodes (1): NodesViewModel
 
 ### Community 56 - "Community 56"
 Cohesion: 0.11
-Nodes (1): OutboundFixerTest
+Nodes (2): PermissionCallback, VpnConnectionManager
 
 ### Community 57 - "Community 57"
 Cohesion: 0.12
@@ -399,232 +399,232 @@ Cohesion: 0.18
 Nodes (0): 
 
 ### Community 93 - "Community 93"
-Cohesion: 0.2
-Nodes (1): ActiveStateDao
+Cohesion: 0.18
+Nodes (1): VpnTunAddressPlanTest
 
 ### Community 94 - "Community 94"
 Cohesion: 0.2
-Nodes (1): SettingsDao
+Nodes (1): ActiveStateDao
 
 ### Community 95 - "Community 95"
 Cohesion: 0.2
-Nodes (0): 
+Nodes (1): SettingsDao
 
 ### Community 96 - "Community 96"
-Cohesion: 0.22
-Nodes (8): ExportData, ExportDataSummary, Failed, ImportOptions, ImportResult, PartialSuccess, ProfileExportData, Success
+Cohesion: 0.2
+Nodes (0): 
 
 ### Community 97 - "Community 97"
 Cohesion: 0.22
-Nodes (1): LatencyCache
+Nodes (8): ExportData, ExportDataSummary, Failed, ImportOptions, ImportResult, PartialSuccess, ProfileExportData, Success
 
 ### Community 98 - "Community 98"
 Cohesion: 0.22
-Nodes (3): FetchResult, SubscriptionFetcher, SubscriptionUserInfo
+Nodes (1): LatencyCache
 
 ### Community 99 - "Community 99"
 Cohesion: 0.22
-Nodes (2): Callbacks, ForeignVpnMonitor
+Nodes (3): FetchResult, SubscriptionFetcher, SubscriptionUserInfo
 
 ### Community 100 - "Community 100"
 Cohesion: 0.22
-Nodes (2): AppLogger, Level
+Nodes (2): Callbacks, ForeignVpnMonitor
 
 ### Community 101 - "Community 101"
 Cohesion: 0.22
-Nodes (1): UrlTestTagMatcherTest
+Nodes (2): AppLogger, Level
 
 ### Community 102 - "Community 102"
-Cohesion: 0.25
-Nodes (1): AppLifecycleObserver
+Cohesion: 0.22
+Nodes (1): UrlTestTagMatcherTest
 
 ### Community 103 - "Community 103"
-Cohesion: 0.25
-Nodes (2): ResolveDetail, UrlTestTagMatcher
+Cohesion: 0.22
+Nodes (1): DiagnosticsViewModelNodeLineTest
 
 ### Community 104 - "Community 104"
 Cohesion: 0.25
-Nodes (2): TrafficStatsUiState, TrafficStatsViewModel
+Nodes (1): AppLifecycleObserver
 
 ### Community 105 - "Community 105"
 Cohesion: 0.25
-Nodes (1): PlatformInterfaceImplTest
+Nodes (2): ResolveDetail, UrlTestTagMatcher
 
 ### Community 106 - "Community 106"
-Cohesion: 0.29
-Nodes (1): LatencyTester
+Cohesion: 0.25
+Nodes (2): TrafficStatsUiState, TrafficStatsViewModel
 
 ### Community 107 - "Community 107"
-Cohesion: 0.29
-Nodes (1): SubscriptionAutoUpdateWorker
+Cohesion: 0.25
+Nodes (1): PlatformInterfaceImplTest
 
 ### Community 108 - "Community 108"
 Cohesion: 0.29
-Nodes (1): VpnKeepaliveWorker
+Nodes (1): LatencyTester
 
 ### Community 109 - "Community 109"
 Cohesion: 0.29
-Nodes (1): SquareViewFinderView
+Nodes (1): SubscriptionAutoUpdateWorker
 
 ### Community 110 - "Community 110"
 Cohesion: 0.29
-Nodes (0): 
+Nodes (1): VpnKeepaliveWorker
 
 ### Community 111 - "Community 111"
 Cohesion: 0.29
-Nodes (1): BatteryOptimizationHelper
+Nodes (1): SquareViewFinderView
 
 ### Community 112 - "Community 112"
 Cohesion: 0.29
-Nodes (1): LocaleHelper
+Nodes (0): 
 
 ### Community 113 - "Community 113"
 Cohesion: 0.29
-Nodes (1): SecurityUtils
+Nodes (1): BatteryOptimizationHelper
 
 ### Community 114 - "Community 114"
 Cohesion: 0.29
-Nodes (1): DnsResolveStoreTest
+Nodes (1): LocaleHelper
 
 ### Community 115 - "Community 115"
 Cohesion: 0.29
-Nodes (1): DiagnosticsViewModelNodeLineTest
+Nodes (1): SecurityUtils
 
 ### Community 116 - "Community 116"
-Cohesion: 0.33
-Nodes (1): MainActivity
+Cohesion: 0.29
+Nodes (1): SettingsStoreTest
 
 ### Community 117 - "Community 117"
-Cohesion: 0.33
-Nodes (1): SingBoxApplication
+Cohesion: 0.29
+Nodes (1): DnsResolveStoreTest
 
 ### Community 118 - "Community 118"
 Cohesion: 0.33
-Nodes (1): Converters
+Nodes (1): MainActivity
 
 ### Community 119 - "Community 119"
 Cohesion: 0.33
-Nodes (1): NodeEntity
+Nodes (1): SingBoxApplication
 
 ### Community 120 - "Community 120"
 Cohesion: 0.33
-Nodes (1): NodeExtractor
+Nodes (1): Converters
 
 ### Community 121 - "Community 121"
 Cohesion: 0.33
-Nodes (1): RuleSetAutoUpdateWorker
+Nodes (1): NodeEntity
 
 ### Community 122 - "Community 122"
 Cohesion: 0.33
-Nodes (0): 
+Nodes (1): NodeExtractor
 
 ### Community 123 - "Community 123"
 Cohesion: 0.33
-Nodes (1): VersionInfo
+Nodes (1): RuleSetAutoUpdateWorker
 
 ### Community 124 - "Community 124"
 Cohesion: 0.33
-Nodes (1): LogViewModel
+Nodes (0): 
 
 ### Community 125 - "Community 125"
 Cohesion: 0.33
-Nodes (1): IpVersionModeRulesTest
+Nodes (1): VersionInfo
 
 ### Community 126 - "Community 126"
 Cohesion: 0.33
-Nodes (1): PingDisplayTextTest
+Nodes (1): LogViewModel
 
 ### Community 127 - "Community 127"
 Cohesion: 0.33
-Nodes (1): SettingsStoreTest
+Nodes (1): IpVersionModeRulesTest
 
 ### Community 128 - "Community 128"
 Cohesion: 0.33
-Nodes (1): BackgroundPowerManagerTest
+Nodes (1): PingDisplayTextTest
 
 ### Community 129 - "Community 129"
-Cohesion: 0.4
-Nodes (0): 
+Cohesion: 0.33
+Nodes (1): InboundBuilderTest
 
 ### Community 130 - "Community 130"
-Cohesion: 0.4
-Nodes (1): LibboxNativeSupport
+Cohesion: 0.33
+Nodes (1): BackgroundPowerManagerTest
 
 ### Community 131 - "Community 131"
 Cohesion: 0.4
-Nodes (1): LocalResolverImpl
+Nodes (0): 
 
 ### Community 132 - "Community 132"
 Cohesion: 0.4
-Nodes (3): AddNodeTarget, ExistingProfile, NewProfile
+Nodes (1): LibboxNativeSupport
 
 ### Community 133 - "Community 133"
 Cohesion: 0.4
-Nodes (3): ExistingProfile, NewProfile, SelectProfileTarget
+Nodes (1): LocalResolverImpl
 
 ### Community 134 - "Community 134"
 Cohesion: 0.4
-Nodes (0): 
+Nodes (3): AddNodeTarget, ExistingProfile, NewProfile
 
 ### Community 135 - "Community 135"
 Cohesion: 0.4
-Nodes (0): 
+Nodes (3): ExistingProfile, NewProfile, SelectProfileTarget
 
 ### Community 136 - "Community 136"
 Cohesion: 0.4
-Nodes (2): DeepLinkHandler, SubscriptionImportData
+Nodes (0): 
 
 ### Community 137 - "Community 137"
 Cohesion: 0.4
-Nodes (1): StringBuilderPool
+Nodes (0): 
 
 ### Community 138 - "Community 138"
 Cohesion: 0.4
-Nodes (1): InstalledAppsViewModel
+Nodes (2): DeepLinkHandler, SubscriptionImportData
 
 ### Community 139 - "Community 139"
 Cohesion: 0.4
-Nodes (1): BoxWrapperManagerRecoveryPolicyTest
+Nodes (1): StringBuilderPool
 
 ### Community 140 - "Community 140"
 Cohesion: 0.4
-Nodes (1): SingBoxIpcHubStateTest
+Nodes (1): InstalledAppsViewModel
 
 ### Community 141 - "Community 141"
 Cohesion: 0.4
-Nodes (1): VpnStateStoreTest
+Nodes (1): BoxWrapperManagerRecoveryPolicyTest
 
 ### Community 142 - "Community 142"
 Cohesion: 0.4
-Nodes (1): ModelSerializationTest
+Nodes (1): SingBoxIpcHubStateTest
 
 ### Community 143 - "Community 143"
 Cohesion: 0.4
-Nodes (1): LatencyProbePolicyTest
+Nodes (1): VpnStateStoreTest
 
 ### Community 144 - "Community 144"
 Cohesion: 0.4
-Nodes (1): InboundBuilderTest
+Nodes (1): ModelSerializationTest
 
 ### Community 145 - "Community 145"
 Cohesion: 0.4
-Nodes (1): NodeLinkExporterTest
+Nodes (1): LatencyProbePolicyTest
 
 ### Community 146 - "Community 146"
 Cohesion: 0.4
-Nodes (1): NetworkSwitchManagerTest
+Nodes (1): NodeLinkExporterTest
 
 ### Community 147 - "Community 147"
 Cohesion: 0.4
-Nodes (1): RouteGroupSelectorTest
+Nodes (1): NetworkSwitchManagerTest
 
 ### Community 148 - "Community 148"
 Cohesion: 0.4
-Nodes (1): StartupManagerTest
+Nodes (1): RouteGroupSelectorTest
 
 ### Community 149 - "Community 149"
 Cohesion: 0.4
-Nodes (1): VpnTunAddressPlanTest
+Nodes (1): StartupManagerTest
 
 ### Community 150 - "Community 150"
 Cohesion: 0.5
@@ -903,7 +903,7 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `ConfigRepository` connect `Community 0` to `Community 3`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `SingBoxService` connect `Community 5` to `Community 1`?**
+- **Why does `SingBoxService` connect `Community 5` to `Community 2`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **What connects `RecoveryMode`, `RecoveryLevel`, `SmartRecoveryResult` to the rest of the system?**
   _264 weakly-connected nodes found - possible documentation gaps or missing edges._

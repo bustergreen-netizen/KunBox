@@ -31,6 +31,56 @@ class VpnTunManager(
 ) {
     companion object {
         private const val TAG = "VpnTunManager"
+
+        internal fun resolveVpnDnsServersForTest(
+            settings: AppSettings?,
+            dnsServerAddress: String? = null,
+            tunPlan: VpnTunAddressPlan = VpnTunAddressPlanner.build(settings?.ipVersionMode ?: IpVersionMode.DUAL_STACK)
+        ): List<String> {
+            val dnsServers = mutableListOf<String>()
+            val explicitDnsServerAddress = dnsServerAddress?.trim().orEmpty()
+            if (explicitDnsServerAddress.isNotEmpty() && isNumericAddressStatic(explicitDnsServerAddress)) {
+                dnsServers.add(explicitDnsServerAddress)
+                return dnsServers.distinct()
+            }
+            if (settings != null) {
+                if (isNumericAddressStatic(settings.remoteDns)) dnsServers.add(settings.remoteDns)
+                if (isNumericAddressStatic(settings.localDns)) dnsServers.add(settings.localDns)
+            }
+            if (dnsServers.isEmpty()) {
+                dnsServers.addAll(tunPlan.addresses.map { it.first })
+            }
+            return dnsServers.distinct()
+        }
+
+        internal fun shouldAppendHttpProxy(settings: AppSettings?): Boolean {
+            return settings?.appendHttpProxy == true && settings.proxyPort > 0 && !settings.tunEnabled
+        }
+
+        private fun isNumericAddressStatic(address: String): Boolean {
+            if (address.isBlank()) return false
+
+            val hasUrlFormat = address.contains("://") || address.contains("/")
+            val hasNonIpv6Colon = address.contains(":") && !isIpv6LiteralStatic(address)
+            if (hasUrlFormat || hasNonIpv6Colon) {
+                return false
+            }
+
+            return try {
+                val addr = InetAddress.getByName(address)
+                addr.hostAddress == address
+            } catch (_: Exception) {
+                false
+            }
+        }
+
+        private fun isIpv6LiteralStatic(address: String): Boolean {
+            if (address.startsWith("[") || address.startsWith("::")) return true
+            val colonCount = address.count { it == ':' }
+            val dotCount = address.count { it == '.' }
+
+            return colonCount >= 2 && dotCount == 0
+        }
     }
 
     @Volatile
@@ -90,7 +140,7 @@ class VpnTunManager(
 
         configureRoutes(builder, settings, tunPlan)
 
-        configureDns(builder, settings, tunPlan)
+        configureDns(builder, settings, options)
 
         configurePerAppVpn(builder, settings)
 
@@ -237,17 +287,10 @@ class VpnTunManager(
     private fun configureDns(
         builder: VpnService.Builder,
         settings: AppSettings?,
-        tunPlan: VpnTunAddressPlan
+        options: TunOptions?
     ) {
-        val dnsServers = mutableListOf<String>()
-        if (settings != null) {
-            if (isNumericAddress(settings.remoteDns)) dnsServers.add(settings.remoteDns)
-            if (isNumericAddress(settings.localDns)) dnsServers.add(settings.localDns)
-        }
-
-        if (dnsServers.isEmpty()) {
-            dnsServers.addAll(tunPlan.defaultDnsServers)
-        }
+        val dnsServerAddress = runCatching { options?.getDNSServerAddress()?.getValue() }.getOrNull()
+        val dnsServers = resolveVpnDnsServersForTest(settings, dnsServerAddress)
 
         dnsServers.distinct().forEach { dns ->
             try {
@@ -315,10 +358,14 @@ class VpnTunManager(
 
     private fun configureHttpProxy(builder: VpnService.Builder, settings: AppSettings?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (settings?.appendHttpProxy == true && settings.proxyPort > 0) {
+            val currentSettings = settings ?: return
+            if (currentSettings.appendHttpProxy && currentSettings.tunEnabled) {
+                Log.w(TAG, "HTTP proxy not appended in TUN VPN mode")
+            }
+            if (shouldAppendHttpProxy(currentSettings)) {
                 try {
-                    builder.setHttpProxy(ProxyInfo.buildDirectProxy("127.0.0.1", settings.proxyPort))
-                    Log.i(TAG, "HTTP Proxy appended to VPN: 127.0.0.1:${settings.proxyPort}")
+                    builder.setHttpProxy(ProxyInfo.buildDirectProxy("127.0.0.1", currentSettings.proxyPort))
+                    Log.i(TAG, "HTTP Proxy appended to VPN: 127.0.0.1:${currentSettings.proxyPort}")
                 } catch (e: Exception) {
                     Log.w(TAG, "Failed to set HTTP proxy for VPN", e)
                 }
@@ -402,31 +449,5 @@ class VpnTunManager(
             .map { it.trim() }
             .filter { it.isNotEmpty() }
             .distinct()
-    }
-
-    private fun isNumericAddress(address: String): Boolean {
-        if (address.isBlank()) return false
-
-        val hasUrlFormat = address.contains("://") || address.contains("/")
-        val hasNonIpv6Colon = address.contains(":") && !isIpv6Literal(address)
-        if (hasUrlFormat || hasNonIpv6Colon) {
-            return false
-        }
-
-        return try {
-            val addr = InetAddress.getByName(address)
-            addr.hostAddress == address
-        } catch (_: Exception) {
-            false
-        }
-    }
-
-    private fun isIpv6Literal(address: String): Boolean {
-
-        if (address.startsWith("[") || address.startsWith("::")) return true
-        val colonCount = address.count { it == ':' }
-        val dotCount = address.count { it == '.' }
-
-        return colonCount >= 2 && dotCount == 0
     }
 }

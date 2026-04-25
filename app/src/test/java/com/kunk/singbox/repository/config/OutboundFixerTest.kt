@@ -3,8 +3,10 @@ package com.kunk.singbox.repository.config
 import com.kunk.singbox.model.DomainResolveConfig
 import com.kunk.singbox.model.ObfsConfig
 import com.kunk.singbox.model.Outbound
+import com.kunk.singbox.model.RealityConfig
 import com.kunk.singbox.model.TlsConfig
 import com.kunk.singbox.model.TransportConfig
+import com.kunk.singbox.model.UtlsConfig
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertFalse
@@ -170,7 +172,7 @@ class OutboundFixerTest {
     }
 
     @Test
-    fun testBuildForRuntimeClearsTuicServerNameWhenDisableSniEnabled() {
+    fun testBuildForRuntimeKeepsTuicServerNameWhenDisableSniEnabled() {
         val outbound = Outbound(
             type = "tuic",
             tag = "tuic-node",
@@ -190,7 +192,7 @@ class OutboundFixerTest {
         assertNull(runtime?.disableSni)
         assertEquals(true, runtime?.tls?.disableSni)
         assertEquals(true, runtime?.tls?.enabled)
-        assertNull(runtime?.tls?.serverName)
+        assertEquals("tuic.example.com", runtime?.tls?.serverName)
     }
 
     @Test
@@ -278,7 +280,7 @@ class OutboundFixerTest {
     }
 
     @Test
-    fun testBuildForRuntimeClearsImplicitXudpForVlessXhttp() {
+    fun testBuildForRuntimePreservesImplicitXudpForVlessXhttp() {
         val outbound = Outbound(
             type = "vless",
             tag = "xhttp-node",
@@ -290,7 +292,130 @@ class OutboundFixerTest {
 
         val runtime = OutboundFixer.buildForRuntimeWithDialConfigForTest(outbound)
 
-        assertEquals("", runtime?.packetEncoding)
+        assertNull(runtime?.packetEncoding)
+    }
+
+    @Test
+    fun testBuildForRuntimePreservesExplicitXudpForVlessXhttp() {
+        val outbound = Outbound(
+            type = "vless",
+            tag = "xhttp-node",
+            server = "xhttp.example.com",
+            serverPort = 443,
+            uuid = "uuid",
+            packetEncoding = "xudp",
+            transport = TransportConfig(type = "xhttp", path = "/x")
+        )
+
+        val runtime = OutboundFixer.buildForRuntimeWithDialConfigForTest(outbound)
+
+        assertEquals("xudp", runtime?.packetEncoding)
+    }
+
+    @Test
+    fun testBuildForRuntimePreservesImplicitXudpForEncryptedVlessWebSocket() {
+        val outbound = Outbound(
+            type = "vless",
+            tag = "encrypted-ws-node",
+            server = "34.150.59.170",
+            serverPort = 39797,
+            uuid = "b6fd6867-c239-4d95-8a98-cb036d34fc21",
+            encryption = "mlkem768x25519plus.native.0rtt.sample",
+            transport = TransportConfig(type = "ws", path = "/b6fd6867-c239-4d95-8a98-cb036d34fc21-vw")
+        )
+
+        val runtime = OutboundFixer.buildForRuntimeWithDialConfigForTest(outbound)
+
+        assertNull(runtime?.packetEncoding)
+        assertEquals("mlkem768x25519plus.native.0rtt.sample", runtime?.encryption)
+    }
+
+    @Test
+    fun testBuildForRuntimePreservesExplicitXudpForEncryptedVlessWebSocket() {
+        val outbound = Outbound(
+            type = "vless",
+            tag = "encrypted-ws-node",
+            server = "34.150.59.170",
+            serverPort = 39797,
+            uuid = "b6fd6867-c239-4d95-8a98-cb036d34fc21",
+            packetEncoding = "xudp",
+            encryption = "mlkem768x25519plus.native.0rtt.sample",
+            transport = TransportConfig(type = "ws", path = "/b6fd6867-c239-4d95-8a98-cb036d34fc21-vw")
+        )
+
+        val runtime = OutboundFixer.buildForRuntimeWithDialConfigForTest(outbound)
+
+        assertEquals("xudp", runtime?.packetEncoding)
+        assertEquals("ws", runtime?.transport?.type)
+    }
+
+    @Test
+    fun testBuildForRuntimePreservesExplicitXudpWithRealityVisionXhttp() {
+        val outbound = Outbound(
+            type = "vless",
+            tag = "reality-xhttp-node",
+            server = "35.194.192.123",
+            serverPort = 13324,
+            uuid = "2edd765b-a895-46ab-a01c-c4719947546b",
+            flow = "xtls-rprx-vision",
+            packetEncoding = "xudp",
+            encryption = "mlkem768x25519plus.native.0rtt.sample",
+            tls = TlsConfig(
+                enabled = true,
+                serverName = "apple.com",
+                reality = RealityConfig(
+                    enabled = true,
+                    publicKey = "HBnrh72W2LW-zJygpN_H0Kw5fO7kIWhw5Bd-8ieVGj0",
+                    shortId = "94c5638d"
+                ),
+                utls = UtlsConfig(enabled = true, fingerprint = "chrome")
+            ),
+            transport = TransportConfig(
+                type = "xhttp",
+                path = "/2edd765b-a895-46ab-a01c-c4719947546b-xh",
+                mode = "auto"
+            )
+        )
+
+        val runtime = OutboundFixer.buildForRuntimeWithDialConfigForTest(outbound)
+
+        assertEquals("xudp", runtime?.packetEncoding)
+        assertEquals("xtls-rprx-vision", runtime?.flow)
+        assertEquals("mlkem768x25519plus.native.0rtt.sample", runtime?.encryption)
+        assertEquals("xhttp", runtime?.transport?.type)
+    }
+
+    @Test
+    fun testBuildForRuntimePreservesExplicitXhttpAlpnWhenProvided() {
+        val outbound = Outbound(
+            type = "vless",
+            tag = "reality-xhttp-node",
+            server = "35.194.192.123",
+            serverPort = 13324,
+            uuid = "2edd765b-a895-46ab-a01c-c4719947546b",
+            flow = "xtls-rprx-vision",
+            packetEncoding = "xudp",
+            tls = TlsConfig(
+                enabled = true,
+                serverName = "apple.com",
+                alpn = listOf("http/1.1"),
+                reality = RealityConfig(
+                    enabled = true,
+                    publicKey = "HBnrh72W2LW-zJygpN_H0Kw5fO7kIWhw5Bd-8ieVGj0",
+                    shortId = "94c5638d"
+                ),
+                utls = UtlsConfig(enabled = true, fingerprint = "chrome")
+            ),
+            transport = TransportConfig(
+                type = "xhttp",
+                path = "/2edd765b-a895-46ab-a01c-c4719947546b-xh",
+                mode = "auto"
+            )
+        )
+
+        val runtime = OutboundFixer.buildForRuntimeWithDialConfigForTest(outbound)
+
+        assertEquals(listOf("http/1.1"), runtime?.tls?.alpn)
     }
 
     @Test

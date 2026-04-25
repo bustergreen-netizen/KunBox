@@ -89,4 +89,20 @@ class InboundBuilderTest {
         assertNull(inbound.sniffOverrideDestination)
         assertNull(inbound.sniffTimeout)
     }
+
+    @Test
+    fun buildTunInboundRespectsAutoRouteAndStrictRouteSettings() {
+        val inbound = InboundBuilder.build(
+            settings = AppSettings(
+                tunEnabled = true,
+                proxyPort = 0,
+                autoRoute = true,
+                strictRoute = true
+            ),
+            effectiveTunStack = TunStack.MIXED
+        ).single()
+
+        assertEquals(true, inbound.autoRoute)
+        assertEquals(true, inbound.strictRoute)
+    }
 }

@@ -2,7 +2,6 @@ package com.kunk.singbox.model
 
 import com.google.gson.Gson
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -57,7 +56,8 @@ class ModelSerializationTest {
             password = "secret",
             tls = TlsConfig(
                 enabled = true,
-                disableSni = true
+                disableSni = true,
+                serverName = "edge.example.com"
             )
         )
 
@@ -65,6 +65,6 @@ class ModelSerializationTest {
 
         assertTrue(json.contains("\"tls\""))
         assertTrue(json.contains("\"disable_sni\":true"))
-        assertFalse(json.contains("\"server_name\""))
+        assertTrue(json.contains("\"server_name\":\"edge.example.com\""))
     }
 }

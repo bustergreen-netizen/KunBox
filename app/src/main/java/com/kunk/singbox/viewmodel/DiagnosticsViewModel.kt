@@ -369,10 +369,10 @@ class DiagnosticsViewModel(application: Application) : AndroidViewModel(applicat
                 val ips = withContext(Dispatchers.IO) {
                     InetAddress.getAllByName(host)
                 }
-                val ipList = ips.joinToString("\n") { it.hostAddress ?: "(null)" }
-                _resultMessage.value = "Domain: $host\n\nResult:\n$ipList\n\nNote: This result is affected by current DNS settings and VPN status."
+                val ipList = ips.mapNotNull { it.hostAddress ?: "(null)" }
+                _resultMessage.value = buildDnsQuerySuccessMessage(host, ipList)
             } catch (e: Exception) {
-                _resultMessage.value = "Domain: $host\n\nFailed: ${e.message}"
+                _resultMessage.value = buildDnsQueryFailureMessage(host, e.message ?: "unknown")
             } finally {
                 _isDnsLoading.value = false
                 _showResultDialog.value = true

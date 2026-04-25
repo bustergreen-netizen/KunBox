@@ -460,8 +460,7 @@ fun NodeDetailScreen(
                                 editingOutbound = outbound.copy(
                                     disableSni = if (checked) true else null,
                                     tls = currentTls.copy(
-                                        enabled = true,
-                                        serverName = if (checked) null else currentTls.serverName
+                                        enabled = true
                                     )
                                 )
                             }

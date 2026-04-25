@@ -183,8 +183,7 @@ object OutboundFixer {
                     )
 
             val currentAlpn = tlsForXhttp?.alpn
-            val shouldFixXhttpAlpn = tlsForXhttp != null &&
-                (currentAlpn.isNullOrEmpty() || currentAlpn != listOf("h2"))
+            val shouldFixXhttpAlpn = tlsForXhttp != null && currentAlpn.isNullOrEmpty()
 
             if (normalizedPath != rawPath || shouldFixXhttpSni || shouldFixXhttpAlpn) {
                 var updated = result.copy(
@@ -205,12 +204,6 @@ object OutboundFixer {
 
                 result = updated
             }
-
-            if (result.type == "vless" && result.packetEncoding.isNullOrBlank()) {
-                result = result.copy(packetEncoding = "")
-            } else if (result.packetEncoding == "xudp") {
-                result = result.copy(packetEncoding = "")
-            }
         }
 
         if (result.type == "tuic" || result.type == "hysteria2") {
@@ -220,8 +213,7 @@ object OutboundFixer {
                     disableSni = null,
                     tls = currentTls.copy(
                         enabled = true,
-                        disableSni = true,
-                        serverName = null
+                        disableSni = true
                     )
                 )
             } else {

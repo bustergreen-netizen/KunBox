@@ -17,6 +17,8 @@ import com.kunk.singbox.model.RuleType
 import com.kunk.singbox.model.BatchUpdateResult
 import com.kunk.singbox.model.ProfileType
 import com.kunk.singbox.model.ProfileUi
+import com.kunk.singbox.model.RoutingMode
+import com.kunk.singbox.model.DefaultRule
 import com.kunk.singbox.model.SubscriptionUpdateStage
 import com.kunk.singbox.model.SubscriptionUpdateResult
 import com.kunk.singbox.model.UpdateStatus
@@ -822,6 +824,21 @@ class ConfigRepositoryTest {
     }
 
     @Test
+    fun testBuildDynamicRemoteDnsServerForProxyDetourCarriesDetour() {
+        val server = ConfigRepository.buildDynamicRemoteDnsServerForTest(
+            detourTag = "PROXY",
+            remoteDnsAddr = "https://1.1.1.1/dns-query",
+            remoteStrategy = "prefer_ipv4",
+            remoteResolver = DomainResolveConfig(server = "dns-bootstrap")
+        )
+
+        assertEquals("PROXY", server.detour)
+        assertEquals("https", server.type)
+        assertEquals("1.1.1.1", server.server)
+        assertEquals("/dns-query", server.path)
+    }
+
+    @Test
     fun testBuildFakeIpDnsServerForTestIncludesRangesForFakeIpTransport() {
         val server = ConfigRepository.buildFakeIpDnsServerForTest("198.18.0.0/15")
 
@@ -860,6 +877,32 @@ class ConfigRepositoryTest {
     }
 
     @Test
+    fun testDnsServerTagForProxyUsesProxyServerWhenFakeDnsEnabled() {
+        val serverTag = ConfigRepository.resolveDnsServerTagForRuleSemanticForTest(
+            semantic = ConfigRepository.OutboundSemantic.Proxy,
+            fakeDnsEnabled = true,
+            proxyServerTag = ConfigRepository.buildDynamicDnsServerTag("PROXY")
+        )
+
+        assertEquals(ConfigRepository.buildDynamicDnsServerTag("PROXY"), serverTag)
+    }
+
+    @Test
+    fun testDnsRouteToProxyReturnsFakeIpAndProxyRulesWhenFakeDnsEnabled() {
+        val rules = ConfigRepository.buildDnsRouteToProxyForTest(
+            fakeDnsEnabled = true,
+            proxyServerTag = ConfigRepository.buildDynamicDnsServerTag("PROXY"),
+            rule = com.kunk.singbox.model.DnsRule(ruleSet = listOf("geosite-geolocation-!cn"))
+        )
+
+        assertEquals(2, rules.size)
+        assertEquals("fakeip-dns", rules[0].server)
+        assertEquals(listOf("A", "AAAA"), rules[0].queryType)
+        assertEquals(ConfigRepository.buildDynamicDnsServerTag("PROXY"), rules[1].server)
+        assertNull(rules[1].queryType)
+    }
+
+    @Test
     fun testDnsServerTagForFallbackProxyUsesProxyServer() {
         val serverTag = ConfigRepository.dnsServerTagForSemanticForTest(
             semantic = ConfigRepository.OutboundSemantic.FallbackProxy("PROXY"),
@@ -867,6 +910,17 @@ class ConfigRepositoryTest {
         )
 
         assertEquals("remote", serverTag)
+    }
+
+    @Test
+    fun testDnsServerTagForFallbackProxyUsesDynamicServerWhenFakeDnsEnabled() {
+        val serverTag = ConfigRepository.dnsServerTagForSemanticForTest(
+            semantic = ConfigRepository.OutboundSemantic.FallbackProxy("PROXY"),
+            fakeDnsEnabled = true,
+            proxyServerTag = ConfigRepository.buildDynamicDnsServerTag("PROXY")
+        )
+
+        assertEquals(ConfigRepository.buildDynamicDnsServerTag("PROXY"), serverTag)
     }
 
     @Test
@@ -1246,12 +1300,125 @@ class ConfigRepositoryTest {
     }
 
     @Test
+    fun testBuildQuicBlockRuleReturnsEmptyWhenBlockQuicDisabled() {
+        val rules = ConfigRepository.buildQuicBlockRuleForTest(AppSettings(blockQuic = false))
+
+        assertTrue(rules.isEmpty())
+    }
+
+    @Test
+    fun testBuildQuicBlockRuleReturnsRejectRulesWhenBlockQuicEnabled() {
+        val rules = ConfigRepository.buildQuicBlockRuleForTest(AppSettings(blockQuic = true))
+
+        assertFalse(rules.isEmpty())
+        assertTrue(rules.any { it.protocol?.contains("quic") == true })
+        assertTrue(rules.any { it.network?.contains("udp") == true && it.port == listOf(443) })
+    }
+
+    @Test
+    fun testBuildTunFakeIpDnsRuleReturnsEmptyWhenFakeDnsDisabled() {
+        val rules = ConfigRepository.buildTunFakeIpDnsRulesForTest(false)
+
+        assertTrue(rules.isEmpty())
+    }
+
+    @Test
+    fun testBuildTunFakeIpDnsRuleRoutesTunAaaaAndAWhenFakeDnsEnabled() {
+        val rules = ConfigRepository.buildTunFakeIpDnsRulesForTest(true)
+
+        assertEquals(1, rules.size)
+        assertEquals(listOf("A", "AAAA"), rules.first().queryType)
+        assertEquals(listOf("tun-in"), rules.first().inbound)
+        assertEquals("route", rules.first().action)
+        assertEquals("fakeip-dns", rules.first().server)
+    }
+
+    @Test
+    fun testResolveRunDnsFinalServerUsesStableRemoteWhenGlobalProxyAndFakeDnsEnabled() {
+        val finalServer = ConfigRepository.resolveRunDnsFinalServerForTest(
+            routingMode = RoutingMode.GLOBAL_PROXY,
+            defaultRule = DefaultRule.PROXY,
+            fakeDnsEnabled = true,
+            proxyServerTag = ConfigRepository.buildDynamicDnsServerTag("node-b")
+        )
+
+        assertEquals("remote", finalServer)
+    }
+
+    @Test
+    fun testResolveRunDnsFinalServerUsesStableRemoteWhenRuleProxyAndFakeDnsEnabled() {
+        val finalServer = ConfigRepository.resolveRunDnsFinalServerForTest(
+            routingMode = RoutingMode.RULE,
+            defaultRule = DefaultRule.PROXY,
+            fakeDnsEnabled = true,
+            proxyServerTag = ConfigRepository.buildDynamicDnsServerTag("node-b")
+        )
+
+        assertEquals("remote", finalServer)
+    }
+
+    @Test
+    fun testResolveProxyDnsDetourTagUsesSelectorDefaultConcreteNode() {
+        val detourTag = ConfigRepository.resolveProxyDnsDetourTagForTest(
+            selectorTag = "PROXY",
+            outbounds = listOf(
+                Outbound(
+                    type = "selector",
+                    tag = "PROXY",
+                    outbounds = listOf("node-a", "node-b"),
+                    default = "node-b"
+                ),
+                Outbound(type = "vless", tag = "node-a"),
+                Outbound(type = "vless", tag = "node-b")
+            )
+        )
+
+        assertEquals("node-b", detourTag)
+    }
+
+    @Test
+    fun testResolveProxyDnsDetourTagUnwrapsUrlTestDefault() {
+        val detourTag = ConfigRepository.resolveProxyDnsDetourTagForTest(
+            selectorTag = "PROXY",
+            outbounds = listOf(
+                Outbound(
+                    type = "selector",
+                    tag = "PROXY",
+                    outbounds = listOf("P:HK#AUTO"),
+                    default = "P:HK#AUTO"
+                ),
+                Outbound(
+                    type = "urltest",
+                    tag = "P:HK#AUTO",
+                    outbounds = listOf("node-a", "node-b")
+                ),
+                Outbound(type = "vless", tag = "node-a"),
+                Outbound(type = "vless", tag = "node-b")
+            )
+        )
+
+        assertEquals("node-a", detourTag)
+    }
+
+    @Test
     fun testBypassLanRulesUseIpIsPrivate() {
         val rules = ConfigRepository.buildBypassLanRulesForTest(AppSettings(bypassLan = true))
 
         assertEquals(1, rules.size)
         assertEquals(true, rules.first().ipIsPrivate)
         assertEquals("direct", rules.first().outbound)
+    }
+
+    @Test
+    fun testHijackDnsRulesCatchTunDnsPortBeforeProtocolSniffing() {
+        val rules = ConfigRepository.buildHijackDnsRulesForTest()
+
+        assertEquals(2, rules.size)
+        assertEquals(listOf("tun-in"), rules[0].inbound)
+        assertEquals(listOf(53), rules[0].port)
+        assertEquals("hijack-dns", rules[0].action)
+        assertEquals(listOf("dns"), rules[1].protocol)
+        assertEquals("hijack-dns", rules[1].action)
     }
 
     @Test
