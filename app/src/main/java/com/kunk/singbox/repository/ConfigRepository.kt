@@ -4524,7 +4524,7 @@ class ConfigRepository(private val context: Context) {
         if (settings.blockQuic && !hasEchOutbound) {
             dnsRules.add(dnsReject(DnsRule(queryType = listOf("HTTPS", "SVCB"))))
         }
-        val echQueryServerTag = if (activeEchDnsAddr != null) proxyServerTag else directServerTag
+        val echQueryServerTag = directServerTag
         dnsRules.addAll(buildEchDnsRules(outboundsContext.outbounds, echQueryServerTag))
         val bootstrapStrategy = resolveDnsStrategy(settings.serverAddressStrategy, settings.ipVersionMode)
         val bootstrapV4Tag = "dns-bootstrap-v4"
