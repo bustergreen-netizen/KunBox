@@ -1,16 +1,26 @@
-﻿package com.kunk.singbox.utils
+herepackage com.kunk.singbox.utils
 
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.os.LocaleList
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import com.kunk.singbox.model.AppLanguage
 import java.util.Locale
 
 object LocaleHelper {
 
-    /**
-     */
+    fun applyLanguage(language: AppLanguage) {
+        val tag = when (language) {
+            AppLanguage.SYSTEM -> ""
+            AppLanguage.CHINESE -> "zh"
+            AppLanguage.ENGLISH -> "en"
+            AppLanguage.RUSSIAN -> "ru"
+        }
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
+    }
+
     fun setLocale(context: Context, language: AppLanguage): Context {
         val locale = when (language) {
             AppLanguage.SYSTEM -> getSystemLocale()
@@ -22,8 +32,6 @@ object LocaleHelper {
         return updateResources(context, locale)
     }
 
-    /**
-     */
     private fun getSystemLocale(): Locale {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             LocaleList.getDefault().get(0)
@@ -33,8 +41,6 @@ object LocaleHelper {
         }
     }
 
-    /**
-     */
     private fun updateResources(context: Context, locale: Locale): Context {
         Locale.setDefault(locale)
 
@@ -48,8 +54,6 @@ object LocaleHelper {
         return context.createConfigurationContext(configuration)
     }
 
-    /**
-     */
     fun getLanguageDisplayName(language: AppLanguage): String {
         return when (language) {
             AppLanguage.SYSTEM -> "System Default"
@@ -59,8 +63,6 @@ object LocaleHelper {
         }
     }
 
-    /**
-     */
     fun wrap(context: Context, language: AppLanguage): Context {
         return setLocale(context, language)
     }
