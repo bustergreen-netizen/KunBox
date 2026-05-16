@@ -851,7 +851,7 @@ class ConfigRepositoryTest {
         assertEquals(1, servers.size)
         assertEquals("dns.alidns.com", servers.first().server)
         assertEquals("dns-bootstrap", servers.first().domainResolver?.server)
-        assertNull(servers.first().detour)
+        assertEquals("ECH Node", servers.first().detour)
     }
 
     @Test
@@ -896,7 +896,7 @@ class ConfigRepositoryTest {
         assertEquals("dns.alidns.com", server.server)
         assertEquals("/dns-query", server.path)
         assertEquals("dns-bootstrap", server.domainResolver?.server)
-        assertNull(server.detour)
+        assertEquals("ECH Node", server.detour)
     }
 
     @Test

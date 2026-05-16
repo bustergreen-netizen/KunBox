@@ -168,6 +168,20 @@ class CommandManager(
         commandClientGroup?.connect()
         Log.i(TAG, "CommandClient connected (Group, interval=3s)")
 
+        val optionsLog = CommandClientOptions()
+        optionsLog.addCommand(Libbox.CommandLog)
+        optionsLog.statusInterval = 1500L * 1000L * 1000L
+        commandClientLogs = Libbox.newCommandClient(handler, optionsLog)
+        commandClientLogs?.connect()
+        Log.i(TAG, "CommandClient connected (Logs, interval=1.5s)")
+
+        val optionsConn = CommandClientOptions()
+        optionsConn.addCommand(Libbox.CommandConnections)
+        optionsConn.statusInterval = 5000L * 1000L * 1000L
+        commandClientConnections = Libbox.newCommandClient(handler, optionsConn)
+        commandClientConnections?.connect()
+        Log.i(TAG, "CommandClient connected (Connections, interval=5s)")
+
         serviceScope.launch {
             delay(3500)
             val groupsSize = groupSelectedOutbounds.size

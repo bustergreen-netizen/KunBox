@@ -493,6 +493,7 @@
     <string name="logs_title">Logs</string>
     <string name="logs_export">Export</string>
     <string name="logs_clear">Clear</string>
+    <string name="logs_search_hint">Search keywords (domain, error, etc.)</string>
     <string name="logs_debug_disabled">Debug mode disabled</string>
     <string name="logs_debug_disabled_hint">Logs are not recorded when debug mode is off to save performance</string>
 

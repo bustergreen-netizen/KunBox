@@ -931,10 +931,12 @@ class ConfigRepository(private val context: Context) {
         ): DnsServer {
             val echDnsAddress = resolveActiveEchDnsServer(detourTag, outbounds)
             if (echDnsAddress != null) {
-                return buildEchBootstrapDnsServer(
-                    tag = buildDynamicDnsServerTag(detourTag),
+                return buildDnsServer(
                     address = echDnsAddress,
-                    remoteStrategy = remoteStrategy
+                    tag = buildDynamicDnsServerTag(detourTag),
+                    detour = detourTag,
+                    domainStrategy = remoteStrategy,
+                    domainResolver = DomainResolveConfig(server = "dns-bootstrap")
                 )
             }
             return buildDnsServer(
@@ -980,20 +982,6 @@ class ConfigRepository(private val context: Context) {
                     !ech?.config.isNullOrEmpty()
                 hasEch && ech?.dnsServer.isNullOrBlank() && ech?.config.isNullOrEmpty()
             }
-        }
-
-        private fun buildEchBootstrapDnsServer(
-            tag: String,
-            address: String,
-            remoteStrategy: String?,
-            resolverTag: String = "dns-bootstrap"
-        ): DnsServer {
-            return buildDnsServer(
-                address = address,
-                tag = tag,
-                domainStrategy = remoteStrategy,
-                domainResolver = DomainResolveConfig(server = resolverTag)
-            )
         }
 
         private data class FakeIpRanges(
@@ -4417,7 +4405,7 @@ class ConfigRepository(private val context: Context) {
 
     private fun buildRunLogConfig(): LogConfig {
         return LogConfig(
-            level = "warn",
+            level = "info",
             timestamp = true
         )
     }
@@ -4595,11 +4583,14 @@ class ConfigRepository(private val context: Context) {
         dnsServers.add(remoteServer)
         val remoteStrategy = resolveDnsStrategy(settings.remoteDnsStrategy, settings.ipVersionMode)
         if (activeEchDnsAddr != null) {
+            val echResolver = DomainResolveConfig(server = "dns-bootstrap")
             dnsServers.add(
-                buildEchBootstrapDnsServer(
-                    tag = proxyServerTag,
+                buildDnsServer(
                     address = activeEchDnsAddr,
-                    remoteStrategy = remoteStrategy
+                    tag = proxyServerTag,
+                    detour = proxyDetourTag,
+                    domainStrategy = remoteStrategy,
+                    domainResolver = echResolver
                 )
             )
         } else {
