@@ -1,4 +1,4 @@
-herepackage com.kunk.singbox.utils
+package com.kunk.singbox.utils
 
 import android.content.Context
 import android.content.res.Configuration
