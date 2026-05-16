@@ -1441,7 +1441,6 @@ class SingBoxService : VpnService() {
             VpnStateStore.setActiveLabel(displayName)
             realTimeNodeName = displayName
             runCatching {
-                node?.id?.let { configRepository.setActiveNodeIdOnly(it) }
                 configRepository.syncActiveNodeFromProxySelection(displayName)
             }
             trafficMonitor.resetStallCounter()
