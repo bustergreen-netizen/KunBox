@@ -227,7 +227,8 @@ enum class AppThemeMode(@StringRes val displayNameRes: Int) {
 enum class AppLanguage(@StringRes val displayNameRes: Int, val localeCode: String) {
     @SerializedName("SYSTEM") SYSTEM(R.string.language_system, ""),
     @SerializedName("CHINESE") CHINESE(R.string.language_chinese, "zh"),
-    @SerializedName("ENGLISH") ENGLISH(R.string.language_english, "en");
+    @SerializedName("ENGLISH") ENGLISH(R.string.language_english, "en"),
+    @SerializedName("RUSSIAN") RUSSIAN(R.string.language_russian, "ru");
 
     companion object {
         fun fromLocaleCode(code: String): AppLanguage {
