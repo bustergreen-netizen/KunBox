@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.13.4](https://github.com/roseforljh/KunBox/compare/v2.13.3...v2.13.4) (2026-05-16)
+
+
+### Bug Fixes
+
+* ECH DNS规则改用直连避免loopback循环依赖 ([67bf416](https://github.com/roseforljh/KunBox/commit/67bf4167a82bb95e55fb380e4b647a7e3c72a3fd))
+* ECH场景DNS无detour导致污染 + 日志功能增强 ([9613a09](https://github.com/roseforljh/KunBox/commit/9613a09a6b179f6198a76c2eb20158ee0bdd6a04))
+* 修复 ECH 订阅节点 DNS 路由 ([c8ba34d](https://github.com/roseforljh/KunBox/commit/c8ba34d8a3660e65c618992c0dbabe7712ecb585))
+* 修复DNS规则分流异常 ([0f18dbe](https://github.com/roseforljh/KunBox/commit/0f18dbe23c82ba4da815c9447f59881f1eeb94ae))
+* 修复运行时DNS与恢复异常 ([2598ae3](https://github.com/roseforljh/KunBox/commit/2598ae3bc6e402d9734382ec23764f8b73974ccd))
+* 限制运行日志采集到调试模式 ([ddecd23](https://github.com/roseforljh/KunBox/commit/ddecd23e885c29dd5f33cdb4e0db1d0559f11100))
+
 ## [2.13.3](https://github.com/roseforljh/KunBox/compare/v2.13.2...v2.13.3) (2026-05-16)
 
 
