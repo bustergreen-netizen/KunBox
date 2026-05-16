@@ -205,7 +205,7 @@ class RouteGroupSelector(
         }
 
         internal fun selectorTagForCandidateRpc(target: RouteGroupTarget): String {
-            return target.autoGroupTag?.takeIf { it.isNotBlank() } ?: target.groupTag
+            return target.groupTag
         }
 
         internal fun selectorTagForFallbackRpc(target: RouteGroupTarget): String {
@@ -782,7 +782,7 @@ class RouteGroupSelector(
             client = client,
             selectorTag = selectorTagForCandidateRpc(target),
             currentSelected = currentSelected,
-            bestTag = bestTag
+            bestTag = autoGroupTag ?: bestTag
         )
     }
 

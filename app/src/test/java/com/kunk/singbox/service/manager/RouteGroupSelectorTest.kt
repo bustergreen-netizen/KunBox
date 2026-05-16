@@ -7,7 +7,7 @@ import org.junit.Test
 class RouteGroupSelectorTest {
 
     @Test
-    fun testSelectorTagForCandidateRpcUsesAutoGroupWhenPresent() {
+    fun testCandidateRpcUsesOuterSelectorWhenAutoGroupPresent() {
         val target = RouteGroupSelector.Companion.RouteGroupTarget(
             groupTag = "P:cf",
             candidates = listOf("US|官方优选|218ms"),
@@ -16,7 +16,7 @@ class RouteGroupSelectorTest {
             autoGroupTag = "P:cf#AUTO"
         )
 
-        assertEquals("P:cf#AUTO", RouteGroupSelector.selectorTagForCandidateRpc(target))
+        assertEquals("P:cf", RouteGroupSelector.selectorTagForCandidateRpc(target))
         assertEquals("P:cf", RouteGroupSelector.selectorTagForFallbackRpc(target))
     }
 

@@ -155,14 +155,13 @@ object OutboundFixer {
             }
         }
 
-        // Fix ALPN for WebSocket + TLS
+        // Fix ALPN for WebSocket + TLS (skip when ECH is enabled to avoid outer ClientHello conflict)
         val tlsAfterSni = result.tls
-        if (
-            result.transport?.type == "ws" &&
+        val needsWsAlpn = result.transport?.type == "ws" &&
             tlsAfterSni?.enabled == true &&
-            (tlsAfterSni.alpn == null || tlsAfterSni.alpn.isEmpty())
-        ) {
-            result = result.copy(tls = tlsAfterSni.copy(alpn = listOf("http/1.1")))
+            tlsAfterSni.ech?.enabled != true
+        if (needsWsAlpn && (tlsAfterSni?.alpn == null || tlsAfterSni.alpn.isEmpty())) {
+            result = result.copy(tls = tlsAfterSni?.copy(alpn = listOf("http/1.1")))
         }
 
         if (transport?.type == "xhttp") {
@@ -282,6 +281,13 @@ object OutboundFixer {
             )
         }
         if (result.type == "vmess" && result.packetEncoding.isNullOrBlank()) {
+            result = result.copy(packetEncoding = "xudp")
+        }
+        val isVlessNeedingXudp = result.type == "vless" &&
+            result.packetEncoding.isNullOrBlank() &&
+            result.encryption.isNullOrBlank() &&
+            result.transport?.type != "xhttp"
+        if (isVlessNeedingXudp) {
             result = result.copy(packetEncoding = "xudp")
         }
 

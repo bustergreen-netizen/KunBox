@@ -871,7 +871,8 @@ class ConfigRepository(private val context: Context) {
             semantics: List<OutboundSemantic>,
             remoteDnsAddr: String,
             remoteStrategy: String?,
-            remoteResolver: DomainResolveConfig?
+            remoteResolver: DomainResolveConfig?,
+            outbounds: List<Outbound> = emptyList()
         ) {
             semantics.asSequence()
                 .filterIsInstance<OutboundSemantic.RouteTag>()
@@ -881,12 +882,12 @@ class ConfigRepository(private val context: Context) {
                     val serverTag = buildDynamicDnsServerTag(detourTag)
                     if (dnsServers.none { it.tag == serverTag }) {
                         dnsServers.add(
-                            buildDnsServer(
-                                address = remoteDnsAddr,
-                                tag = serverTag,
-                                detour = detourTag,
-                                domainStrategy = remoteStrategy,
-                                domainResolver = remoteResolver
+                            buildDynamicRemoteDnsServer(
+                                detourTag = detourTag,
+                                remoteDnsAddr = remoteDnsAddr,
+                                remoteStrategy = remoteStrategy,
+                                remoteResolver = remoteResolver,
+                                outbounds = outbounds
                             )
                         )
                     }
@@ -897,10 +898,11 @@ class ConfigRepository(private val context: Context) {
             semantics: List<OutboundSemantic>,
             remoteDnsAddr: String,
             remoteStrategy: String?,
-            remoteResolver: DomainResolveConfig?
+            remoteResolver: DomainResolveConfig?,
+            outbounds: List<Outbound> = emptyList()
         ): List<DnsServer> {
             val servers = mutableListOf<DnsServer>()
-            ensureDynamicRemoteDnsServers(servers, semantics, remoteDnsAddr, remoteStrategy, remoteResolver)
+            ensureDynamicRemoteDnsServers(servers, semantics, remoteDnsAddr, remoteStrategy, remoteResolver, outbounds)
             return servers
         }
 
@@ -908,14 +910,89 @@ class ConfigRepository(private val context: Context) {
             detourTag: String,
             remoteDnsAddr: String,
             remoteStrategy: String?,
-            remoteResolver: DomainResolveConfig?
+            remoteResolver: DomainResolveConfig?,
+            outbounds: List<Outbound> = emptyList()
         ): DnsServer {
+            return buildDynamicRemoteDnsServer(
+                detourTag = detourTag,
+                remoteDnsAddr = remoteDnsAddr,
+                remoteStrategy = remoteStrategy,
+                remoteResolver = remoteResolver,
+                outbounds = outbounds
+            )
+        }
+
+        private fun buildDynamicRemoteDnsServer(
+            detourTag: String,
+            remoteDnsAddr: String,
+            remoteStrategy: String?,
+            remoteResolver: DomainResolveConfig?,
+            outbounds: List<Outbound>
+        ): DnsServer {
+            val echDnsAddress = resolveActiveEchDnsServer(detourTag, outbounds)
+            if (echDnsAddress != null) {
+                return buildEchBootstrapDnsServer(
+                    tag = buildDynamicDnsServerTag(detourTag),
+                    address = echDnsAddress,
+                    remoteStrategy = remoteStrategy
+                )
+            }
             return buildDnsServer(
                 address = remoteDnsAddr,
                 tag = buildDynamicDnsServerTag(detourTag),
                 detour = detourTag,
                 domainStrategy = remoteStrategy,
                 domainResolver = remoteResolver
+            )
+        }
+
+        internal fun resolveActiveEchDnsServerForTest(activeTag: String, outbounds: List<Outbound>): String? {
+            return resolveActiveEchDnsServer(activeTag, outbounds)
+        }
+
+        private fun resolveActiveEchDnsServer(activeTag: String, outbounds: List<Outbound>): String? {
+            val activeOutbound = outbounds.firstOrNull { it.tag == activeTag }
+            val activeDnsServer = activeOutbound
+                ?.tls
+                ?.ech
+                ?.dnsServer
+                ?.trim()
+                ?.takeIf { it.isNotBlank() }
+            if (activeDnsServer != null) return activeDnsServer
+
+            if (activeOutbound?.tls?.ech?.enabled != true) return null
+
+            val candidates = outbounds
+                .mapNotNull { it.tls?.ech?.dnsServer?.trim()?.takeIf(String::isNotBlank) }
+                .distinct()
+            return candidates.singleOrNull()
+        }
+
+        internal fun needsLegacyEchDnsRepairForTest(config: SingBoxConfig): Boolean {
+            return needsLegacyEchDnsRepair(config)
+        }
+
+        private fun needsLegacyEchDnsRepair(config: SingBoxConfig): Boolean {
+            return config.outbounds.orEmpty().any { outbound ->
+                val ech = outbound.tls?.ech
+                val hasEch = ech?.enabled == true ||
+                    !ech?.queryServerName.isNullOrBlank() ||
+                    !ech?.config.isNullOrEmpty()
+                hasEch && ech?.dnsServer.isNullOrBlank() && ech?.config.isNullOrEmpty()
+            }
+        }
+
+        private fun buildEchBootstrapDnsServer(
+            tag: String,
+            address: String,
+            remoteStrategy: String?,
+            resolverTag: String = "dns-bootstrap"
+        ): DnsServer {
+            return buildDnsServer(
+                address = address,
+                tag = tag,
+                domainStrategy = remoteStrategy,
+                domainResolver = DomainResolveConfig(server = resolverTag)
             )
         }
 
@@ -1033,6 +1110,10 @@ class ConfigRepository(private val context: Context) {
             return buildTunFakeIpDnsRulesStatic(fakeDnsEnabled)
         }
 
+        internal fun buildEchDnsRulesForTest(outbounds: List<Outbound>, serverTag: String): List<DnsRule> {
+            return buildEchDnsRules(outbounds, serverTag)
+        }
+
         private fun buildTunFakeIpDnsRulesStatic(fakeDnsEnabled: Boolean): List<DnsRule> {
             if (!fakeDnsEnabled) return emptyList()
             return listOf(
@@ -1041,6 +1122,24 @@ class ConfigRepository(private val context: Context) {
                     inbound = listOf("tun-in"),
                     action = "route",
                     server = "fakeip-dns"
+                )
+            )
+        }
+
+        private fun buildEchDnsRules(outbounds: List<Outbound>, serverTag: String): List<DnsRule> {
+            val queryServerNames = outbounds
+                .mapNotNull { it.tls?.ech?.queryServerName?.trim() }
+                .filter { it.isNotBlank() }
+                .distinct()
+            if (queryServerNames.isEmpty()) {
+                return emptyList()
+            }
+            return listOf(
+                DnsRule(
+                    action = "route",
+                    domain = queryServerNames,
+                    queryType = listOf("HTTPS", "SVCB"),
+                    server = serverTag
                 )
             )
         }
@@ -1069,15 +1168,17 @@ class ConfigRepository(private val context: Context) {
             directServerTag: String = "local"
         ): String {
             return when (routingMode) {
-                RoutingMode.GLOBAL_PROXY -> stableRemoteServerTag
+                RoutingMode.GLOBAL_PROXY -> proxyServerTag
                 RoutingMode.GLOBAL_DIRECT -> directServerTag
                 RoutingMode.RULE -> when (defaultRule) {
-                    DefaultRule.PROXY -> stableRemoteServerTag
+                    DefaultRule.PROXY -> proxyServerTag
                     DefaultRule.DIRECT -> directServerTag
                     DefaultRule.BLOCK -> if (fakeDnsEnabled) stableRemoteServerTag else proxyServerTag
                 }
             }
         }
+
+        internal const val DEFAULT_ROUTE_DOMAIN_RESOLVER_TAG = "dns-bootstrap"
 
         internal fun normalizeLocalDns(value: String?): String {
             val trimmed = value?.trim().orEmpty()
@@ -3796,8 +3897,8 @@ class ConfigRepository(private val context: Context) {
             val activeId = _activeProfileId.value
                 ?: activeStateDao.getSync()?.activeProfileId
                 ?: return@withContext null
-            val config = loadConfig(activeId) ?: return@withContext null
             val activeProfile = _profiles.value.find { it.id == activeId }
+            val config = loadConfigWithLegacyEchRepair(activeProfile, activeId) ?: return@withContext null
             val activeNodeId = _activeNodeId.value
                 ?: activeStateDao.getSync()?.activeNodeId
 
@@ -3837,7 +3938,7 @@ class ConfigRepository(private val context: Context) {
                 outbounds = outboundsContext.outbounds
             )
 
-            val validation = singBoxCore.validateConfig(runConfig)
+            val validation = singBoxCore.validateConfig(stripInternalMetadata(runConfig))
             validation.exceptionOrNull()?.let { e ->
                 val msg = e.cause?.message ?: e.message ?: "unknown error"
                 Log.e(TAG, "Config pre-validation failed: $msg", e)
@@ -3859,7 +3960,7 @@ class ConfigRepository(private val context: Context) {
                 }
             }
             val configFile = File(context.filesDir, "running_config.json")
-            configFile.writeText(gson.toJson(runConfig))
+            configFile.writeText(gson.toJson(stripInternalMetadata(runConfig)))
 
             ConfigGenerationResult(configFile.absolutePath, resolvedTag, allTags)
         } catch (e: Exception) {
@@ -3869,6 +3970,44 @@ class ConfigRepository(private val context: Context) {
     }
     private fun buildOutboundForRuntime(outbound: Outbound): Outbound? =
         OutboundFixer.buildForRuntime(context, outbound)
+
+    private fun loadConfigWithLegacyEchRepair(profile: ProfileUi?, profileId: String): SingBoxConfig? {
+        val config = loadConfig(profileId) ?: return null
+        val subscriptionUrl = profile?.url?.takeIf { it.isNotBlank() } ?: return config
+        if (!needsLegacyEchDnsRepair(config)) return config
+
+        val repairedConfig = fetchAndParseSubscription(subscriptionUrl)?.config ?: return config
+        val deduplicatedConfig = deduplicateTags(repairedConfig)
+        if (needsLegacyEchDnsRepair(deduplicatedConfig)) return config
+
+        runCatching {
+            writeConfigFileOrThrow(profileId, deduplicatedConfig)
+            cacheConfig(profileId, deduplicatedConfig)
+            val repairedNodes = extractNodesFromConfigSync(deduplicatedConfig, profileId)
+            profileNodes[profileId] = repairedNodes
+            updateAllNodesAndGroups()
+            if (_activeProfileId.value == profileId) {
+                _nodes.value = repairedNodes
+            }
+            Log.i(TAG, "Repaired legacy ECH subscription config for profile: ${profile?.name ?: profileId}")
+        }.onFailure { e ->
+            Log.w(TAG, "Failed to persist repaired ECH subscription config for profile: $profileId", e)
+        }
+        return deduplicatedConfig
+    }
+
+    private fun stripInternalMetadata(config: SingBoxConfig): SingBoxConfig {
+        return config.copy(
+            outbounds = config.outbounds?.map { stripInternalMetadata(it) },
+            proxies = config.proxies?.map { stripInternalMetadata(it) }
+        )
+    }
+
+    private fun stripInternalMetadata(outbound: Outbound): Outbound {
+        val tls = outbound.tls ?: return outbound
+        val ech = tls.ech ?: return outbound
+        return outbound.copy(tls = tls.copy(ech = ech.copy(dnsServer = null)))
+    }
 
     private suspend fun preResolveDomainsForProfile(
         profileId: String,
@@ -4317,10 +4456,10 @@ class ConfigRepository(private val context: Context) {
         directServerTag: String = "local"
     ): String {
         return when (routingMode) {
-            RoutingMode.GLOBAL_PROXY -> stableRemoteServerTag
+            RoutingMode.GLOBAL_PROXY -> proxyServerTag
             RoutingMode.GLOBAL_DIRECT -> directServerTag
             RoutingMode.RULE -> when (defaultRule) {
-                DefaultRule.PROXY -> stableRemoteServerTag
+                DefaultRule.PROXY -> proxyServerTag
                 DefaultRule.DIRECT -> directServerTag
                 DefaultRule.BLOCK -> if (fakeDnsEnabled) stableRemoteServerTag else proxyServerTag
             }
@@ -4345,6 +4484,7 @@ class ConfigRepository(private val context: Context) {
         val proxyServerTag = buildDynamicDnsServerTag(proxyDetourTag)
         val proxyFinalServerTag = proxyServerTag
         val directServerTag = "local"
+        val activeEchDnsAddr = resolveActiveEchDnsServer(proxyDetourTag, outboundsContext.outbounds)
 
         fun dnsRouteTo(server: String, rule: DnsRule): DnsRule =
             rule.copy(action = "route", server = server)
@@ -4392,9 +4532,12 @@ class ConfigRepository(private val context: Context) {
                     null -> RuleSetOutboundMode.PROXY
                 }
         }
-        if (settings.blockQuic) {
+        val hasEchOutbound = outboundsContext.outbounds.any { it.tls?.ech?.enabled == true }
+        if (settings.blockQuic && !hasEchOutbound) {
             dnsRules.add(dnsReject(DnsRule(queryType = listOf("HTTPS", "SVCB"))))
         }
+        val echQueryServerTag = if (activeEchDnsAddr != null) proxyServerTag else directServerTag
+        dnsRules.addAll(buildEchDnsRules(outboundsContext.outbounds, echQueryServerTag))
         val bootstrapStrategy = resolveDnsStrategy(settings.serverAddressStrategy, settings.ipVersionMode)
         val bootstrapV4Tag = "dns-bootstrap-v4"
         val bootstrapV6Tag = "dns-bootstrap-v6"
@@ -4435,8 +4578,14 @@ class ConfigRepository(private val context: Context) {
             domainResolver = localResolver
         )
         dnsServers.add(localServer)
-        val remoteDnsAddr = settings.remoteDns.takeIf { it.isNotBlank() } ?: "https://dns.google/dns-query"
-        val remoteResolver = buildDnsResolverForAddress(remoteDnsAddr)
+        val remoteDnsAddr = activeEchDnsAddr
+            ?: settings.remoteDns.takeIf { it.isNotBlank() }
+            ?: "https://dns.google/dns-query"
+        val remoteResolver = if (activeEchDnsAddr != null) {
+            DomainResolveConfig(server = "dns-bootstrap")
+        } else {
+            buildDnsResolverForAddress(remoteDnsAddr)
+        }
         val remoteServer = buildDnsServer(
             address = remoteDnsAddr,
             tag = "remote",
@@ -4444,20 +4593,29 @@ class ConfigRepository(private val context: Context) {
             domainResolver = remoteResolver
         )
         dnsServers.add(remoteServer)
-        ensureDynamicRemoteDnsServers(
-            dnsServers = dnsServers,
-            semantics = listOf(OutboundSemantic.RouteTag(proxyDetourTag)),
-            remoteDnsAddr = remoteDnsAddr,
-            remoteStrategy = resolveDnsStrategy(settings.remoteDnsStrategy, settings.ipVersionMode),
-            remoteResolver = remoteResolver
-        )
+        val remoteStrategy = resolveDnsStrategy(settings.remoteDnsStrategy, settings.ipVersionMode)
+        if (activeEchDnsAddr != null) {
+            dnsServers.add(
+                buildEchBootstrapDnsServer(
+                    tag = proxyServerTag,
+                    address = activeEchDnsAddr,
+                    remoteStrategy = remoteStrategy
+                )
+            )
+        } else {
+            ensureDynamicRemoteDnsServers(
+                dnsServers = dnsServers,
+                semantics = listOf(OutboundSemantic.RouteTag(proxyDetourTag)),
+                remoteDnsAddr = remoteDnsAddr,
+                remoteStrategy = remoteStrategy,
+                remoteResolver = remoteResolver
+            )
+        }
+        val bootstrapDnsAddresses = listOfNotNull(localDnsAddr, remoteDnsAddr, activeEchDnsAddr)
 
         dnsRules.addAll(
             buildBootstrapDnsRules(
-                serverAddresses = listOfNotNull(
-                    localDnsAddr.takeIf { localResolver != null },
-                    remoteDnsAddr.takeIf { remoteResolver != null }
-                ),
+                serverAddresses = bootstrapDnsAddresses,
                 bootstrapV4Tag = bootstrapV4Tag,
                 bootstrapV6Tag = bootstrapV6Tag,
                 bootstrapTag = "dns-bootstrap"
@@ -4705,8 +4863,9 @@ class ConfigRepository(private val context: Context) {
             dnsServers = dnsServers,
             semantics = domainSemantics + ruleSetSemantics + packageSemantics,
             remoteDnsAddr = remoteDnsAddr,
-            remoteStrategy = resolveDnsStrategy(settings.remoteDnsStrategy, settings.ipVersionMode),
-            remoteResolver = remoteResolver
+            remoteStrategy = remoteStrategy,
+            remoteResolver = remoteResolver,
+            outbounds = outboundsContext.outbounds
         )
 
         if (settings.fakeDnsEnabled) {
@@ -4794,7 +4953,7 @@ class ConfigRepository(private val context: Context) {
             if (dnsPreResolve && profileId != null) {
                 processed = applyDnsResolveToOutbound(profileId, processed)
             }
-            if (singBoxCore.validateOutbound(processed)) {
+            if (singBoxCore.validateOutbound(stripInternalMetadata(processed))) {
                 processed
             } else {
                 Log.w(TAG, "Skipping invalid outbound: ${outbound.tag} (type=${outbound.type})")
@@ -4929,7 +5088,7 @@ class ConfigRepository(private val context: Context) {
                 }
                 fixedSourceOutbound = fixedSourceOutbound.copy(tag = finalTag)
             }
-            if (!singBoxCore.validateOutbound(fixedSourceOutbound)) {
+            if (!singBoxCore.validateOutbound(stripInternalMetadata(fixedSourceOutbound))) {
                 Log.w(TAG, "Skipping invalid cross-profile outbound: ${node.name} (type=${sourceOutbound.type})")
                 return@forEach
             }
@@ -5139,6 +5298,8 @@ class ConfigRepository(private val context: Context) {
         }
 
         val bootstrapStrategy = resolveDnsStrategy(settings.serverAddressStrategy, settings.ipVersionMode)
+        val proxyDetourTag = resolveCurrentProxyDnsDetourTag(selectorTag, outbounds)
+        val defaultResolverTag = "dns-bootstrap"
 
         val normalizedRules = allRules.map { rule ->
             if (rule.outbound == "block") {
@@ -5158,7 +5319,7 @@ class ConfigRepository(private val context: Context) {
             findProcess = hasAppRouting,
             autoDetectInterface = true,
             defaultDomainResolver = DomainResolveConfig(
-                server = "dns-bootstrap",
+                server = defaultResolverTag,
                 strategy = bootstrapStrategy
             )
         )

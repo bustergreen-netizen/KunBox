@@ -1,5 +1,6 @@
 ﻿package com.kunk.singbox.utils.parser
 
+import com.kunk.singbox.model.EchConfig
 import com.kunk.singbox.model.Outbound
 import com.kunk.singbox.model.TlsConfig
 import com.kunk.singbox.model.TransportConfig
@@ -33,6 +34,30 @@ class NodeLinkParser(private val gson: Gson) {
         if (value.isNullOrBlank()) return null
         val hosts = value.split(',').map { it.trim() }.filter { it.isNotBlank() }
         return hosts.takeIf { it.isNotEmpty() }
+    }
+
+    private fun parseEchConfig(params: Map<String, String>): EchConfig? {
+        val echParam = firstParam(params, "ech") ?: return null
+        val disabled = echParam.isBlank() ||
+            echParam.equals("0", ignoreCase = true) ||
+            echParam.equals("false", ignoreCase = true)
+        val queryServerName = echParam
+            .substringBefore('+')
+            .substringBefore(' ')
+            .takeIf { it.contains(".") }
+        val dnsServerSource = if (echParam.contains("+")) {
+            echParam.substringAfter('+')
+        } else {
+            echParam.substringAfter(' ', missingDelimiterValue = "")
+        }
+        val dnsServer = dnsServerSource
+            .substringBefore(' ')
+            .takeIf { it.isNotBlank() && it.contains(".") }
+        return if (disabled) {
+            null
+        } else {
+            EchConfig(enabled = true, queryServerName = queryServerName, dnsServer = dnsServer)
+        }
     }
 
     private data class WebSocketPathConfig(
@@ -562,14 +587,24 @@ class NodeLinkParser(private val gson: Gson) {
                 }
             }
 
-            val security = firstParam(params, "security") ?: "none"
             val hostParam = firstParam(params, "host")
+            val explicitSni = firstParam(params, "sni")?.takeIf { it.isNotBlank() }
+            val transportType = firstParam(params, "type") ?: "tcp"
+            val securityRaw = (firstParam(params, "security") ?: "none").lowercase()
+            val tlsLikeTransport = transportType in setOf("ws", "grpc", "xhttp", "splithttp")
+            val shouldInferTls = explicitSni != null || (port == 443 && hostParam != null && tlsLikeTransport)
+            // 很多机场生成的 VLESS 分享链接会省略 security=tls。
+            // 出现 sni，或 443 端口上的常见 HTTP 类传输带 Host 时，按 TLS 处理。
+            val security = if (securityRaw == "none" && shouldInferTls) {
+                "tls"
+            } else {
+                securityRaw
+            }
             val sni = defaultTlsServerName(
-                explicitServerName = firstParam(params, "sni"),
+                explicitServerName = explicitSni,
                 primaryFallback = hostParam,
                 server = server
             )
-            val transportType = firstParam(params, "type") ?: "tcp"
             val insecure = parseBooleanFlag(firstParam(params, "allowInsecure", "insecure")) == true
             val fingerprint = firstParam(params, "fp")?.takeIf { it.isNotBlank() }
             val alpnList = firstParam(params, "alpn")?.split(",")?.filter { it.isNotBlank() }
@@ -579,13 +614,16 @@ class NodeLinkParser(private val gson: Gson) {
             val encryption = firstParam(params, "encryption")
                 ?.takeIf { it.isNotBlank() && !it.equals("none", ignoreCase = true) }
 
+            val echConfig = parseEchConfig(params)
+
             val tlsConfig = when (security) {
                 "tls" -> TlsConfig(
                     enabled = true,
                     serverName = sni,
                     insecure = insecure,
                     alpn = alpnList,
-                    utls = (fingerprint ?: "chrome").let { UtlsConfig(enabled = true, fingerprint = it) }
+                    utls = (fingerprint ?: "chrome").let { UtlsConfig(enabled = true, fingerprint = it) },
+                    ech = echConfig
                 )
                 "reality" -> TlsConfig(
                     enabled = true,
@@ -596,9 +634,9 @@ class NodeLinkParser(private val gson: Gson) {
                         enabled = true,
                         publicKey = firstParam(params, "pbk"),
                         shortId = firstParam(params, "sid")
-                        // Note: spiderX (spx) is Xray-core specific, not supported by sing-box
                     ),
-                    utls = (fingerprint ?: "chrome").let { UtlsConfig(enabled = true, fingerprint = it) }
+                    utls = (fingerprint ?: "chrome").let { UtlsConfig(enabled = true, fingerprint = it) },
+                    ech = echConfig
                 )
                 else -> null
             }
@@ -671,12 +709,15 @@ class NodeLinkParser(private val gson: Gson) {
             val fingerprint = firstParam(params, "fp")?.takeIf { it.isNotBlank() }
             val alpnList = firstParam(params, "alpn")?.split(",")?.map { it.trim() }?.filter { it.isNotBlank() }
 
+            val echConfig = parseEchConfig(params)
+
             val tlsConfig = TlsConfig(
                 enabled = true,
                 serverName = sni,
                 insecure = insecure,
                 alpn = alpnList,
-                utls = fingerprint?.let { UtlsConfig(enabled = true, fingerprint = it) }
+                utls = fingerprint?.let { UtlsConfig(enabled = true, fingerprint = it) },
+                ech = echConfig
             )
             val transport = buildTrojanTransport(params, hostParam)
 

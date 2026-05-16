@@ -301,6 +301,57 @@ class NodeLinkParserTest {
     }
 
     @Test
+    fun testParseVLessInfersTlsWhenSniPresentButSecurityMissing() {
+        // 很多机场生成的链接省略 security=tls，但有 sni 参数，应推断为 TLS
+        val link = "vless://68d55b3f-c4f1-481a-8bfb-e483004f2c15@198.41.223.11:443" +
+            "?flow=&type=ws&path=%2F&host=cm.kuz7.com&sni=cm.kuz7.com#TestNode"
+        val outbound = parser.parse(link)
+
+        assertNotNull(outbound)
+        assertEquals("vless", outbound?.type)
+        assertEquals("198.41.223.11", outbound?.server)
+        assertEquals(443, outbound?.serverPort)
+        // 核心断言：必须有 TLS
+        assertNotNull("TLS should be inferred when sni is present", outbound?.tls)
+        assertEquals(true, outbound?.tls?.enabled)
+        assertEquals("cm.kuz7.com", outbound?.tls?.serverName)
+        // WebSocket transport
+        assertNotNull(outbound?.transport)
+        assertEquals("ws", outbound?.transport?.type)
+    }
+
+    @Test
+    fun testParseVLessInfersTlsWhenHostPresentOnPort443ButSecurityMissing() {
+        // 443 端口上的 WebSocket 且带 Host，通常是 WSS，应推断为 TLS
+        val link = "vless://uuid@example.com:443?type=ws&path=%2F&host=example.com#Node443"
+        val outbound = parser.parse(link)
+
+        assertNotNull(outbound)
+        assertNotNull("TLS should be inferred for WSS-like port 443 link", outbound?.tls)
+        assertEquals(true, outbound?.tls?.enabled)
+    }
+
+    @Test
+    fun testParseVLessNoTlsWhenPort443WithoutHostOrSni() {
+        // 只有 443 端口不足以推断 TLS，避免误伤明文自定义端口场景
+        val link = "vless://uuid@example.com:443?type=ws&path=%2F#Node443Plain"
+        val outbound = parser.parse(link)
+
+        assertNotNull(outbound)
+        assertNull("TLS should NOT be inferred for port 443 without host or sni", outbound?.tls)
+    }
+
+    @Test
+    fun testParseVLessNoTlsWhenPort80AndNoSni() {
+        // 端口 80 且无 sni，不应启用 TLS
+        val link = "vless://uuid@example.com:80?type=ws&path=%2F&host=example.com#Node80"
+        val outbound = parser.parse(link)
+
+        assertNotNull(outbound)
+        assertNull("TLS should NOT be inferred for port 80 without sni", outbound?.tls)
+    }
+
+    @Test
     fun testParseRealVLessWebSocketPqcNodeNormalizesPathAndPreservesEncryption() {
         val link = "vless://b6fd6867-c239-4d95-8a98-cb036d34fc21@34.150.59.170:39797" +
             "?encryption=mlkem768x25519plus.native.0rtt.sample&flow=xtls-rprx-vision" +
@@ -411,6 +462,35 @@ class NodeLinkParserTest {
         assertEquals("xhttp", runtime?.transport?.type)
         assertEquals("/2edd765b-a895-46ab-a01c-c4719947546b-xh", runtime?.transport?.path)
         assertEquals("apple.com", runtime?.tls?.serverName)
+    }
+
+    @Test
+    fun testParseVLessWithEch() {
+        val link = "vless://68d55b3f-c4f1-481a-8bfb-e483004f2c15@198.41.223.11:443" +
+            "?security=tls&type=ws&ech=cloudflare-ech.com%2Bhttps%3A%2F%2Fdns.alidns.com%2Fdns-query" +
+            "&host=cm.kuz7.com&fp=chrome&sni=cm.kuz7.com&path=%2F&encryption=none" +
+            "#SG%7C%E5%AE%98%E6%96%B9%E4%BC%98%E9%80%89%7C90ms"
+        val outbound = parser.parse(link)
+
+        assertNotNull(outbound)
+        assertEquals("vless", outbound?.type)
+        assertEquals("198.41.223.11", outbound?.server)
+        assertNotNull(outbound?.tls)
+        assertEquals(true, outbound?.tls?.enabled)
+        assertEquals("cm.kuz7.com", outbound?.tls?.serverName)
+        assertNotNull("ECH should be enabled when ech param is present", outbound?.tls?.ech)
+        assertEquals(true, outbound?.tls?.ech?.enabled)
+        assertEquals("cloudflare-ech.com", outbound?.tls?.ech?.queryServerName)
+        assertEquals("https://dns.alidns.com/dns-query", outbound?.tls?.ech?.dnsServer)
+    }
+
+    @Test
+    fun testParseVLessWithoutEch() {
+        val link = "vless://uuid@example.com:443?security=tls&sni=example.com&type=ws&path=%2F#NoECH"
+        val outbound = parser.parse(link)
+
+        assertNotNull(outbound)
+        assertNull("ECH should be null when ech param is absent", outbound?.tls?.ech)
     }
 
     // ==================== Trojan ====================
@@ -844,5 +924,27 @@ class NodeLinkParserTest {
 
         assertNotNull(outbound)
         assertEquals("vless", outbound?.type)
+    }
+
+    @Test
+    fun testRealSubscriptionNodeWithoutExplicitSecurity() {
+        val link = "vless://68d55b3f-c4f1-481a-8bfb-e483004f2c15@198.41.223.11:443" +
+            "?flow=&type=ws&path=%2F&host=cm.kuz7.com&sni=cm.kuz7.com" +
+            "#SG%7C%E5%AE%98%E6%96%B9%E4%BC%98%E9%80%89%7C90ms"
+        val outbound = parser.parse(link)
+
+        assertNotNull(outbound)
+        assertEquals("vless", outbound?.type)
+        assertEquals("198.41.223.11", outbound?.server)
+        assertEquals(443, outbound?.serverPort)
+        assertEquals("SG|官方优选|90ms", outbound?.tag)
+        assertNotNull(outbound?.tls)
+        assertEquals(true, outbound?.tls?.enabled)
+        assertEquals("cm.kuz7.com", outbound?.tls?.serverName)
+        assertNull(outbound?.tls?.ech)
+        assertNull(outbound?.flow)
+        assertEquals("ws", outbound?.transport?.type)
+        assertEquals("/", outbound?.transport?.path)
+        assertEquals(mapOf("Host" to "cm.kuz7.com"), outbound?.transport?.headers)
     }
 }

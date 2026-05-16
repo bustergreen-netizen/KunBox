@@ -296,6 +296,8 @@ data class TlsConfig(
 @Keep
 data class EchConfig(
     @SerializedName("enabled") val enabled: Boolean? = null,
+    @SerializedName("query_server_name") val queryServerName: String? = null,
+    @SerializedName("x_kunbox_ech_dns_server") val dnsServer: String? = null,
     @SerializedName("pq_signature_schemes_enabled") val pqSignatureSchemesEnabled: Boolean? = null,
     @SerializedName("dynamic_record_sizing_disabled") val dynamicRecordSizingDisabled: Boolean? = null,
     @SerializedName("config") val config: List<String>? = null,
