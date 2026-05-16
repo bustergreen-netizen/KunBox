@@ -5310,14 +5310,47 @@ class ConfigRepository(private val context: Context) {
         }
     }
 
+    private fun removeOutboundFromConfig(config: SingBoxConfig, removedTag: String): SingBoxConfig {
+        val outbounds = config.outbounds ?: return config
+        val filteredOutbounds = outbounds
+            .filter { it.tag != removedTag }
+            .map { outbound ->
+                when {
+                    outbound.outbounds?.contains(removedTag) == true -> {
+                        val filteredRefs = outbound.outbounds.filter { it != removedTag }
+                        outbound.copy(
+                            outbounds = if (filteredRefs.isEmpty()) listOf("direct") else filteredRefs,
+                            default = outbound.default?.takeIf { it != removedTag }
+                        )
+                    }
+                    outbound.detour == removedTag -> {
+                        outbound.copy(detour = null)
+                    }
+                    else -> outbound
+                }
+            }
+        return config.copy(outbounds = filteredOutbounds)
+    }
+
     fun deleteNode(nodeId: String) {
-        val node = _nodes.value.find { it.id == nodeId } ?: return
+        val node = getNodeById(nodeId) ?: return
         val profileId = node.sourceProfileId
         val config = loadConfig(profileId) ?: return
-        val newOutbounds = config.outbounds?.filter { it.tag != node.name }
-        val newConfig = config.copy(outbounds = newOutbounds)
+        val newConfig = removeOutboundFromConfig(config, node.name)
         cacheConfig(profileId, newConfig)
         writeConfigFileOrThrow(profileId, newConfig)
+
+        val immediateNodes = (profileNodes[profileId] ?: _nodes.value)
+            .filter { it.id != nodeId && it.name != node.name }
+        profileNodes[profileId] = immediateNodes
+        updateAllNodesAndGroups()
+        if (_activeProfileId.value == profileId) {
+            _nodes.value = immediateNodes
+            if (_activeNodeId.value == nodeId) {
+                _activeNodeId.value = immediateNodes.firstOrNull()?.id
+            }
+        }
+
         scope.launch {
             val newNodes = extractNodesFromConfig(newConfig, profileId)
             profileNodes[profileId] = newNodes

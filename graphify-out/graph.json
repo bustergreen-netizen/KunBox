@@ -6828,10 +6828,18 @@
       "community": 0
     },
     {
-      "label": ".deleteNode()",
+      "label": ".removeOutboundFromConfig()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
       "source_location": "L5313",
+      "id": "configrepository_configrepository_removeoutboundfromconfig",
+      "community": 0
+    },
+    {
+      "label": ".deleteNode()",
+      "file_type": "code",
+      "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
+      "source_location": "L5331",
       "id": "configrepository_configrepository_deletenode",
       "community": 0
     },
@@ -6839,7 +6847,7 @@
       "label": ".addSingleNode()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5336",
+      "source_location": "L5365",
       "id": "configrepository_configrepository_addsinglenode",
       "community": 0
     },
@@ -6847,7 +6855,7 @@
       "label": ".renameNode()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5443",
+      "source_location": "L5472",
       "id": "configrepository_configrepository_renamenode",
       "community": 0
     },
@@ -6855,7 +6863,7 @@
       "label": ".updateNode()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5482",
+      "source_location": "L5511",
       "id": "configrepository_configrepository_updatenode",
       "community": 0
     },
@@ -6863,7 +6871,7 @@
       "label": ".exportNode()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5523",
+      "source_location": "L5552",
       "id": "configrepository_configrepository_exportnode",
       "community": 0
     },
@@ -6871,7 +6879,7 @@
       "label": ".deduplicateTags()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5542",
+      "source_location": "L5571",
       "id": "configrepository_configrepository_deduplicatetags",
       "community": 0
     },
@@ -6879,7 +6887,7 @@
       "label": ".findAvailablePort()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5571",
+      "source_location": "L5600",
       "id": "configrepository_configrepository_findavailableport",
       "community": 0
     },
@@ -6887,7 +6895,7 @@
       "label": ".cleanup()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5583",
+      "source_location": "L5612",
       "id": "configrepository_configrepository_cleanup",
       "community": 0
     },
@@ -6895,7 +6903,7 @@
       "label": ".isIpAddress()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5595",
+      "source_location": "L5624",
       "id": "configrepository_configrepository_isipaddress",
       "community": 0
     },
@@ -7385,7 +7393,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L1",
       "id": "logrepository",
-      "community": 42
+      "community": 43
     },
     {
       "label": "LogRepository",
@@ -7393,7 +7401,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L23",
       "id": "logrepository_logrepository",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".setLogUiActive()",
@@ -7401,7 +7409,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L46",
       "id": "logrepository_logrepository_setloguiactive",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".addLog()",
@@ -7409,7 +7417,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L68",
       "id": "logrepository_logrepository_addlog",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".requestFlush()",
@@ -7417,7 +7425,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L126",
       "id": "logrepository_logrepository_requestflush",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".clearLogs()",
@@ -7425,7 +7433,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L159",
       "id": "logrepository_logrepository_clearlogs",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".setFilter()",
@@ -7433,7 +7441,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L170",
       "id": "logrepository_logrepository_setfilter",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".getFilteredLogs()",
@@ -7441,7 +7449,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L177",
       "id": "logrepository_logrepository_getfilteredlogs",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".searchLogs()",
@@ -7449,7 +7457,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L193",
       "id": "logrepository_logrepository_searchlogs",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".getErrorSummary()",
@@ -7457,7 +7465,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L204",
       "id": "logrepository_logrepository_geterrorsummary",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".getLogsAsText()",
@@ -7465,7 +7473,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L212",
       "id": "logrepository_logrepository_getlogsastext",
-      "community": 42
+      "community": 43
     },
     {
       "label": "init()",
@@ -7473,7 +7481,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L237",
       "id": "logrepository_init",
-      "community": 42
+      "community": 43
     },
     {
       "label": "getInstance()",
@@ -7481,7 +7489,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L241",
       "id": "logrepository_getinstance",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".getLogFile()",
@@ -7489,7 +7497,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L248",
       "id": "logrepository_logrepository_getlogfile",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".writeToFileBestEffort()",
@@ -7497,7 +7505,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L253",
       "id": "logrepository_logrepository_writetofilebesteffort",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".clearFileBestEffort()",
@@ -7505,7 +7513,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L266",
       "id": "logrepository_logrepository_clearfilebesteffort",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".reloadFromFileBestEffort()",
@@ -7513,7 +7521,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L275",
       "id": "logrepository_logrepository_reloadfromfilebesteffort",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".startFileSyncLoopIfNeeded()",
@@ -7521,7 +7529,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L290",
       "id": "logrepository_logrepository_startfilesyncloopifneeded",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".stopFileSyncLoop()",
@@ -7529,7 +7537,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L300",
       "id": "logrepository_logrepository_stopfilesyncloop",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".syncFromFileOnceBestEffort()",
@@ -7537,7 +7545,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L305",
       "id": "logrepository_logrepository_syncfromfileoncebesteffort",
-      "community": 42
+      "community": 43
     },
     {
       "label": ".readLastLines()",
@@ -7545,7 +7553,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\LogRepository.kt",
       "source_location": "L333",
       "id": "logrepository_logrepository_readlastlines",
-      "community": 42
+      "community": 43
     },
     {
       "label": "NodeExtractor.kt",
@@ -8977,7 +8985,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
       "source_location": "L1",
       "id": "outboundfixer",
-      "community": 43
+      "community": 44
     },
     {
       "label": "OutboundFixer",
@@ -8985,7 +8993,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
       "source_location": "L13",
       "id": "outboundfixer_outboundfixer",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".getTcpKeepAliveConfig()",
@@ -8993,7 +9001,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
       "source_location": "L23",
       "id": "outboundfixer_outboundfixer_gettcpkeepaliveconfig",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".clearTcpKeepAliveCache()",
@@ -9001,7 +9009,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
       "source_location": "L46",
       "id": "outboundfixer_outboundfixer_cleartcpkeepalivecache",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".shouldKeepUrlTestForRuntime()",
@@ -9009,7 +9017,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
       "source_location": "L62",
       "id": "outboundfixer_outboundfixer_shouldkeepurltestforruntime",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".fix()",
@@ -9017,127 +9025,127 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
       "source_location": "L69",
       "id": "outboundfixer_outboundfixer_fix",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".normalizeLegacyTransport()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L306",
+      "source_location": "L302",
       "id": "outboundfixer_outboundfixer_normalizelegacytransport",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".applyCommonDialFields()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L339",
+      "source_location": "L335",
       "id": "outboundfixer_outboundfixer_applycommondialfields",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".buildForRuntime()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L349",
+      "source_location": "L345",
       "id": "outboundfixer_outboundfixer_buildforruntime",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".buildForRuntimeWithDialConfigForTest()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L363",
+      "source_location": "L359",
       "id": "outboundfixer_outboundfixer_buildforruntimewithdialconfigfortest",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".buildForRuntimeWithDialConfig()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L378",
+      "source_location": "L374",
       "id": "outboundfixer_outboundfixer_buildforruntimewithdialconfig",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".buildRuntimeHysteriaOutbound()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L613",
+      "source_location": "L609",
       "id": "outboundfixer_outboundfixer_buildruntimehysteriaoutbound",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".buildRuntimeNaiveOutbound()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L640",
+      "source_location": "L636",
       "id": "outboundfixer_outboundfixer_buildruntimenaiveoutbound",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".fixNaive()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L667",
+      "source_location": "L663",
       "id": "outboundfixer_outboundfixer_fixnaive",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".resolveDomainResolver()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L709",
+      "source_location": "L705",
       "id": "outboundfixer_outboundfixer_resolvedomainresolver",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".resolveNaiveDomainResolver()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L722",
+      "source_location": "L718",
       "id": "outboundfixer_outboundfixer_resolvenaivedomainresolver",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".applyNaiveRuntimeCompatibility()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L724",
+      "source_location": "L720",
       "id": "outboundfixer_outboundfixer_applynaiveruntimecompatibility",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".tuneMuxForVisionReality()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L735",
+      "source_location": "L731",
       "id": "outboundfixer_outboundfixer_tunemuxforvisionreality",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".isIpLiteral()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L766",
+      "source_location": "L762",
       "id": "outboundfixer_outboundfixer_isipliteral",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".normalizeXhttpPath()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L775",
+      "source_location": "L771",
       "id": "outboundfixer_outboundfixer_normalizexhttppath",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".convertPortRangeFormat()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L796",
+      "source_location": "L792",
       "id": "outboundfixer_outboundfixer_convertportrangeformat",
-      "community": 43
+      "community": 44
     },
     {
       "label": "SettingsStore.kt",
@@ -11287,7 +11295,7 @@
       "label": ".loadActiveAutoFailoverQuarantine()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1473",
+      "source_location": "L1472",
       "id": "singboxservice_singboxservice_loadactiveautofailoverquarantine",
       "community": 5
     },
@@ -11295,7 +11303,7 @@
       "label": ".resolveCurrentProxyOutboundTag()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1482",
+      "source_location": "L1481",
       "id": "singboxservice_singboxservice_resolvecurrentproxyoutboundtag",
       "community": 5
     },
@@ -11303,7 +11311,7 @@
       "label": ".submitRecoveryRequest()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1489",
+      "source_location": "L1488",
       "id": "singboxservice_singboxservice_submitrecoveryrequest",
       "community": 5
     },
@@ -11311,7 +11319,7 @@
       "label": ".mergeRecoveryRequests()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1582",
+      "source_location": "L1581",
       "id": "singboxservice_singboxservice_mergerecoveryrequests",
       "community": 5
     },
@@ -11319,7 +11327,7 @@
       "label": ".cancelPendingRecoveryWork()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1590",
+      "source_location": "L1589",
       "id": "singboxservice_singboxservice_cancelpendingrecoverywork",
       "community": 5
     },
@@ -11327,7 +11335,7 @@
       "label": ".recoveryInvalidStateSummary()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1603",
+      "source_location": "L1602",
       "id": "singboxservice_singboxservice_recoveryinvalidstatesummary",
       "community": 5
     },
@@ -11335,7 +11343,7 @@
       "label": "RecoveryDebounceContext",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1612",
+      "source_location": "L1611",
       "id": "singboxservice_recoverydebouncecontext",
       "community": 2
     },
@@ -11343,7 +11351,7 @@
       "label": ".buildRecoveryDebounceContext()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1620",
+      "source_location": "L1619",
       "id": "singboxservice_singboxservice_buildrecoverydebouncecontext",
       "community": 5
     },
@@ -11351,7 +11359,7 @@
       "label": ".shouldSkipByGlobalDebounce()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1641",
+      "source_location": "L1640",
       "id": "singboxservice_singboxservice_shouldskipbyglobaldebounce",
       "community": 5
     },
@@ -11359,7 +11367,7 @@
       "label": ".shouldSkipBySourceDebounce()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1661",
+      "source_location": "L1660",
       "id": "singboxservice_singboxservice_shouldskipbysourcedebounce",
       "community": 5
     },
@@ -11367,7 +11375,7 @@
       "label": ".requestImmediateRouteGroupReselectIfNeeded()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1681",
+      "source_location": "L1680",
       "id": "singboxservice_singboxservice_requestimmediateroutegroupreselectifneeded",
       "community": 5
     },
@@ -11375,7 +11383,7 @@
       "label": ".convergeConnectionsAfterImmediateRouteGroupSwitch()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1688",
+      "source_location": "L1687",
       "id": "singboxservice_singboxservice_convergeconnectionsafterimmediateroutegroupswitch",
       "community": 5
     },
@@ -11383,7 +11391,7 @@
       "label": ".executeRecoveryRequest()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1725",
+      "source_location": "L1724",
       "id": "singboxservice_singboxservice_executerecoveryrequest",
       "community": 5
     },
@@ -11391,7 +11399,7 @@
       "label": ".calculateRecoverySuccessRate()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1828",
+      "source_location": "L1827",
       "id": "singboxservice_singboxservice_calculaterecoverysuccessrate",
       "community": 5
     },
@@ -11399,7 +11407,7 @@
       "label": ".isSelectedHysteria2Outbound()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1842",
+      "source_location": "L1841",
       "id": "singboxservice_singboxservice_isselectedhysteria2outbound",
       "community": 5
     },
@@ -11407,7 +11415,7 @@
       "label": ".getRecoveryProfile()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1861",
+      "source_location": "L1860",
       "id": "singboxservice_singboxservice_getrecoveryprofile",
       "community": 5
     },
@@ -11415,7 +11423,7 @@
       "label": ".executeForegroundFastRecovery()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1865",
+      "source_location": "L1864",
       "id": "singboxservice_singboxservice_executeforegroundfastrecovery",
       "community": 5
     },
@@ -11423,7 +11431,7 @@
       "label": ".shouldScheduleForegroundHardFallback()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1913",
+      "source_location": "L1912",
       "id": "singboxservice_singboxservice_shouldscheduleforegroundhardfallback",
       "community": 5
     },
@@ -11431,7 +11439,7 @@
       "label": ".evaluateForegroundFallbackState()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1923",
+      "source_location": "L1922",
       "id": "singboxservice_singboxservice_evaluateforegroundfallbackstate",
       "community": 5
     },
@@ -11439,7 +11447,7 @@
       "label": ".scheduleForegroundHardFallbackIfNeeded()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1967",
+      "source_location": "L1966",
       "id": "singboxservice_singboxservice_scheduleforegroundhardfallbackifneeded",
       "community": 5
     },
@@ -11447,7 +11455,7 @@
       "label": ".collectNetworkTypeChangedRecoverySignal()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2025",
+      "source_location": "L2024",
       "id": "singboxservice_singboxservice_collectnetworktypechangedrecoverysignal",
       "community": 5
     },
@@ -11455,7 +11463,7 @@
       "label": ".evaluateNetworkTypeChangedFallbackState()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2047",
+      "source_location": "L2046",
       "id": "singboxservice_singboxservice_evaluatenetworktypechangedfallbackstate",
       "community": 5
     },
@@ -11463,7 +11471,7 @@
       "label": ".buildTriggeredNetworkTypeChangedFallbackState()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2065",
+      "source_location": "L2064",
       "id": "singboxservice_singboxservice_buildtriggerednetworktypechangedfallbackstate",
       "community": 5
     },
@@ -11471,7 +11479,7 @@
       "label": ".buildNetworkTypeChangedStateSkip()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2090",
+      "source_location": "L2089",
       "id": "singboxservice_singboxservice_buildnetworktypechangedstateskip",
       "community": 5
     },
@@ -11479,7 +11487,7 @@
       "label": ".resolveLastNetworkTypeChangedFallbackAtMs()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2109",
+      "source_location": "L2108",
       "id": "singboxservice_singboxservice_resolvelastnetworktypechangedfallbackatms",
       "community": 5
     },
@@ -11487,7 +11495,7 @@
       "label": ".resolveNetworkTypeChangedFallbackDebounceMs()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2119",
+      "source_location": "L2118",
       "id": "singboxservice_singboxservice_resolvenetworktypechangedfallbackdebouncems",
       "community": 5
     },
@@ -11495,7 +11503,7 @@
       "label": ".recordNetworkTypeChangedFallbackAt()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2129",
+      "source_location": "L2128",
       "id": "singboxservice_singboxservice_recordnetworktypechangedfallbackat",
       "community": 5
     },
@@ -11503,7 +11511,7 @@
       "label": ".scheduleNetworkTypeChangedFallbackIfNeeded()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2140",
+      "source_location": "L2139",
       "id": "singboxservice_singboxservice_schedulenetworktypechangedfallbackifneeded",
       "community": 5
     },
@@ -11511,7 +11519,7 @@
       "label": ".logRecoveryEvent()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2188",
+      "source_location": "L2187",
       "id": "singboxservice_singboxservice_logrecoveryevent",
       "community": 5
     },
@@ -11519,7 +11527,7 @@
       "label": ".restartVpnService()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2243",
+      "source_location": "L2242",
       "id": "singboxservice_singboxservice_restartvpnservice",
       "community": 5
     },
@@ -11527,7 +11535,7 @@
       "label": "RecoveryReason",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2311",
+      "source_location": "L2310",
       "id": "singboxservice_recoveryreason",
       "community": 2
     },
@@ -11535,7 +11543,7 @@
       "label": "RecoveryProfile",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2342",
+      "source_location": "L2341",
       "id": "singboxservice_recoveryprofile",
       "community": 2
     },
@@ -11543,7 +11551,7 @@
       "label": "ForegroundFallbackState",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2381",
+      "source_location": "L2380",
       "id": "singboxservice_foregroundfallbackstate",
       "community": 2
     },
@@ -11551,7 +11559,7 @@
       "label": "NetworkTypeChangedFallbackAction",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2387",
+      "source_location": "L2386",
       "id": "singboxservice_networktypechangedfallbackaction",
       "community": 2
     },
@@ -11559,7 +11567,7 @@
       "label": "NetworkTypeChangedFallbackState",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2392",
+      "source_location": "L2391",
       "id": "singboxservice_networktypechangedfallbackstate",
       "community": 2
     },
@@ -11567,7 +11575,7 @@
       "label": "NetworkTypeChangedRecoverySignal",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2399",
+      "source_location": "L2398",
       "id": "singboxservice_networktypechangedrecoverysignal",
       "community": 2
     },
@@ -11575,7 +11583,7 @@
       "label": "RecoveryRequest",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2405",
+      "source_location": "L2404",
       "id": "singboxservice_recoveryrequest",
       "community": 2
     },
@@ -11583,7 +11591,7 @@
       "label": ".findBestPhysicalNetwork()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2413",
+      "source_location": "L2412",
       "id": "singboxservice_singboxservice_findbestphysicalnetwork",
       "community": 5
     },
@@ -11591,7 +11599,7 @@
       "label": ".updateDefaultInterface()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2422",
+      "source_location": "L2421",
       "id": "singboxservice_singboxservice_updatedefaultinterface",
       "community": 5
     },
@@ -11599,7 +11607,7 @@
       "label": ".onCreate()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2445",
+      "source_location": "L2444",
       "id": "singboxservice_singboxservice_oncreate",
       "community": 5
     },
@@ -11607,7 +11615,7 @@
       "label": ".onTrimMemory()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2498",
+      "source_location": "L2497",
       "id": "singboxservice_singboxservice_ontrimmemory",
       "community": 5
     },
@@ -11615,7 +11623,7 @@
       "label": ".onStartCommand()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2508",
+      "source_location": "L2507",
       "id": "singboxservice_singboxservice_onstartcommand",
       "community": 5
     },
@@ -11623,7 +11631,7 @@
       "label": ".performPrepareRestart()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2709",
+      "source_location": "L2708",
       "id": "singboxservice_singboxservice_performpreparerestart",
       "community": 5
     },
@@ -11631,7 +11639,7 @@
       "label": ".performHotReload()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2754",
+      "source_location": "L2753",
       "id": "singboxservice_singboxservice_performhotreload",
       "community": 5
     },
@@ -11639,7 +11647,7 @@
       "label": ".handleHotReloadFailure()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2795",
+      "source_location": "L2794",
       "id": "singboxservice_singboxservice_handlehotreloadfailure",
       "community": 5
     },
@@ -11647,7 +11655,7 @@
       "label": ".performFullRestart()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2811",
+      "source_location": "L2810",
       "id": "singboxservice_singboxservice_performfullrestart",
       "community": 5
     },
@@ -11655,7 +11663,7 @@
       "label": ".performHotReloadSync()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2856",
+      "source_location": "L2855",
       "id": "singboxservice_singboxservice_performhotreloadsync",
       "community": 5
     },
@@ -11663,7 +11671,7 @@
       "label": ".startVpn()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2895",
+      "source_location": "L2894",
       "id": "singboxservice_singboxservice_startvpn",
       "community": 5
     },
@@ -11671,7 +11679,7 @@
       "label": ".stopVpn()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2981",
+      "source_location": "L2980",
       "id": "singboxservice_singboxservice_stopvpn",
       "community": 5
     },
@@ -11679,7 +11687,7 @@
       "label": ".updateTileState()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3050",
+      "source_location": "L3049",
       "id": "singboxservice_singboxservice_updatetilestate",
       "community": 5
     },
@@ -11687,7 +11695,7 @@
       "label": ".buildNotificationState()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3064",
+      "source_location": "L3063",
       "id": "singboxservice_singboxservice_buildnotificationstate",
       "community": 5
     },
@@ -11695,7 +11703,7 @@
       "label": ".requestNotificationUpdate()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3083",
+      "source_location": "L3082",
       "id": "singboxservice_singboxservice_requestnotificationupdate",
       "community": 5
     },
@@ -11703,7 +11711,7 @@
       "label": ".createNotification()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3087",
+      "source_location": "L3086",
       "id": "singboxservice_singboxservice_createnotification",
       "community": 5
     },
@@ -11711,7 +11719,7 @@
       "label": ".onDestroy()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3091",
+      "source_location": "L3090",
       "id": "singboxservice_singboxservice_ondestroy",
       "community": 5
     },
@@ -11719,7 +11727,7 @@
       "label": ".onRevoke()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3147",
+      "source_location": "L3146",
       "id": "singboxservice_singboxservice_onrevoke",
       "community": 5
     },
@@ -11727,7 +11735,7 @@
       "label": ".onTaskRemoved()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3180",
+      "source_location": "L3179",
       "id": "singboxservice_singboxservice_ontaskremoved",
       "community": 5
     },
@@ -11735,7 +11743,7 @@
       "label": ".ensureNetworkCallbackReadyWithTimeout()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3192",
+      "source_location": "L3191",
       "id": "singboxservice_singboxservice_ensurenetworkcallbackreadywithtimeout",
       "community": 5
     },
@@ -11743,7 +11751,7 @@
       "label": ".scheduleAsyncRuleSetUpdate()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3213",
+      "source_location": "L3212",
       "id": "singboxservice_singboxservice_scheduleasyncrulesetupdate",
       "community": 5
     },
@@ -11751,7 +11759,7 @@
       "label": ".waitForUsablePhysicalNetwork()",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3250",
+      "source_location": "L3249",
       "id": "singboxservice_singboxservice_waitforusablephysicalnetwork",
       "community": 5
     },
@@ -11759,7 +11767,7 @@
       "label": "ServiceState",
       "file_type": "code",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3260",
+      "source_location": "L3259",
       "id": "singboxservice_servicestate",
       "community": 2
     },
@@ -18161,7 +18169,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L1",
       "id": "defaultnetworklistener",
-      "community": 44
+      "community": 45
     },
     {
       "label": "DefaultNetworkListener",
@@ -18169,7 +18177,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L23",
       "id": "defaultnetworklistener_defaultnetworklistener",
-      "community": 44
+      "community": 45
     },
     {
       "label": "NetworkMessage",
@@ -18177,7 +18185,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L27",
       "id": "defaultnetworklistener_networkmessage",
-      "community": 44
+      "community": 45
     },
     {
       "label": "Start",
@@ -18185,7 +18193,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L28",
       "id": "defaultnetworklistener_start",
-      "community": 44
+      "community": 45
     },
     {
       "label": "Get",
@@ -18193,7 +18201,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L29",
       "id": "defaultnetworklistener_get",
-      "community": 44
+      "community": 45
     },
     {
       "label": "Stop",
@@ -18201,7 +18209,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L32",
       "id": "defaultnetworklistener_stop",
-      "community": 44
+      "community": 45
     },
     {
       "label": "Put",
@@ -18209,7 +18217,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L33",
       "id": "defaultnetworklistener_put",
-      "community": 44
+      "community": 45
     },
     {
       "label": "Update",
@@ -18217,7 +18225,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L34",
       "id": "defaultnetworklistener_update",
-      "community": 44
+      "community": 45
     },
     {
       "label": "Lost",
@@ -18225,7 +18233,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L35",
       "id": "defaultnetworklistener_lost",
-      "community": 44
+      "community": 45
     },
     {
       "label": "Reset",
@@ -18233,7 +18241,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L36",
       "id": "defaultnetworklistener_reset",
-      "community": 44
+      "community": 45
     },
     {
       "label": "Callback",
@@ -18241,7 +18249,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L113",
       "id": "defaultnetworklistener_callback",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".onAvailable()",
@@ -18249,7 +18257,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L114",
       "id": "defaultnetworklistener_callback_onavailable",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".onCapabilitiesChanged()",
@@ -18257,7 +18265,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L120",
       "id": "defaultnetworklistener_callback_oncapabilitieschanged",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".onLost()",
@@ -18265,7 +18273,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L124",
       "id": "defaultnetworklistener_callback_onlost",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".tryFindReplacementNetwork()",
@@ -18273,7 +18281,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L159",
       "id": "defaultnetworklistener_callback_tryfindreplacementnetwork",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".start()",
@@ -18281,7 +18289,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L178",
       "id": "defaultnetworklistener_defaultnetworklistener_start",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".get()",
@@ -18289,7 +18297,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L185",
       "id": "defaultnetworklistener_defaultnetworklistener_get",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".stop()",
@@ -18297,7 +18305,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L202",
       "id": "defaultnetworklistener_defaultnetworklistener_stop",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".register()",
@@ -18305,7 +18313,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L206",
       "id": "defaultnetworklistener_defaultnetworklistener_register",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".unregister()",
@@ -18313,7 +18321,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L232",
       "id": "defaultnetworklistener_defaultnetworklistener_unregister",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".cleanup()",
@@ -18321,7 +18329,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\utils\\DefaultNetworkListener.kt",
       "source_location": "L243",
       "id": "defaultnetworklistener_defaultnetworklistener_cleanup",
-      "community": 44
+      "community": 45
     },
     {
       "label": "KernelHttpClient.kt",
@@ -20801,7 +20809,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L1",
       "id": "diagnosticsnodelinequery",
-      "community": 40
+      "community": 41
     },
     {
       "label": "DiagnosticsNodeLineQueryRunner",
@@ -20809,7 +20817,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L18",
       "id": "diagnosticsnodelinequery_diagnosticsnodelinequeryrunner",
-      "community": 40
+      "community": 41
     },
     {
       "label": ".buildReport()",
@@ -20817,7 +20825,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L25",
       "id": "diagnosticsnodelinequery_diagnosticsnodelinequeryrunner_buildreport",
-      "community": 40
+      "community": 41
     },
     {
       "label": ".buildUnavailableMessage()",
@@ -20825,7 +20833,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L66",
       "id": "diagnosticsnodelinequery_diagnosticsnodelinequeryrunner_buildunavailablemessage",
-      "community": 40
+      "community": 41
     },
     {
       "label": ".resolveServerAddresses()",
@@ -20833,7 +20841,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L76",
       "id": "diagnosticsnodelinequery_diagnosticsnodelinequeryrunner_resolveserveraddresses",
-      "community": 40
+      "community": 41
     },
     {
       "label": ".queryNodeDelay()",
@@ -20841,7 +20849,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L85",
       "id": "diagnosticsnodelinequery_diagnosticsnodelinequeryrunner_querynodedelay",
-      "community": 40
+      "community": 41
     },
     {
       "label": ".queryExitPortrait()",
@@ -20849,7 +20857,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L95",
       "id": "diagnosticsnodelinequery_diagnosticsnodelinequeryrunner_queryexitportrait",
-      "community": 40
+      "community": 41
     },
     {
       "label": "buildDnsQuerySuccessMessage()",
@@ -20857,7 +20865,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L123",
       "id": "diagnosticsnodelinequery_builddnsquerysuccessmessage",
-      "community": 40
+      "community": 41
     },
     {
       "label": "buildDnsQueryFailureMessage()",
@@ -20865,7 +20873,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L130",
       "id": "diagnosticsnodelinequery_builddnsqueryfailuremessage",
-      "community": 40
+      "community": 41
     },
     {
       "label": "NodeLineQueryData",
@@ -20873,7 +20881,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L136",
       "id": "diagnosticsnodelinequery_nodelinequerydata",
-      "community": 40
+      "community": 41
     },
     {
       "label": "NodeLineTarget",
@@ -20881,7 +20889,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L149",
       "id": "diagnosticsnodelinequery_nodelinetarget",
-      "community": 40
+      "community": 41
     },
     {
       "label": "resolveNodeLineTarget()",
@@ -20889,7 +20897,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L154",
       "id": "diagnosticsnodelinequery_resolvenodelinetarget",
-      "community": 40
+      "community": 41
     },
     {
       "label": "buildNodeLineQueryMessage()",
@@ -20897,7 +20905,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L168",
       "id": "diagnosticsnodelinequery_buildnodelinequerymessage",
-      "community": 40
+      "community": 41
     },
     {
       "label": "appendSignalSection()",
@@ -20905,7 +20913,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L183",
       "id": "diagnosticsnodelinequery_appendsignalsection",
-      "community": 40
+      "community": 41
     },
     {
       "label": "appendNodeSection()",
@@ -20913,7 +20921,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L195",
       "id": "diagnosticsnodelinequery_appendnodesection",
-      "community": 40
+      "community": 41
     },
     {
       "label": "appendServerLine()",
@@ -20921,7 +20929,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L210",
       "id": "diagnosticsnodelinequery_appendserverline",
-      "community": 40
+      "community": 41
     },
     {
       "label": "appendExitPortraitSection()",
@@ -20929,7 +20937,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L216",
       "id": "diagnosticsnodelinequery_appendexitportraitsection",
-      "community": 40
+      "community": 41
     },
     {
       "label": "appendNoteSection()",
@@ -20937,7 +20945,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L235",
       "id": "diagnosticsnodelinequery_appendnotesection",
-      "community": 40
+      "community": 41
     },
     {
       "label": "formatNodeDelay()",
@@ -20945,7 +20953,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L243",
       "id": "diagnosticsnodelinequery_formatnodedelay",
-      "community": 40
+      "community": 41
     },
     {
       "label": "IpSbGeoIpResponse",
@@ -20953,7 +20961,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L248",
       "id": "diagnosticsnodelinequery_ipsbgeoipresponse",
-      "community": 40
+      "community": 41
     },
     {
       "label": ".toExitPortrait()",
@@ -20961,7 +20969,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L257",
       "id": "diagnosticsnodelinequery_ipsbgeoipresponse_toexitportrait",
-      "community": 40
+      "community": 41
     },
     {
       "label": "NodeExitPortrait",
@@ -20969,7 +20977,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsNodeLineQuery.kt",
       "source_location": "L272",
       "id": "diagnosticsnodelinequery_nodeexitportrait",
-      "community": 40
+      "community": 41
     },
     {
       "label": "DiagnosticsViewModel.kt",
@@ -20977,7 +20985,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L1",
       "id": "diagnosticsviewmodel",
-      "community": 41
+      "community": 42
     },
     {
       "label": "DiagnosticsViewModel",
@@ -20985,7 +20993,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L34",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".dismissDialog()",
@@ -20993,7 +21001,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L78",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_dismissdialog",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".showRunningConfigSummary()",
@@ -21001,7 +21009,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L82",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_showrunningconfigsummary",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".generateRunningConfig()",
@@ -21009,7 +21017,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L115",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_generaterunningconfig",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".loadRunConfig()",
@@ -21017,7 +21025,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L119",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_loadrunconfig",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".resolveNetworkType()",
@@ -21025,7 +21033,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L127",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_resolvenetworktype",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".resolveEffectiveMtu()",
@@ -21033,7 +21041,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L139",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_resolveeffectivemtu",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".resolveTunStack()",
@@ -21041,7 +21049,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L149",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_resolvetunstack",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".buildDiagnosticMessage()",
@@ -21049,7 +21057,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L157",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_builddiagnosticmessage",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".exportRunningConfigToExternalFiles()",
@@ -21057,7 +21065,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L212",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_exportrunningconfigtoexternalfiles",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".runConnectivityCheck()",
@@ -21065,7 +21073,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L246",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_runconnectivitycheck",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".runPingTest()",
@@ -21073,7 +21081,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L322",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_runpingtest",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".runDnsQuery()",
@@ -21081,7 +21089,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L361",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_rundnsquery",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".runRoutingTest()",
@@ -21089,7 +21097,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L383",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_runroutingtest",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".runAppRoutingDiagnostics()",
@@ -21097,7 +21105,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L406",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_runapproutingdiagnostics",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".showConnectionOwnerStats()",
@@ -21105,7 +21113,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L455",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_showconnectionownerstats",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".resetConnectionOwnerStats()",
@@ -21113,7 +21121,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L488",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_resetconnectionownerstats",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".runNodeLineQuery()",
@@ -21121,7 +21129,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L495",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_runnodelinequery",
-      "community": 41
+      "community": 42
     },
     {
       "label": "MatchResult",
@@ -21129,7 +21137,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L511",
       "id": "diagnosticsviewmodel_matchresult",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".buildNaiveDiagnostics()",
@@ -21137,7 +21145,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L513",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_buildnaivediagnostics",
-      "community": 41
+      "community": 42
     },
     {
       "label": ".findMatch()",
@@ -21145,7 +21153,7 @@
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\viewmodel\\DiagnosticsViewModel.kt",
       "source_location": "L534",
       "id": "diagnosticsviewmodel_diagnosticsviewmodel_findmatch",
-      "community": 41
+      "community": 42
     },
     {
       "label": "InstalledAppsViewModel.kt",
@@ -24129,7 +24137,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L1",
       "id": "outboundfixertest",
-      "community": 45
+      "community": 40
     },
     {
       "label": "OutboundFixerTest",
@@ -24137,7 +24145,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L15",
       "id": "outboundfixertest_outboundfixertest",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testFixNaivePreservesH2NetworkForRuntime()",
@@ -24145,7 +24153,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L17",
       "id": "outboundfixertest_outboundfixertest_testfixnaivepreservesh2networkforruntime",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testBuildRuntimeHysteria2PreservesCriticalFields()",
@@ -24153,7 +24161,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L41",
       "id": "outboundfixertest_outboundfixertest_testbuildruntimehysteria2preservescriticalfields",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testBuildRuntimeHysteria2AddsBootstrapDomainResolverForHostnames()",
@@ -24161,7 +24169,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L74",
       "id": "outboundfixertest_outboundfixertest_testbuildruntimehysteria2addsbootstrapdomainresolverforhostnames",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testBuildRuntimeHysteria2PreservesExistingDomainResolver()",
@@ -24169,7 +24177,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L93",
       "id": "outboundfixertest_outboundfixertest_testbuildruntimehysteria2preservesexistingdomainresolver",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testBuildRuntimeHysteria2DoesNotAddBootstrapDomainResolverForIpLiteral()",
@@ -24177,7 +24185,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L114",
       "id": "outboundfixertest_outboundfixertest_testbuildruntimehysteria2doesnotaddbootstrapdomainresolverforipliteral",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testBuildRuntimeHysteria2DefaultsBandwidthTo50WhenMissing()",
@@ -24185,7 +24193,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L133",
       "id": "outboundfixertest_outboundfixertest_testbuildruntimehysteria2defaultsbandwidthto50whenmissing",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testBuildRuntimeHysteria2DoesNotInjectTcpFields()",
@@ -24193,7 +24201,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L153",
       "id": "outboundfixertest_outboundfixertest_testbuildruntimehysteria2doesnotinjecttcpfields",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testBuildForRuntimeKeepsTuicServerNameWhenDisableSniEnabled()",
@@ -24201,7 +24209,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L174",
       "id": "outboundfixertest_outboundfixertest_testbuildforruntimekeepstuicservernamewhendisablesnienabled",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testBuildForRuntimeKeepsTuicServerNameWhenDisableSniDisabled()",
@@ -24209,7 +24217,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L198",
       "id": "outboundfixertest_outboundfixertest_testbuildforruntimekeepstuicservernamewhendisablesnidisabled",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testFixPreservesWhitelistedAutoUrlTestWithoutDefault()",
@@ -24217,7 +24225,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L220",
       "id": "outboundfixertest_outboundfixertest_testfixpreserveswhitelistedautourltestwithoutdefault",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testBuildForRuntimeKeepsWhitelistedUrlTestWithoutDefault()",
@@ -24225,7 +24233,7 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L242",
       "id": "outboundfixertest_outboundfixertest_testbuildforruntimekeepswhitelistedurltestwithoutdefault",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testBuildForRuntimePreservesVlessCustomEncryption()",
@@ -24233,63 +24241,79 @@
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L264",
       "id": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesvlesscustomencryption",
-      "community": 45
+      "community": 40
     },
     {
-      "label": ".testBuildForRuntimeClearsImplicitXudpForVlessXhttp()",
+      "label": ".testBuildForRuntimePreservesImplicitXudpForVlessXhttp()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L282",
-      "id": "outboundfixertest_outboundfixertest_testbuildforruntimeclearsimplicitxudpforvlessxhttp",
-      "community": 45
+      "id": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesimplicitxudpforvlessxhttp",
+      "community": 40
     },
     {
-      "label": ".testBuildForRuntimeClearsExplicitXudpForVlessXhttp()",
+      "label": ".testBuildForRuntimePreservesExplicitXudpForVlessXhttp()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L298",
-      "id": "outboundfixertest_outboundfixertest_testbuildforruntimeclearsexplicitxudpforvlessxhttp",
-      "community": 45
+      "id": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesexplicitxudpforvlessxhttp",
+      "community": 40
     },
     {
-      "label": ".testBuildForRuntimeClearsExplicitXudpWithRealityVisionXhttp()",
+      "label": ".testBuildForRuntimePreservesImplicitXudpForEncryptedVlessWebSocket()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
       "source_location": "L315",
-      "id": "outboundfixertest_outboundfixertest_testbuildforruntimeclearsexplicitxudpwithrealityvisionxhttp",
-      "community": 45
+      "id": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesimplicitxudpforencryptedvlesswebsocket",
+      "community": 40
+    },
+    {
+      "label": ".testBuildForRuntimePreservesExplicitXudpForEncryptedVlessWebSocket()",
+      "file_type": "code",
+      "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
+      "source_location": "L333",
+      "id": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesexplicitxudpforencryptedvlesswebsocket",
+      "community": 40
+    },
+    {
+      "label": ".testBuildForRuntimePreservesExplicitXudpWithRealityVisionXhttp()",
+      "file_type": "code",
+      "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
+      "source_location": "L352",
+      "id": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesexplicitxudpwithrealityvisionxhttp",
+      "community": 40
     },
     {
       "label": ".testBuildForRuntimePreservesExplicitXhttpAlpnWhenProvided()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
-      "source_location": "L351",
+      "source_location": "L388",
       "id": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesexplicitxhttpalpnwhenprovided",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testBuildForRuntimeKeepsVmessHttpTransport()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
-      "source_location": "L384",
+      "source_location": "L421",
       "id": "outboundfixertest_outboundfixertest_testbuildforruntimekeepsvmesshttptransport",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testFixPreservesOuterSelectorDefaultForRouteGroup()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
-      "source_location": "L401",
+      "source_location": "L438",
       "id": "outboundfixertest_outboundfixertest_testfixpreservesouterselectordefaultforroutegroup",
-      "community": 45
+      "community": 40
     },
     {
       "label": ".testFixConvertsNonWhitelistedUrlTestToSelector()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
-      "source_location": "L418",
+      "source_location": "L455",
       "id": "outboundfixertest_outboundfixertest_testfixconvertsnonwhitelistedurltesttoselector",
-      "community": 45
+      "community": 40
     },
     {
       "label": "SettingsStoreTest.kt",
@@ -25543,7 +25567,7 @@
       "label": ".testParseVLessWithReality()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L319",
+      "source_location": "L320",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsevlesswithreality",
       "community": 9
     },
@@ -25551,7 +25575,7 @@
       "label": ".testParseVLessWithFlow()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L336",
+      "source_location": "L337",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsevlesswithflow",
       "community": 9
     },
@@ -25559,7 +25583,7 @@
       "label": ".testParseVLessWithGrpc()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L345",
+      "source_location": "L346",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsevlesswithgrpc",
       "community": 9
     },
@@ -25567,7 +25591,7 @@
       "label": ".testParseVLessWithXhttpExtendedParams()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L356",
+      "source_location": "L357",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsevlesswithxhttpextendedparams",
       "community": 9
     },
@@ -25575,23 +25599,23 @@
       "label": ".testParseVLessWithCustomEncryptionAndXhttp()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L378",
+      "source_location": "L379",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsevlesswithcustomencryptionandxhttp",
       "community": 9
     },
     {
-      "label": ".testRealVLessXhttpRealityNodeClearsXudpPacketEncodingForRuntime()",
+      "label": ".testRealVLessXhttpRealityNodePreservesXudpPacketEncodingForRuntime()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L396",
-      "id": "nodelinkparsertest_nodelinkparsertest_testrealvlessxhttprealitynodeclearsxudppacketencodingforruntime",
+      "source_location": "L397",
+      "id": "nodelinkparsertest_nodelinkparsertest_testrealvlessxhttprealitynodepreservesxudppacketencodingforruntime",
       "community": 9
     },
     {
       "label": ".testParseTrojanBasic()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L417",
+      "source_location": "L418",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsetrojanbasic",
       "community": 9
     },
@@ -25599,7 +25623,7 @@
       "label": ".testParseTrojanWithDefaultPort()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L432",
+      "source_location": "L433",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsetrojanwithdefaultport",
       "community": 9
     },
@@ -25607,7 +25631,7 @@
       "label": ".testParseTrojanWithXhttpExtendedParams()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L441",
+      "source_location": "L442",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsetrojanwithxhttpextendedparams",
       "community": 9
     },
@@ -25615,7 +25639,7 @@
       "label": ".testParseHysteria2Basic()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L477",
+      "source_location": "L478",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2basic",
       "community": 9
     },
@@ -25623,7 +25647,7 @@
       "label": ".testParseHysteria2WithBandwidth()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L490",
+      "source_location": "L491",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2withbandwidth",
       "community": 9
     },
@@ -25631,7 +25655,7 @@
       "label": ".testParseHysteria2WithoutBandwidthKeepsNull()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L500",
+      "source_location": "L501",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2withoutbandwidthkeepsnull",
       "community": 9
     },
@@ -25639,7 +25663,7 @@
       "label": ".testParseHysteria2WithExportedBandwidthParamNames()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L510",
+      "source_location": "L511",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2withexportedbandwidthparamnames",
       "community": 9
     },
@@ -25647,7 +25671,7 @@
       "label": ".testParseHy2ShortScheme()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L520",
+      "source_location": "L521",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsehy2shortscheme",
       "community": 9
     },
@@ -25655,7 +25679,7 @@
       "label": ".testParseHysteria2WithObfs()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L530",
+      "source_location": "L531",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2withobfs",
       "community": 9
     },
@@ -25663,7 +25687,7 @@
       "label": ".testParseHysteria2WithTlsFlagsAndMport()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L541",
+      "source_location": "L542",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2withtlsflagsandmport",
       "community": 9
     },
@@ -25671,7 +25695,7 @@
       "label": ".testParseHysteria2IpWithoutSniKeepsServerNameNull()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L554",
+      "source_location": "L555",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2ipwithoutsnikeepsservernamenull",
       "community": 9
     },
@@ -25679,7 +25703,7 @@
       "label": ".testParseNaiveBasic()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L566",
+      "source_location": "L567",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsenaivebasic",
       "community": 9
     },
@@ -25687,7 +25711,7 @@
       "label": ".testParseNaivePlusHttpsScheme()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L592",
+      "source_location": "L593",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsenaiveplushttpsscheme",
       "community": 9
     },
@@ -25695,7 +25719,7 @@
       "label": ".testParseNaivePlusHttpsWithTrailingComma()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L606",
+      "source_location": "L607",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsenaiveplushttpswithtrailingcomma",
       "community": 9
     },
@@ -25703,7 +25727,7 @@
       "label": ".testParseNaiveIpWithoutSniKeepsServerNameNull()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L619",
+      "source_location": "L620",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsenaiveipwithoutsnikeepsservernamenull",
       "community": 9
     },
@@ -25711,7 +25735,7 @@
       "label": ".testParseTuicBasic()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L631",
+      "source_location": "L632",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsetuicbasic",
       "community": 9
     },
@@ -25719,7 +25743,7 @@
       "label": ".testParseTuicWithDisableSniKeepsServerName()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L649",
+      "source_location": "L650",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsetuicwithdisablesnikeepsservername",
       "community": 9
     },
@@ -25727,7 +25751,7 @@
       "label": ".testParseTuicWithZeroRtt()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L661",
+      "source_location": "L662",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsetuicwithzerortt",
       "community": 9
     },
@@ -25735,7 +25759,7 @@
       "label": ".testRealTuicLinkDisablesSniInRuntimeTlsOptions()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L670",
+      "source_location": "L671",
       "id": "nodelinkparsertest_nodelinkparsertest_testrealtuiclinkdisablessniinruntimetlsoptions",
       "community": 9
     },
@@ -25743,7 +25767,7 @@
       "label": ".testRealHysteria2LinkDisablesSniInRuntimeTlsOptions()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L687",
+      "source_location": "L688",
       "id": "nodelinkparsertest_nodelinkparsertest_testrealhysteria2linkdisablessniinruntimetlsoptions",
       "community": 9
     },
@@ -25751,7 +25775,7 @@
       "label": ".testParseAnyTLSBasic()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L705",
+      "source_location": "L706",
       "id": "nodelinkparsertest_nodelinkparsertest_testparseanytlsbasic",
       "community": 9
     },
@@ -25759,7 +25783,7 @@
       "label": ".testParseAnyTLSWithSessionParams()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L720",
+      "source_location": "L721",
       "id": "nodelinkparsertest_nodelinkparsertest_testparseanytlswithsessionparams",
       "community": 9
     },
@@ -25767,7 +25791,7 @@
       "label": ".testParseHttpsProxy()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L733",
+      "source_location": "L734",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsehttpsproxy",
       "community": 9
     },
@@ -25775,7 +25799,7 @@
       "label": ".testParseHttpsProxyIpKeepsServerNameNull()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L749",
+      "source_location": "L750",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsehttpsproxyipkeepsservernamenull",
       "community": 9
     },
@@ -25783,7 +25807,7 @@
       "label": ".testParseHttpProxy()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L759",
+      "source_location": "L760",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsehttpproxy",
       "community": 9
     },
@@ -25791,7 +25815,7 @@
       "label": ".testParseHttpProxyWithoutAuth()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L770",
+      "source_location": "L771",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsehttpproxywithoutauth",
       "community": 9
     },
@@ -25799,7 +25823,7 @@
       "label": ".testParseSocks5Basic()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L782",
+      "source_location": "L783",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsesocks5basic",
       "community": 9
     },
@@ -25807,7 +25831,7 @@
       "label": ".testParseSocksShortScheme()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L796",
+      "source_location": "L797",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsesocksshortscheme",
       "community": 9
     },
@@ -25815,7 +25839,7 @@
       "label": ".testParseUnknownScheme()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L808",
+      "source_location": "L809",
       "id": "nodelinkparsertest_nodelinkparsertest_testparseunknownscheme",
       "community": 9
     },
@@ -25823,7 +25847,7 @@
       "label": ".testParseEmptyLink()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L816",
+      "source_location": "L817",
       "id": "nodelinkparsertest_nodelinkparsertest_testparseemptylink",
       "community": 9
     },
@@ -25831,7 +25855,7 @@
       "label": ".testParseMalformedLink()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L822",
+      "source_location": "L823",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsemalformedlink",
       "community": 9
     },
@@ -25839,7 +25863,7 @@
       "label": ".testParseSpecialCharactersInPassword()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L828",
+      "source_location": "L829",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsespecialcharactersinpassword",
       "community": 9
     },
@@ -25847,7 +25871,7 @@
       "label": ".testParseSpacesInQueryParams()",
       "file_type": "code",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L838",
+      "source_location": "L839",
       "id": "nodelinkparsertest_nodelinkparsertest_testparsespacesinqueryparams",
       "community": 9
     },
@@ -35772,6 +35796,18 @@
       "source_location": "L5313",
       "weight": 1.0,
       "_src": "configrepository_configrepository",
+      "_tgt": "configrepository_configrepository_removeoutboundfromconfig",
+      "source": "configrepository_configrepository",
+      "target": "configrepository_configrepository_removeoutboundfromconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
+      "source_location": "L5331",
+      "weight": 1.0,
+      "_src": "configrepository_configrepository",
       "_tgt": "configrepository_configrepository_deletenode",
       "source": "configrepository_configrepository",
       "target": "configrepository_configrepository_deletenode",
@@ -35781,7 +35817,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5336",
+      "source_location": "L5365",
       "weight": 1.0,
       "_src": "configrepository_configrepository",
       "_tgt": "configrepository_configrepository_addsinglenode",
@@ -35793,7 +35829,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5443",
+      "source_location": "L5472",
       "weight": 1.0,
       "_src": "configrepository_configrepository",
       "_tgt": "configrepository_configrepository_renamenode",
@@ -35805,7 +35841,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5482",
+      "source_location": "L5511",
       "weight": 1.0,
       "_src": "configrepository_configrepository",
       "_tgt": "configrepository_configrepository_updatenode",
@@ -35817,7 +35853,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5523",
+      "source_location": "L5552",
       "weight": 1.0,
       "_src": "configrepository_configrepository",
       "_tgt": "configrepository_configrepository_exportnode",
@@ -35829,7 +35865,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5542",
+      "source_location": "L5571",
       "weight": 1.0,
       "_src": "configrepository_configrepository",
       "_tgt": "configrepository_configrepository_deduplicatetags",
@@ -35841,7 +35877,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5571",
+      "source_location": "L5600",
       "weight": 1.0,
       "_src": "configrepository_configrepository",
       "_tgt": "configrepository_configrepository_findavailableport",
@@ -35853,7 +35889,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5583",
+      "source_location": "L5612",
       "weight": 1.0,
       "_src": "configrepository_configrepository",
       "_tgt": "configrepository_configrepository_cleanup",
@@ -35865,7 +35901,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\ConfigRepository.kt",
-      "source_location": "L5595",
+      "source_location": "L5624",
       "weight": 1.0,
       "_src": "configrepository_configrepository",
       "_tgt": "configrepository_configrepository_isipaddress",
@@ -38865,7 +38901,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L306",
+      "source_location": "L302",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_normalizelegacytransport",
@@ -38877,7 +38913,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L339",
+      "source_location": "L335",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_applycommondialfields",
@@ -38889,7 +38925,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L349",
+      "source_location": "L345",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_buildforruntime",
@@ -38901,7 +38937,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L363",
+      "source_location": "L359",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_buildforruntimewithdialconfigfortest",
@@ -38913,7 +38949,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L378",
+      "source_location": "L374",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_buildforruntimewithdialconfig",
@@ -38925,7 +38961,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L613",
+      "source_location": "L609",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_buildruntimehysteriaoutbound",
@@ -38937,7 +38973,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L640",
+      "source_location": "L636",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_buildruntimenaiveoutbound",
@@ -38949,7 +38985,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L667",
+      "source_location": "L663",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_fixnaive",
@@ -38961,7 +38997,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L709",
+      "source_location": "L705",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_resolvedomainresolver",
@@ -38973,7 +39009,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L722",
+      "source_location": "L718",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_resolvenaivedomainresolver",
@@ -38985,7 +39021,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L724",
+      "source_location": "L720",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_applynaiveruntimecompatibility",
@@ -38997,7 +39033,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L735",
+      "source_location": "L731",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_tunemuxforvisionreality",
@@ -39009,7 +39045,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L766",
+      "source_location": "L762",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_isipliteral",
@@ -39021,7 +39057,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L775",
+      "source_location": "L771",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_normalizexhttppath",
@@ -39033,7 +39069,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixer.kt",
-      "source_location": "L796",
+      "source_location": "L792",
       "weight": 1.0,
       "_src": "outboundfixer_outboundfixer",
       "_tgt": "outboundfixer_outboundfixer_convertportrangeformat",
@@ -41817,7 +41853,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1612",
+      "source_location": "L1611",
       "weight": 1.0,
       "_src": "singboxservice",
       "_tgt": "singboxservice_recoverydebouncecontext",
@@ -41829,7 +41865,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2311",
+      "source_location": "L2310",
       "weight": 1.0,
       "_src": "singboxservice",
       "_tgt": "singboxservice_recoveryreason",
@@ -41841,7 +41877,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2342",
+      "source_location": "L2341",
       "weight": 1.0,
       "_src": "singboxservice",
       "_tgt": "singboxservice_recoveryprofile",
@@ -41853,7 +41889,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2381",
+      "source_location": "L2380",
       "weight": 1.0,
       "_src": "singboxservice",
       "_tgt": "singboxservice_foregroundfallbackstate",
@@ -41865,7 +41901,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2387",
+      "source_location": "L2386",
       "weight": 1.0,
       "_src": "singboxservice",
       "_tgt": "singboxservice_networktypechangedfallbackaction",
@@ -41877,7 +41913,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2392",
+      "source_location": "L2391",
       "weight": 1.0,
       "_src": "singboxservice",
       "_tgt": "singboxservice_networktypechangedfallbackstate",
@@ -41889,7 +41925,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2399",
+      "source_location": "L2398",
       "weight": 1.0,
       "_src": "singboxservice",
       "_tgt": "singboxservice_networktypechangedrecoverysignal",
@@ -41901,7 +41937,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2405",
+      "source_location": "L2404",
       "weight": 1.0,
       "_src": "singboxservice",
       "_tgt": "singboxservice_recoveryrequest",
@@ -41913,7 +41949,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3260",
+      "source_location": "L3259",
       "weight": 1.0,
       "_src": "singboxservice",
       "_tgt": "singboxservice_servicestate",
@@ -42285,7 +42321,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1473",
+      "source_location": "L1472",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_loadactiveautofailoverquarantine",
@@ -42297,7 +42333,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1482",
+      "source_location": "L1481",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_resolvecurrentproxyoutboundtag",
@@ -42309,7 +42345,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1489",
+      "source_location": "L1488",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_submitrecoveryrequest",
@@ -42321,7 +42357,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1582",
+      "source_location": "L1581",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_mergerecoveryrequests",
@@ -42333,7 +42369,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1590",
+      "source_location": "L1589",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_cancelpendingrecoverywork",
@@ -42345,7 +42381,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1603",
+      "source_location": "L1602",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_recoveryinvalidstatesummary",
@@ -42357,7 +42393,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1620",
+      "source_location": "L1619",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_buildrecoverydebouncecontext",
@@ -42369,7 +42405,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1641",
+      "source_location": "L1640",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_shouldskipbyglobaldebounce",
@@ -42381,7 +42417,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1661",
+      "source_location": "L1660",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_shouldskipbysourcedebounce",
@@ -42393,7 +42429,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1681",
+      "source_location": "L1680",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_requestimmediateroutegroupreselectifneeded",
@@ -42405,7 +42441,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1688",
+      "source_location": "L1687",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_convergeconnectionsafterimmediateroutegroupswitch",
@@ -42417,7 +42453,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1725",
+      "source_location": "L1724",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_executerecoveryrequest",
@@ -42429,7 +42465,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1828",
+      "source_location": "L1827",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_calculaterecoverysuccessrate",
@@ -42441,7 +42477,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1842",
+      "source_location": "L1841",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_isselectedhysteria2outbound",
@@ -42453,7 +42489,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1861",
+      "source_location": "L1860",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_getrecoveryprofile",
@@ -42465,7 +42501,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1865",
+      "source_location": "L1864",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_executeforegroundfastrecovery",
@@ -42477,7 +42513,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1913",
+      "source_location": "L1912",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_shouldscheduleforegroundhardfallback",
@@ -42489,7 +42525,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1923",
+      "source_location": "L1922",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_evaluateforegroundfallbackstate",
@@ -42501,7 +42537,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L1967",
+      "source_location": "L1966",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_scheduleforegroundhardfallbackifneeded",
@@ -42513,7 +42549,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2025",
+      "source_location": "L2024",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_collectnetworktypechangedrecoverysignal",
@@ -42525,7 +42561,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2047",
+      "source_location": "L2046",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_evaluatenetworktypechangedfallbackstate",
@@ -42537,7 +42573,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2065",
+      "source_location": "L2064",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_buildtriggerednetworktypechangedfallbackstate",
@@ -42549,7 +42585,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2090",
+      "source_location": "L2089",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_buildnetworktypechangedstateskip",
@@ -42561,7 +42597,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2109",
+      "source_location": "L2108",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_resolvelastnetworktypechangedfallbackatms",
@@ -42573,7 +42609,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2119",
+      "source_location": "L2118",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_resolvenetworktypechangedfallbackdebouncems",
@@ -42585,7 +42621,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2129",
+      "source_location": "L2128",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_recordnetworktypechangedfallbackat",
@@ -42597,7 +42633,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2140",
+      "source_location": "L2139",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_schedulenetworktypechangedfallbackifneeded",
@@ -42609,7 +42645,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2188",
+      "source_location": "L2187",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_logrecoveryevent",
@@ -42621,7 +42657,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2243",
+      "source_location": "L2242",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_restartvpnservice",
@@ -42633,7 +42669,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2413",
+      "source_location": "L2412",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_findbestphysicalnetwork",
@@ -42645,7 +42681,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2422",
+      "source_location": "L2421",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_updatedefaultinterface",
@@ -42657,7 +42693,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2445",
+      "source_location": "L2444",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_oncreate",
@@ -42669,7 +42705,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2498",
+      "source_location": "L2497",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_ontrimmemory",
@@ -42681,7 +42717,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2508",
+      "source_location": "L2507",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_onstartcommand",
@@ -42693,7 +42729,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2709",
+      "source_location": "L2708",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_performpreparerestart",
@@ -42705,7 +42741,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2754",
+      "source_location": "L2753",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_performhotreload",
@@ -42717,7 +42753,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2795",
+      "source_location": "L2794",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_handlehotreloadfailure",
@@ -42729,7 +42765,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2811",
+      "source_location": "L2810",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_performfullrestart",
@@ -42741,7 +42777,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2856",
+      "source_location": "L2855",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_performhotreloadsync",
@@ -42753,7 +42789,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2895",
+      "source_location": "L2894",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_startvpn",
@@ -42765,7 +42801,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L2981",
+      "source_location": "L2980",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_stopvpn",
@@ -42777,7 +42813,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3050",
+      "source_location": "L3049",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_updatetilestate",
@@ -42789,7 +42825,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3064",
+      "source_location": "L3063",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_buildnotificationstate",
@@ -42801,7 +42837,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3083",
+      "source_location": "L3082",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_requestnotificationupdate",
@@ -42813,7 +42849,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3087",
+      "source_location": "L3086",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_createnotification",
@@ -42825,7 +42861,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3091",
+      "source_location": "L3090",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_ondestroy",
@@ -42837,7 +42873,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3147",
+      "source_location": "L3146",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_onrevoke",
@@ -42849,7 +42885,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3180",
+      "source_location": "L3179",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_ontaskremoved",
@@ -42861,7 +42897,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3192",
+      "source_location": "L3191",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_ensurenetworkcallbackreadywithtimeout",
@@ -42873,7 +42909,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3213",
+      "source_location": "L3212",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_scheduleasyncrulesetupdate",
@@ -42885,7 +42921,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\main\\java\\com\\kunk\\singbox\\service\\SingBoxService.kt",
-      "source_location": "L3250",
+      "source_location": "L3249",
       "weight": 1.0,
       "_src": "singboxservice_singboxservice",
       "_tgt": "singboxservice_singboxservice_waitforusablephysicalnetwork",
@@ -60036,9 +60072,9 @@
       "source_location": "L282",
       "weight": 1.0,
       "_src": "outboundfixertest_outboundfixertest",
-      "_tgt": "outboundfixertest_outboundfixertest_testbuildforruntimeclearsimplicitxudpforvlessxhttp",
+      "_tgt": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesimplicitxudpforvlessxhttp",
       "source": "outboundfixertest_outboundfixertest",
-      "target": "outboundfixertest_outboundfixertest_testbuildforruntimeclearsimplicitxudpforvlessxhttp",
+      "target": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesimplicitxudpforvlessxhttp",
       "confidence_score": 1.0
     },
     {
@@ -60048,9 +60084,9 @@
       "source_location": "L298",
       "weight": 1.0,
       "_src": "outboundfixertest_outboundfixertest",
-      "_tgt": "outboundfixertest_outboundfixertest_testbuildforruntimeclearsexplicitxudpforvlessxhttp",
+      "_tgt": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesexplicitxudpforvlessxhttp",
       "source": "outboundfixertest_outboundfixertest",
-      "target": "outboundfixertest_outboundfixertest_testbuildforruntimeclearsexplicitxudpforvlessxhttp",
+      "target": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesexplicitxudpforvlessxhttp",
       "confidence_score": 1.0
     },
     {
@@ -60060,16 +60096,40 @@
       "source_location": "L315",
       "weight": 1.0,
       "_src": "outboundfixertest_outboundfixertest",
-      "_tgt": "outboundfixertest_outboundfixertest_testbuildforruntimeclearsexplicitxudpwithrealityvisionxhttp",
+      "_tgt": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesimplicitxudpforencryptedvlesswebsocket",
       "source": "outboundfixertest_outboundfixertest",
-      "target": "outboundfixertest_outboundfixertest_testbuildforruntimeclearsexplicitxudpwithrealityvisionxhttp",
+      "target": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesimplicitxudpforencryptedvlesswebsocket",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
-      "source_location": "L351",
+      "source_location": "L333",
+      "weight": 1.0,
+      "_src": "outboundfixertest_outboundfixertest",
+      "_tgt": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesexplicitxudpforencryptedvlesswebsocket",
+      "source": "outboundfixertest_outboundfixertest",
+      "target": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesexplicitxudpforencryptedvlesswebsocket",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
+      "source_location": "L352",
+      "weight": 1.0,
+      "_src": "outboundfixertest_outboundfixertest",
+      "_tgt": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesexplicitxudpwithrealityvisionxhttp",
+      "source": "outboundfixertest_outboundfixertest",
+      "target": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesexplicitxudpwithrealityvisionxhttp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
+      "source_location": "L388",
       "weight": 1.0,
       "_src": "outboundfixertest_outboundfixertest",
       "_tgt": "outboundfixertest_outboundfixertest_testbuildforruntimepreservesexplicitxhttpalpnwhenprovided",
@@ -60081,7 +60141,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
-      "source_location": "L384",
+      "source_location": "L421",
       "weight": 1.0,
       "_src": "outboundfixertest_outboundfixertest",
       "_tgt": "outboundfixertest_outboundfixertest_testbuildforruntimekeepsvmesshttptransport",
@@ -60093,7 +60153,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
-      "source_location": "L401",
+      "source_location": "L438",
       "weight": 1.0,
       "_src": "outboundfixertest_outboundfixertest",
       "_tgt": "outboundfixertest_outboundfixertest_testfixpreservesouterselectordefaultforroutegroup",
@@ -60105,7 +60165,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\repository\\config\\OutboundFixerTest.kt",
-      "source_location": "L418",
+      "source_location": "L455",
       "weight": 1.0,
       "_src": "outboundfixertest_outboundfixertest",
       "_tgt": "outboundfixertest_outboundfixertest_testfixconvertsnonwhitelistedurltesttoselector",
@@ -61809,7 +61869,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L319",
+      "source_location": "L320",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsevlesswithreality",
@@ -61821,7 +61881,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L336",
+      "source_location": "L337",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsevlesswithflow",
@@ -61833,7 +61893,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L345",
+      "source_location": "L346",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsevlesswithgrpc",
@@ -61845,7 +61905,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L356",
+      "source_location": "L357",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsevlesswithxhttpextendedparams",
@@ -61857,7 +61917,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L378",
+      "source_location": "L379",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsevlesswithcustomencryptionandxhttp",
@@ -61869,19 +61929,19 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L396",
+      "source_location": "L397",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
-      "_tgt": "nodelinkparsertest_nodelinkparsertest_testrealvlessxhttprealitynodeclearsxudppacketencodingforruntime",
+      "_tgt": "nodelinkparsertest_nodelinkparsertest_testrealvlessxhttprealitynodepreservesxudppacketencodingforruntime",
       "source": "nodelinkparsertest_nodelinkparsertest",
-      "target": "nodelinkparsertest_nodelinkparsertest_testrealvlessxhttprealitynodeclearsxudppacketencodingforruntime",
+      "target": "nodelinkparsertest_nodelinkparsertest_testrealvlessxhttprealitynodepreservesxudppacketencodingforruntime",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L417",
+      "source_location": "L418",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsetrojanbasic",
@@ -61893,7 +61953,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L432",
+      "source_location": "L433",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsetrojanwithdefaultport",
@@ -61905,7 +61965,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L441",
+      "source_location": "L442",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsetrojanwithxhttpextendedparams",
@@ -61917,7 +61977,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L477",
+      "source_location": "L478",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2basic",
@@ -61929,7 +61989,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L490",
+      "source_location": "L491",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2withbandwidth",
@@ -61941,7 +62001,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L500",
+      "source_location": "L501",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2withoutbandwidthkeepsnull",
@@ -61953,7 +62013,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L510",
+      "source_location": "L511",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2withexportedbandwidthparamnames",
@@ -61965,7 +62025,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L520",
+      "source_location": "L521",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsehy2shortscheme",
@@ -61977,7 +62037,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L530",
+      "source_location": "L531",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2withobfs",
@@ -61989,7 +62049,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L541",
+      "source_location": "L542",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2withtlsflagsandmport",
@@ -62001,7 +62061,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L554",
+      "source_location": "L555",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsehysteria2ipwithoutsnikeepsservernamenull",
@@ -62013,7 +62073,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L566",
+      "source_location": "L567",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsenaivebasic",
@@ -62025,7 +62085,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L592",
+      "source_location": "L593",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsenaiveplushttpsscheme",
@@ -62037,7 +62097,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L606",
+      "source_location": "L607",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsenaiveplushttpswithtrailingcomma",
@@ -62049,7 +62109,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L619",
+      "source_location": "L620",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsenaiveipwithoutsnikeepsservernamenull",
@@ -62061,7 +62121,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L631",
+      "source_location": "L632",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsetuicbasic",
@@ -62073,7 +62133,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L649",
+      "source_location": "L650",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsetuicwithdisablesnikeepsservername",
@@ -62085,7 +62145,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L661",
+      "source_location": "L662",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsetuicwithzerortt",
@@ -62097,7 +62157,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L670",
+      "source_location": "L671",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testrealtuiclinkdisablessniinruntimetlsoptions",
@@ -62109,7 +62169,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L687",
+      "source_location": "L688",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testrealhysteria2linkdisablessniinruntimetlsoptions",
@@ -62121,7 +62181,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L705",
+      "source_location": "L706",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparseanytlsbasic",
@@ -62133,7 +62193,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L720",
+      "source_location": "L721",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparseanytlswithsessionparams",
@@ -62145,7 +62205,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L733",
+      "source_location": "L734",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsehttpsproxy",
@@ -62157,7 +62217,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L749",
+      "source_location": "L750",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsehttpsproxyipkeepsservernamenull",
@@ -62169,7 +62229,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L759",
+      "source_location": "L760",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsehttpproxy",
@@ -62181,7 +62241,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L770",
+      "source_location": "L771",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsehttpproxywithoutauth",
@@ -62193,7 +62253,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L782",
+      "source_location": "L783",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsesocks5basic",
@@ -62205,7 +62265,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L796",
+      "source_location": "L797",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsesocksshortscheme",
@@ -62217,7 +62277,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L808",
+      "source_location": "L809",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparseunknownscheme",
@@ -62229,7 +62289,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L816",
+      "source_location": "L817",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparseemptylink",
@@ -62241,7 +62301,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L822",
+      "source_location": "L823",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsemalformedlink",
@@ -62253,7 +62313,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L828",
+      "source_location": "L829",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsespecialcharactersinpassword",
@@ -62265,7 +62325,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app\\src\\test\\java\\com\\kunk\\singbox\\utils\\parser\\NodeLinkParserTest.kt",
-      "source_location": "L838",
+      "source_location": "L839",
       "weight": 1.0,
       "_src": "nodelinkparsertest_nodelinkparsertest",
       "_tgt": "nodelinkparsertest_nodelinkparsertest_testparsespacesinqueryparams",
