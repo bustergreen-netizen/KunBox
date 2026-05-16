@@ -1,17 +1,17 @@
-# Graph Report - .  (2026-05-17)
+﻿# Graph Report - .  (2026-05-17)
 
 ## Corpus Check
-- 205 files · ~212,713 words
+- 205 files 路 ~212,876 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3268 nodes · 3065 edges · 205 communities detected
-- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
-- Token cost: 0 input · 0 output
+- 3280 nodes 路 3077 edges 路 205 communities detected
+- Extraction: 100% EXTRACTED 路 0% INFERRED 路 0% AMBIGUOUS
+- Token cost: 0 input 路 0 output
 
 ## God Nodes (most connected - your core abstractions)
 1. `ConfigRepository` - 155 edges
-2. `ConfigRepositoryTest` - 122 edges
+2. `ConfigRepositoryTest` - 128 edges
 3. `SingBoxService` - 82 edges
 4. `SettingsViewModel` - 75 edges
 5. `SettingsRepository` - 65 edges
@@ -76,7 +76,7 @@ Nodes (7): AlreadyConnected, DisconnectedStopState, Failed, HotReloadResult, Rec
 
 ### Community 12 - "Community 12"
 Cohesion: 0.04
-Nodes (0): 
+Nodes (0):
 
 ### Community 13 - "Community 13"
 Cohesion: 0.04
@@ -368,7 +368,7 @@ Nodes (1): ProfileImportType
 
 ### Community 85 - "Community 85"
 Cohesion: 0.17
-Nodes (0): 
+Nodes (0):
 
 ### Community 86 - "Community 86"
 Cohesion: 0.17
@@ -396,7 +396,7 @@ Nodes (1): FakeRepository
 
 ### Community 92 - "Community 92"
 Cohesion: 0.18
-Nodes (0): 
+Nodes (0):
 
 ### Community 93 - "Community 93"
 Cohesion: 0.18
@@ -412,7 +412,7 @@ Nodes (1): SettingsDao
 
 ### Community 96 - "Community 96"
 Cohesion: 0.2
-Nodes (0): 
+Nodes (0):
 
 ### Community 97 - "Community 97"
 Cohesion: 0.22
@@ -476,7 +476,7 @@ Nodes (1): SquareViewFinderView
 
 ### Community 112 - "Community 112"
 Cohesion: 0.29
-Nodes (0): 
+Nodes (0):
 
 ### Community 113 - "Community 113"
 Cohesion: 0.29
@@ -492,47 +492,47 @@ Nodes (1): SecurityUtils
 
 ### Community 116 - "Community 116"
 Cohesion: 0.29
-Nodes (1): SettingsStoreTest
+Nodes (1): LogViewModel
 
 ### Community 117 - "Community 117"
 Cohesion: 0.29
-Nodes (1): DnsResolveStoreTest
+Nodes (1): SettingsStoreTest
 
 ### Community 118 - "Community 118"
-Cohesion: 0.33
-Nodes (1): MainActivity
+Cohesion: 0.29
+Nodes (1): DnsResolveStoreTest
 
 ### Community 119 - "Community 119"
 Cohesion: 0.33
-Nodes (1): SingBoxApplication
+Nodes (1): MainActivity
 
 ### Community 120 - "Community 120"
 Cohesion: 0.33
-Nodes (1): Converters
+Nodes (1): SingBoxApplication
 
 ### Community 121 - "Community 121"
 Cohesion: 0.33
-Nodes (1): NodeEntity
+Nodes (1): Converters
 
 ### Community 122 - "Community 122"
 Cohesion: 0.33
-Nodes (1): NodeExtractor
+Nodes (1): NodeEntity
 
 ### Community 123 - "Community 123"
 Cohesion: 0.33
-Nodes (1): RuleSetAutoUpdateWorker
+Nodes (1): NodeExtractor
 
 ### Community 124 - "Community 124"
 Cohesion: 0.33
-Nodes (0): 
+Nodes (1): RuleSetAutoUpdateWorker
 
 ### Community 125 - "Community 125"
 Cohesion: 0.33
-Nodes (1): VersionInfo
+Nodes (0):
 
 ### Community 126 - "Community 126"
 Cohesion: 0.33
-Nodes (1): LogViewModel
+Nodes (1): VersionInfo
 
 ### Community 127 - "Community 127"
 Cohesion: 0.33
@@ -552,7 +552,7 @@ Nodes (1): BackgroundPowerManagerTest
 
 ### Community 131 - "Community 131"
 Cohesion: 0.4
-Nodes (0): 
+Nodes (0):
 
 ### Community 132 - "Community 132"
 Cohesion: 0.4
@@ -572,11 +572,11 @@ Nodes (3): ExistingProfile, NewProfile, SelectProfileTarget
 
 ### Community 136 - "Community 136"
 Cohesion: 0.4
-Nodes (0): 
+Nodes (0):
 
 ### Community 137 - "Community 137"
 Cohesion: 0.4
-Nodes (0): 
+Nodes (0):
 
 ### Community 138 - "Community 138"
 Cohesion: 0.4
@@ -636,7 +636,7 @@ Nodes (3): GithubFile, GithubTreeItem, GithubTreeResponse
 
 ### Community 152 - "Community 152"
 Cohesion: 0.5
-Nodes (0): 
+Nodes (0):
 
 ### Community 153 - "Community 153"
 Cohesion: 0.5
@@ -644,15 +644,15 @@ Nodes (2): VpnTunAddressPlan, VpnTunAddressPlanner
 
 ### Community 154 - "Community 154"
 Cohesion: 0.5
-Nodes (0): 
+Nodes (0):
 
 ### Community 155 - "Community 155"
 Cohesion: 0.5
-Nodes (0): 
+Nodes (0):
 
 ### Community 156 - "Community 156"
 Cohesion: 0.5
-Nodes (0): 
+Nodes (0):
 
 ### Community 157 - "Community 157"
 Cohesion: 0.5
@@ -692,7 +692,7 @@ Nodes (1): ShortcutActivity
 
 ### Community 166 - "Community 166"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 167 - "Community 167"
 Cohesion: 0.67
@@ -700,39 +700,39 @@ Nodes (1): AppNotificationManager
 
 ### Community 168 - "Community 168"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 169 - "Community 169"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 170 - "Community 170"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 171 - "Community 171"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 172 - "Community 172"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 173 - "Community 173"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 174 - "Community 174"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 175 - "Community 175"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 176 - "Community 176"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 177 - "Community 177"
 Cohesion: 0.67
@@ -776,79 +776,79 @@ Nodes (1): PingResultCode
 
 ### Community 187 - "Community 187"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 188 - "Community 188"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 189 - "Community 189"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 190 - "Community 190"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 191 - "Community 191"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 192 - "Community 192"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 193 - "Community 193"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 194 - "Community 194"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 195 - "Community 195"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 196 - "Community 196"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 197 - "Community 197"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 198 - "Community 198"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 199 - "Community 199"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 200 - "Community 200"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 201 - "Community 201"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 202 - "Community 202"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 203 - "Community 203"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 204 - "Community 204"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ## Knowledge Gaps
 - **264 isolated node(s):** `RecoveryMode`, `RecoveryLevel`, `SmartRecoveryResult`, `ProbeTarget`, `ProbeResult` (+259 more)
-  These have ≤1 connection - possible missing edges or undocumented components.
+  These have 鈮? connection - possible missing edges or undocumented components.
 - **Thin community `Community 181`** (2 nodes): `ActiveStateEntity.kt`, `ActiveStateEntity`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 182`** (2 nodes): `NodeLatencyEntity.kt`, `NodeLatencyEntity`
@@ -902,7 +902,7 @@ Nodes (0):
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `ConfigRepository` connect `Community 0` to `Community 2`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
+  _High betweenness centrality (0.006) - this node is a cross-community bridge._
 - **Why does `SingBoxService` connect `Community 5` to `Community 3`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **What connects `RecoveryMode`, `RecoveryLevel`, `SmartRecoveryResult` to the rest of the system?**

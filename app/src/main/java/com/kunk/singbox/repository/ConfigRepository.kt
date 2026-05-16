@@ -137,6 +137,8 @@ class ConfigRepository(private val context: Context) {
         private const val RULE_SET_TEXT_PARSE_LIMIT_BYTES = 256 * 1024L
 
         private const val RULE_SET_IP_THRESHOLD = 0.6
+        private val IP_DNS_QUERY_TYPES = listOf("A", "AAAA")
+        private val NON_IP_DNS_QUERY_TYPES = listOf("HTTPS", "SVCB")
 
         private val REGEX_IP_CIDR = Regex("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}" +
             "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/([0-9]|[1-2][0-9]|3[0-2])\$")
@@ -871,8 +873,7 @@ class ConfigRepository(private val context: Context) {
             semantics: List<OutboundSemantic>,
             remoteDnsAddr: String,
             remoteStrategy: String?,
-            remoteResolver: DomainResolveConfig?,
-            outbounds: List<Outbound> = emptyList()
+            remoteResolver: DomainResolveConfig?
         ) {
             semantics.asSequence()
                 .filterIsInstance<OutboundSemantic.RouteTag>()
@@ -886,8 +887,7 @@ class ConfigRepository(private val context: Context) {
                                 detourTag = detourTag,
                                 remoteDnsAddr = remoteDnsAddr,
                                 remoteStrategy = remoteStrategy,
-                                remoteResolver = remoteResolver,
-                                outbounds = outbounds
+                                remoteResolver = remoteResolver
                             )
                         )
                     }
@@ -898,11 +898,10 @@ class ConfigRepository(private val context: Context) {
             semantics: List<OutboundSemantic>,
             remoteDnsAddr: String,
             remoteStrategy: String?,
-            remoteResolver: DomainResolveConfig?,
-            outbounds: List<Outbound> = emptyList()
+            remoteResolver: DomainResolveConfig?
         ): List<DnsServer> {
             val servers = mutableListOf<DnsServer>()
-            ensureDynamicRemoteDnsServers(servers, semantics, remoteDnsAddr, remoteStrategy, remoteResolver, outbounds)
+            ensureDynamicRemoteDnsServers(servers, semantics, remoteDnsAddr, remoteStrategy, remoteResolver)
             return servers
         }
 
@@ -910,15 +909,13 @@ class ConfigRepository(private val context: Context) {
             detourTag: String,
             remoteDnsAddr: String,
             remoteStrategy: String?,
-            remoteResolver: DomainResolveConfig?,
-            outbounds: List<Outbound> = emptyList()
+            remoteResolver: DomainResolveConfig?
         ): DnsServer {
             return buildDynamicRemoteDnsServer(
                 detourTag = detourTag,
                 remoteDnsAddr = remoteDnsAddr,
                 remoteStrategy = remoteStrategy,
-                remoteResolver = remoteResolver,
-                outbounds = outbounds
+                remoteResolver = remoteResolver
             )
         }
 
@@ -926,19 +923,8 @@ class ConfigRepository(private val context: Context) {
             detourTag: String,
             remoteDnsAddr: String,
             remoteStrategy: String?,
-            remoteResolver: DomainResolveConfig?,
-            outbounds: List<Outbound>
+            remoteResolver: DomainResolveConfig?
         ): DnsServer {
-            val echDnsAddress = resolveActiveEchDnsServer(detourTag, outbounds)
-            if (echDnsAddress != null) {
-                return buildDnsServer(
-                    address = echDnsAddress,
-                    tag = buildDynamicDnsServerTag(detourTag),
-                    detour = detourTag,
-                    domainStrategy = remoteStrategy,
-                    domainResolver = DomainResolveConfig(server = "dns-bootstrap")
-                )
-            }
             return buildDnsServer(
                 address = remoteDnsAddr,
                 tag = buildDynamicDnsServerTag(detourTag),
@@ -1070,7 +1056,6 @@ class ConfigRepository(private val context: Context) {
             proxyServerTag: String,
             rule: DnsRule
         ): List<DnsRule> {
-            val fakeipQueryTypes = listOf("A", "AAAA")
             fun dnsRouteTo(server: String, currentRule: DnsRule): DnsRule =
                 currentRule.copy(action = "route", server = server)
 
@@ -1078,9 +1063,17 @@ class ConfigRepository(private val context: Context) {
                 return listOf(dnsRouteTo(proxyServerTag, rule))
             }
             return listOf(
-                dnsRouteTo("fakeip-dns", rule.copy(queryType = fakeipQueryTypes)),
+                dnsRouteTo("fakeip-dns", rule.copy(queryType = IP_DNS_QUERY_TYPES)),
                 dnsRouteTo(proxyServerTag, rule.copy(queryType = null))
             )
+        }
+
+        internal fun buildNonIpDnsFallbackRuleForTest(serverTag: String): DnsRule {
+            return buildNonIpDnsFallbackRule(serverTag)
+        }
+
+        internal fun sortRuleSetsForDnsAndRoutePriorityForTest(ruleSets: List<RuleSet>): List<RuleSet> {
+            return sortRuleSetsForDnsAndRoutePriority(ruleSets)
         }
 
         internal fun buildQuicBlockRuleForTest(settings: AppSettings): List<RouteRule> {
@@ -1132,6 +1125,39 @@ class ConfigRepository(private val context: Context) {
             )
         }
 
+        private fun buildNonIpDnsFallbackRule(serverTag: String): DnsRule {
+            return DnsRule(
+                action = "route",
+                queryType = NON_IP_DNS_QUERY_TYPES,
+                server = serverTag
+            )
+        }
+
+        private fun sortRuleSetsForDnsAndRoutePriority(ruleSets: List<RuleSet>): List<RuleSet> {
+            return ruleSets.sortedWith(
+                compareBy(
+                    { ruleSet ->
+                        when {
+                            ruleSet.tag == "geolocation-!cn" -> 200
+                            ruleSet.tag == "geolocation-cn" -> 199
+                            ruleSet.tag == "!cn" || ruleSet.tag.endsWith("-!cn") -> 198
+                            ruleSet.tag.matches(Regex("^geo(site|ip)-[a-z]{2}$")) -> 100
+                            else -> 0
+                        }
+                    },
+                    { ruleSet ->
+                        when (resolveRuleSetOutboundMode(ruleSet.outboundMode)) {
+                            RuleSetOutboundMode.NODE -> 0
+                            RuleSetOutboundMode.PROXY -> 1
+                            RuleSetOutboundMode.DIRECT -> 2
+                            RuleSetOutboundMode.BLOCK -> 3
+                            RuleSetOutboundMode.PROFILE -> 1
+                        }
+                    }
+                )
+            )
+        }
+
         internal fun resolveProxyDnsDetourTagForTest(
             selectorTag: String,
             outbounds: List<Outbound>
@@ -1175,6 +1201,22 @@ class ConfigRepository(private val context: Context) {
             } else {
                 trimmed
             }
+        }
+
+        internal fun normalizeRemoteDns(value: String?): String {
+            val trimmed = value?.trim().orEmpty()
+            val remoteDns = trimmed.ifBlank { "https://dns.google/dns-query" }
+            return normalizeCloudflareIpDohAddress(remoteDns)
+        }
+
+        private fun normalizeCloudflareIpDohAddress(address: String): String {
+            val uri = runCatching { URI(address.trim()) }.getOrNull() ?: return address
+            val scheme = uri.scheme?.lowercase() ?: return address
+            val host = uri.host?.removePrefix("[")?.removeSuffix("]") ?: return address
+            if (scheme !in setOf("https", "h3") || host !in CLOUDFLARE_DOH_IPS) return address
+            val path = uri.rawPath?.takeIf { it.isNotBlank() } ?: "/dns-query"
+            val query = uri.rawQuery?.let { "?$it" }.orEmpty()
+            return "$scheme://cloudflare-dns.com$path$query"
         }
 
         internal fun buildDnsResolverForAddress(address: String): DomainResolveConfig? {
@@ -1229,6 +1271,13 @@ class ConfigRepository(private val context: Context) {
         private fun shouldUseParsedDnsHost(scheme: String?): Boolean {
             return scheme == null || scheme in setOf("https", "h3", "tls", "quic", "tcp", "udp", "dhcp")
         }
+
+        private val CLOUDFLARE_DOH_IPS = setOf(
+            "1.1.1.1",
+            "1.0.0.1",
+            "2606:4700:4700::1111",
+            "2606:4700:4700::1001"
+        )
 
         internal fun buildDnsServer(
             address: String,
@@ -4269,27 +4318,8 @@ class ConfigRepository(private val context: Context) {
         val rules = mutableListOf<RouteRule>()
 
         val validTags = validRuleSets.mapNotNull { it.tag }.toSet()
-        val sortedRuleSets = settings.ruleSets.filter { it.enabled && it.tag in validTags }.sortedWith(
-            compareBy(
-                { ruleSet ->
-                    when {
-                        ruleSet.tag == "geolocation-!cn" -> 200
-                        ruleSet.tag == "geolocation-cn" -> 199
-                        ruleSet.tag == "!cn" || ruleSet.tag.endsWith("-!cn") -> 198
-                        ruleSet.tag.matches(Regex("^geo(site|ip)-[a-z]{2}$")) -> 100
-                        else -> 0
-                    }
-                },
-                { ruleSet ->
-                    when (resolveRuleSetOutboundMode(ruleSet.outboundMode)) {
-                        RuleSetOutboundMode.NODE -> 0
-                        RuleSetOutboundMode.PROXY -> 1
-                        RuleSetOutboundMode.DIRECT -> 2
-                        RuleSetOutboundMode.BLOCK -> 3
-                        RuleSetOutboundMode.PROFILE -> 1
-                    }
-                }
-            )
+        val sortedRuleSets = sortRuleSetsForDnsAndRoutePriority(
+            settings.ruleSets.filter { it.enabled && it.tag in validTags }
         )
 
         sortedRuleSets.forEach { ruleSet ->
@@ -4472,7 +4502,6 @@ class ConfigRepository(private val context: Context) {
         val proxyServerTag = buildDynamicDnsServerTag(proxyDetourTag)
         val proxyFinalServerTag = proxyServerTag
         val directServerTag = "local"
-        val activeEchDnsAddr = resolveActiveEchDnsServer(proxyDetourTag, outboundsContext.outbounds)
 
         fun dnsRouteTo(server: String, rule: DnsRule): DnsRule =
             rule.copy(action = "route", server = server)
@@ -4496,14 +4525,12 @@ class ConfigRepository(private val context: Context) {
                 .distinct()
         }
 
-        val fakeipQueryTypes = listOf("A", "AAAA")
-
         fun dnsRouteToProxy(rule: DnsRule): List<DnsRule> {
             if (!settings.fakeDnsEnabled) {
                 return listOf(dnsRouteTo(proxyServerTag, rule))
             }
             return listOf(
-                dnsRouteTo("fakeip-dns", rule.copy(queryType = fakeipQueryTypes)),
+                dnsRouteTo("fakeip-dns", rule.copy(queryType = IP_DNS_QUERY_TYPES)),
                 dnsRouteTo(proxyServerTag, rule.copy(queryType = null))
             )
         }
@@ -4524,8 +4551,9 @@ class ConfigRepository(private val context: Context) {
         if (settings.blockQuic && !hasEchOutbound) {
             dnsRules.add(dnsReject(DnsRule(queryType = listOf("HTTPS", "SVCB"))))
         }
-        val echQueryServerTag = directServerTag
+        val echQueryServerTag = "dns-bootstrap"
         dnsRules.addAll(buildEchDnsRules(outboundsContext.outbounds, echQueryServerTag))
+        dnsRules.add(buildNonIpDnsFallbackRule(proxyServerTag))
         val bootstrapStrategy = resolveDnsStrategy(settings.serverAddressStrategy, settings.ipVersionMode)
         val bootstrapV4Tag = "dns-bootstrap-v4"
         val bootstrapV6Tag = "dns-bootstrap-v6"
@@ -4566,14 +4594,8 @@ class ConfigRepository(private val context: Context) {
             domainResolver = localResolver
         )
         dnsServers.add(localServer)
-        val remoteDnsAddr = activeEchDnsAddr
-            ?: settings.remoteDns.takeIf { it.isNotBlank() }
-            ?: "https://dns.google/dns-query"
-        val remoteResolver = if (activeEchDnsAddr != null) {
-            DomainResolveConfig(server = "dns-bootstrap")
-        } else {
-            buildDnsResolverForAddress(remoteDnsAddr)
-        }
+        val remoteDnsAddr = normalizeRemoteDns(settings.remoteDns)
+        val remoteResolver = buildDnsResolverForAddress(remoteDnsAddr)
         val remoteServer = buildDnsServer(
             address = remoteDnsAddr,
             tag = "remote",
@@ -4582,27 +4604,14 @@ class ConfigRepository(private val context: Context) {
         )
         dnsServers.add(remoteServer)
         val remoteStrategy = resolveDnsStrategy(settings.remoteDnsStrategy, settings.ipVersionMode)
-        if (activeEchDnsAddr != null) {
-            val echResolver = DomainResolveConfig(server = "dns-bootstrap")
-            dnsServers.add(
-                buildDnsServer(
-                    address = activeEchDnsAddr,
-                    tag = proxyServerTag,
-                    detour = proxyDetourTag,
-                    domainStrategy = remoteStrategy,
-                    domainResolver = echResolver
-                )
-            )
-        } else {
-            ensureDynamicRemoteDnsServers(
-                dnsServers = dnsServers,
-                semantics = listOf(OutboundSemantic.RouteTag(proxyDetourTag)),
-                remoteDnsAddr = remoteDnsAddr,
-                remoteStrategy = remoteStrategy,
-                remoteResolver = remoteResolver
-            )
-        }
-        val bootstrapDnsAddresses = listOfNotNull(localDnsAddr, remoteDnsAddr, activeEchDnsAddr)
+        ensureDynamicRemoteDnsServers(
+            dnsServers = dnsServers,
+            semantics = listOf(OutboundSemantic.RouteTag(proxyDetourTag)),
+            remoteDnsAddr = remoteDnsAddr,
+            remoteStrategy = remoteStrategy,
+            remoteResolver = remoteResolver
+        )
+        val bootstrapDnsAddresses = listOf(localDnsAddr, remoteDnsAddr)
 
         dnsRules.addAll(
             buildBootstrapDnsRules(
@@ -4709,8 +4718,7 @@ class ConfigRepository(private val context: Context) {
             }
         }
 
-        settings.ruleSets
-            .filter { it.enabled }
+        sortRuleSetsForDnsAndRoutePriority(settings.ruleSets.filter { it.enabled })
             .forEach { ruleSet ->
                 val tag = ruleSet.tag
                 if (tag.isBlank() || tag !in validRuleSetTags) return@forEach
@@ -4855,8 +4863,7 @@ class ConfigRepository(private val context: Context) {
             semantics = domainSemantics + ruleSetSemantics + packageSemantics,
             remoteDnsAddr = remoteDnsAddr,
             remoteStrategy = remoteStrategy,
-            remoteResolver = remoteResolver,
-            outbounds = outboundsContext.outbounds
+            remoteResolver = remoteResolver
         )
 
         if (settings.fakeDnsEnabled) {

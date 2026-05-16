@@ -617,6 +617,34 @@ class ConfigRepositoryTest {
     }
 
     @Test
+    fun testNormalizeRemoteDnsReplacesBlankValue() {
+        val normalized = ConfigRepository.normalizeRemoteDns("   ")
+
+        assertEquals("https://dns.google/dns-query", normalized)
+    }
+
+    @Test
+    fun testNormalizeRemoteDnsRewritesCloudflareIpDohToDomain() {
+        val normalized = ConfigRepository.normalizeRemoteDns("https://1.1.1.1/dns-query")
+
+        assertEquals("https://cloudflare-dns.com/dns-query", normalized)
+    }
+
+    @Test
+    fun testNormalizeRemoteDnsRewritesCloudflareIpv6DohToDomain() {
+        val normalized = ConfigRepository.normalizeRemoteDns("https://[2606:4700:4700::1111]/dns-query")
+
+        assertEquals("https://cloudflare-dns.com/dns-query", normalized)
+    }
+
+    @Test
+    fun testNormalizeRemoteDnsKeepsNonCloudflareIpDoh() {
+        val normalized = ConfigRepository.normalizeRemoteDns("https://8.8.8.8/dns-query")
+
+        assertEquals("https://8.8.8.8/dns-query", normalized)
+    }
+
+    @Test
     fun testBuildDnsResolverForDomainUrlReturnsBootstrapResolver() {
         val resolver = ConfigRepository.buildDnsResolverForAddress("https://dns.alidns.com/dns-query")
 
@@ -827,29 +855,16 @@ class ConfigRepositoryTest {
     }
 
     @Test
-    fun testBuildDynamicDnsServersUsesEchResolverForMatchingRouteTag() {
+    fun testBuildDynamicDnsServersUsesRemoteDnsWithDetourForEchRouteTag() {
         val servers = ConfigRepository.buildDynamicDnsServersForTest(
             semantics = listOf(ConfigRepository.OutboundSemantic.RouteTag("ECH Node")),
             remoteDnsAddr = "https://1.1.1.1/dns-query",
             remoteStrategy = "prefer_ipv4",
-            remoteResolver = DomainResolveConfig(server = "dns-bootstrap"),
-            outbounds = listOf(
-                Outbound(
-                    type = "vless",
-                    tag = "ECH Node",
-                    tls = TlsConfig(
-                        ech = EchConfig(
-                            enabled = true,
-                            queryServerName = "cloudflare-ech.com",
-                            dnsServer = "https://dns.alidns.com/dns-query"
-                        )
-                    )
-                )
-            )
+            remoteResolver = DomainResolveConfig(server = "dns-bootstrap")
         )
 
         assertEquals(1, servers.size)
-        assertEquals("dns.alidns.com", servers.first().server)
+        assertEquals("1.1.1.1", servers.first().server)
         assertEquals("dns-bootstrap", servers.first().domainResolver?.server)
         assertEquals("ECH Node", servers.first().detour)
     }
@@ -870,30 +885,17 @@ class ConfigRepositoryTest {
     }
 
     @Test
-    fun testBuildDynamicRemoteDnsServerUsesActiveEchResolverWithoutDetour() {
+    fun testBuildDynamicRemoteDnsServerKeepsRemoteDnsForEchDetour() {
         val server = ConfigRepository.buildDynamicRemoteDnsServerForTest(
             detourTag = "ECH Node",
             remoteDnsAddr = "https://1.1.1.1/dns-query",
             remoteStrategy = "prefer_ipv4",
-            remoteResolver = DomainResolveConfig(server = "dns-bootstrap"),
-            outbounds = listOf(
-                Outbound(
-                    type = "vless",
-                    tag = "ECH Node",
-                    tls = TlsConfig(
-                        ech = EchConfig(
-                            enabled = true,
-                            queryServerName = "cloudflare-ech.com",
-                            dnsServer = "https://dns.alidns.com/dns-query"
-                        )
-                    )
-                )
-            )
+            remoteResolver = DomainResolveConfig(server = "dns-bootstrap")
         )
 
         assertEquals(ConfigRepository.buildDynamicDnsServerTag("ECH Node"), server.tag)
         assertEquals("https", server.type)
-        assertEquals("dns.alidns.com", server.server)
+        assertEquals("1.1.1.1", server.server)
         assertEquals("/dns-query", server.path)
         assertEquals("dns-bootstrap", server.domainResolver?.server)
         assertEquals("ECH Node", server.detour)
@@ -961,6 +963,45 @@ class ConfigRepositoryTest {
         assertEquals(listOf("A", "AAAA"), rules[0].queryType)
         assertEquals(ConfigRepository.buildDynamicDnsServerTag("PROXY"), rules[1].server)
         assertNull(rules[1].queryType)
+    }
+
+    @Test
+    fun testNonIpDnsFallbackRoutesHttpsAndSvcbToProxyDns() {
+        val rule = ConfigRepository.buildNonIpDnsFallbackRuleForTest(
+            ConfigRepository.buildDynamicDnsServerTag("PROXY")
+        )
+
+        assertEquals("route", rule.action)
+        assertEquals(listOf("HTTPS", "SVCB"), rule.queryType)
+        assertEquals(ConfigRepository.buildDynamicDnsServerTag("PROXY"), rule.server)
+    }
+
+    @Test
+    fun testRuleSetDnsPriorityKeepsProxySpecificRulesBeforeDirectCountryRules() {
+        val sortedRuleSets = ConfigRepository.sortRuleSetsForDnsAndRoutePriorityForTest(
+            listOf(
+                RuleSet(
+                    tag = "geosite-cn",
+                    type = RuleSetType.REMOTE,
+                    outboundMode = RuleSetOutboundMode.DIRECT
+                ),
+                RuleSet(
+                    tag = "geosite-google",
+                    type = RuleSetType.REMOTE,
+                    outboundMode = RuleSetOutboundMode.PROXY
+                ),
+                RuleSet(
+                    tag = "geosite-geolocation-!cn",
+                    type = RuleSetType.REMOTE,
+                    outboundMode = RuleSetOutboundMode.PROXY
+                )
+            )
+        )
+
+        assertEquals(
+            listOf("geosite-google", "geosite-cn", "geosite-geolocation-!cn"),
+            sortedRuleSets.map { it.tag }
+        )
     }
 
     @Test
