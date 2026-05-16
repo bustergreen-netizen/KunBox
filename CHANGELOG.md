@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.13.3](https://github.com/roseforljh/KunBox/compare/v2.13.2...v2.13.3) (2026-05-16)
+
+
+### Bug Fixes
+
+* bug fix ([e480d99](https://github.com/roseforljh/KunBox/commit/e480d99d0f9103d6a26321508b6992117337a891))
+* 同步singbox官方最新版本内核 ([462d30f](https://github.com/roseforljh/KunBox/commit/462d30f00486811121644b623d7ec4d0f827aba1))
+* 磁贴启动VPN使用错误节点，auto-failover不应持久化节点选择 ([39dda31](https://github.com/roseforljh/KunBox/commit/39dda315be3a53fd7ed6d434919b4f415bbf5cac))
+
 ## [2.13.2](https://github.com/roseforljh/KunBox/compare/v2.13.1...v2.13.2) (2026-04-25)
 
 
