@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KunBox</string>
+
+    <!-- App Shortcuts -->
+    <string name="shortcut_toggle">Переключить</string>
+    <string name="shortcut_toggle_short">Перекл.</string>
+    <string name="shortcut_toggle_vpn">Включить/выключить VPN</string>
+    <string name="shortcut_toggle_vpn_short">Вкл./Выкл.</string>
+    <string name="shortcut_switch_node">Сменить узел</string>
+    <string name="shortcut_switch_node_short">Узел</string>
+    <string name="shortcut_scan">Сканировать QR-код</string>
+    <string name="shortcut_scan_short">Сканер</string>
+
+    <!-- Update Notification -->
+    <string name="update_channel_name">Обновления приложения</string>
+    <string name="update_channel_description">Уведомления о выходе новых версий</string>
+    <string name="update_notification_title">Доступна новая версия</string>
+    <string name="update_notification_content">Вышла версия KunBox %s, нажмите для подробностей</string>
+
+    <!-- Common -->
+    <string name="common_confirm">Подтвердить</string>
+    <string name="common_cancel">Отмена</string>
+    <string name="common_save">Сохранить</string>
+    <string name="common_delete">Удалить</string>
+    <string name="common_edit">Изменить</string>
+    <string name="common_edit_title">Изменить: %s</string>
+    <string name="common_select_title">Выбрать: %s</string>
+    <string name="common_add">Добавить</string>
+    <string name="common_ok">ОК</string>
+    <string name="common_close">Закрыть</string>
+    <string name="common_back">Назад</string>
+    <string name="common_retry">Повторить</string>
+    <string name="common_search">Поиск</string>
+    <string name="common_refresh">Обновить</string>
+    <string name="common_export">Экспорт</string>
+    <string name="common_import">Импорт</string>
+    <string name="common_update">Обновить</string>
+    <string name="common_enable">Включить</string>
+    <string name="common_disable">Отключить</string>
+    <string name="common_enabled">Включено</string>
+    <string name="common_disabled">Отключено</string>
+    <string name="common_select_all">Выбрать всё</string>
+    <string name="common_clear">Очистить</string>
+    <string name="common_copy">Копировать</string>
+    <string name="common_latency">Задержка</string>
+    <string name="common_timeout">Таймаут</string>
+    <string name="common_ipv6_only">Только IPv6</string>
+    <string name="common_unavailable">Недоступно</string>
+    <string name="common_loading">Загрузка...</string>
+    <string name="common_unknown">Неизвестно</string>
+    <string name="common_none">Нет</string>
+    <string name="common_all">Все</string>
+    <string name="common_yes">Да</string>
+    <string name="common_no">Нет</string>
+    <string name="common_auto">Авто</string>
+    <string name="common_menu">Меню</string>
+    <string name="common_more_options">Ещё</string>
+    <string name="common_view">Просмотр</string>
+    <string name="common_downloaded">Загружено</string>
+    <string name="common_ready">Готово</string>
+    <string name="common_system">Система</string>
+    <string name="common_background">Фон</string>
+    <string name="common_inbound">Входящий</string>
+    <string name="common_outbound">Исходящий</string>
+    <string name="splash_tagline">Безопасно · Быстро · Стабильно</string>
+
+    <!-- Connection Status -->
+    <string name="connection_idle">Не подключено</string>
+    <string name="connection_connecting">Подключение...</string>
+    <string name="connection_connected">Подключено</string>
+    <string name="connection_disconnecting">Отключение...</string>
+    <string name="connection_error">Ошибка</string>
+    <string name="connection_failed_check_config">Ошибка подключения, проверьте конфигурацию</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_routing_mode">Режим маршрутизации</string>
+    <string name="dashboard_update_subscription">Обновить подписки</string>
+    <string name="dashboard_update_subscription_confirm">Обновить все подписки?</string>
+    <string name="dashboard_latency_test">Тест задержки</string>
+    <string name="dashboard_latency_test_confirm">Протестировать задержку всех узлов?</string>
+    <string name="dashboard_start_test">Начать тест</string>
+    <string name="dashboard_logs">Журнал работы</string>
+    <string name="dashboard_diagnostics">Диагностика сети</string>
+    <string name="dashboard_select_profile">Выбрать конфигурацию</string>
+    <string name="dashboard_select_node">Выбрать узел</string>
+    <string name="dashboard_no_profile_selected">Конфигурация не выбрана</string>
+    <string name="dashboard_no_node_selected">Узел не выбран</string>
+    <string name="dashboard_no_profiles_available">Нет доступных конфигураций</string>
+    <string name="dashboard_no_nodes_available">Нет доступных узлов</string>
+    <string name="dashboard_test_complete">Тест завершён</string>
+    <string name="dashboard_config_generation_failed">Ошибка создания конфигурации</string>
+    <string name="dashboard_system_vpn_running">Обнаружен другой работающий VPN</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_general">Общие</string>
+    <string name="settings_network">Сеть</string>
+    <string name="settings_tools">Инструменты</string>
+    <string name="settings_data_management">Управление данными</string>
+    <string name="settings_about">О приложении</string>
+    <string name="settings_app_theme">Тема приложения</string>
+    <string name="settings_app_language">Язык приложения</string>
+    <string name="settings_connection_startup">Подключение и запуск</string>
+    <string name="settings_connection_startup_subtitle">Автоподключение, переподключение при разрыве</string>
+    <string name="settings_routing">Маршрутизация</string>
+    <string name="settings_routing_subtitle">Режим, наборы правил, правило по умолчанию</string>
+    <string name="settings_dns">Настройки DNS</string>
+    <string name="settings_dns_auto">Авто</string>
+    <string name="settings_local_dns">Локальный DNS</string>
+    <string name="settings_remote_dns">Удалённый DNS</string>
+    <string name="settings_tun_vpn">TUN / VPN</string>
+    <string name="settings_tun_vpn_subtitle">Стек, MTU, прокси для отдельных приложений</string>
+    <string name="settings_update_rulesets">Обновить наборы правил</string>
+    <string name="settings_update_rulesets_subtitle">Ручное обновление правил рекламы и маршрутизации</string>
+    <string name="settings_updating">Загрузка...</string>
+    <string name="settings_preparing_update">Подготовка обновления...</string>
+    <string name="settings_update_success">Обновление успешно</string>
+    <string name="settings_update_failed">Ошибка обновления</string>
+    <string name="settings_ruleset_update_success">Наборы правил обновлены</string>
+    <string name="settings_ruleset_update_failed">Ошибка обновления наборов правил</string>
+    <string name="settings_ruleset_auto_update">Автообновление наборов правил</string>
+    <string name="settings_ruleset_auto_update_enabled">Автообновление каждые %d мин.</string>
+    <string name="settings_ruleset_auto_update_disabled">При включении все удалённые наборы будут обновляться автоматически</string>
+    <string name="settings_update_interval">Интервал обновления</string>
+    <string name="settings_update_interval_value">%d мин.</string>
+    <string name="settings_update_interval_min">Минимальный интервал — 15 минут</string>
+    <string name="settings_debug_mode">Режим отладки</string>
+    <string name="settings_debug_mode_subtitle">Подробное логирование (требуется перезапуск службы)</string>
+    <string name="settings_logs">Журнал работы</string>
+    <string name="settings_network_diagnostics">Диагностика сети</string>
+    <string name="settings_export_data">Экспорт данных</string>
+    <string name="settings_export_data_subtitle">Сохранить все конфигурации и настройки в файл</string>
+    <string name="settings_import_data">Импорт данных</string>
+    <string name="settings_import_data_subtitle">Восстановить конфигурации и настройки из файла</string>
+    <string name="settings_about_app">О приложении</string>
+    <string name="settings_about_kunbox">О KunBox</string>
+    <string name="settings_restart_needed">Настройки изменены, применятся после перезапуска</string>
+
+    <!-- Connection Settings -->
+    <string name="connection_settings_title">Подключение и запуск</string>
+    <string name="connection_settings_auto_connect">Автоподключение</string>
+    <string name="connection_settings_auto_connect_subtitle">Автоматически подключать VPN при запуске приложения</string>
+    <string name="connection_settings_hide_recent">Скрывать в недавних задачах</string>
+    <string name="connection_settings_hide_recent_subtitle">Приложение не будет отображаться в списке недавних задач</string>
+    <string name="connection_settings_proxy_port">Порт прокси</string>
+    <string name="connection_settings_proxy_port_subtitle">Локальный смешанный прокси-порт (Mixed Port)</string>
+    <string name="connection_settings_allow_lan">Разрешить подключения из локальной сети</string>
+    <string name="connection_settings_allow_lan_subtitle">Другие устройства в локальной сети смогут использовать этот порт как прокси</string>
+    <string name="connection_settings_append_http_proxy">Передать HTTP-прокси в VPN</string>
+    <string name="connection_settings_append_http_proxy_subtitle">Установить локальный HTTP-прокси как системный (Android 10+)</string>
+    <string name="connection_settings_latency_concurrency">Параллельные тесты задержки</string>
+    <string name="connection_settings_latency_concurrency_subtitle">Количество одновременных запросов при массовом тесте (по умолчанию: 10)</string>
+    <string name="connection_settings_latency_timeout">Таймаут теста задержки (мс)</string>
+    <string name="connection_settings_latency_timeout_subtitle">Таймаут одного теста задержки (по умолчанию: 2000 мс)</string>
+
+    <!-- Routing Settings -->
+    <string name="routing_settings_title">Маршрутизация</string>
+    <string name="routing_settings_mode">Режим маршрутизации</string>
+    <string name="routing_settings_default_rule">Правило по умолчанию</string>
+    <string name="routing_settings_latency_test_method">Метод теста задержки</string>
+    <string name="routing_settings_latency_test_url">Адрес для теста задержки</string>
+    <string name="routing_settings_latency_test_timeout">Таймаут теста</string>
+    <string name="routing_settings_latency_test_timeout_s">%d сек.</string>
+    <string name="routing_settings_subscription_timeout">Таймаут обновления подписки</string>
+    <string name="routing_settings_subscription_timeout_subtitle">По истечении таймаута обновление будет прервано как неуспешное</string>
+    <string name="routing_settings_github_mirror">Зеркало GitHub</string>
+    <string name="routing_settings_block_ads">Блокировка рекламы</string>
+    <string name="routing_settings_block_ads_subtitle">Блокировать распространённые рекламные домены</string>
+    <string name="routing_settings_block_quic">Блокировать QUIC</string>
+    <string name="routing_settings_block_quic_subtitle">Включите при нестабильной работе QUIC; отключение повышает производительность HTTP/3</string>
+    <string name="routing_settings_bypass_lan">Обход локальной сети</string>
+    <string name="routing_settings_bypass_lan_subtitle">Трафик локальной сети не проходит через прокси</string>
+    <string name="routing_settings_icmp_echo_routing">Маршрутизация ICMP Echo</string>
+    <string name="routing_settings_icmp_echo_routing_subtitle">Обработка ping-трафика по правилам ICMP из sing-box 1.13</string>
+    <string name="routing_settings_app_routing">Маршрутизация приложений</string>
+    <string name="routing_settings_app_routing_rules">%d правил</string>
+    <string name="routing_settings_domain_routing">Маршрутизация по домену</string>
+    <string name="routing_settings_manage_rulesets">Управление наборами правил</string>
+
+    <!-- TUN Settings -->
+    <string name="tun_settings_title">Настройки TUN / VPN</string>
+    <string name="tun_settings_enable">Включить TUN</string>
+    <string name="tun_settings_enable_subtitle">Создать VPN-интерфейс для перехвата системного трафика</string>
+    <string name="tun_settings_stack">Стек</string>
+    <string name="tun_settings_ip_version_mode">Режим IP-версии</string>
+    <string name="tun_settings_mtu">MTU</string>
+    <string name="tun_settings_mtu_auto">Автоматический MTU</string>
+    <string name="tun_settings_mtu_auto_subtitle">Wi-Fi/Ethernet 1480, мобильная сеть 1400; подходит для QUIC-протоколов. Можно отключить и задать вручную</string>
+    <string name="tun_settings_interface_name">Имя интерфейса</string>
+    <string name="tun_settings_auto_route">Автоматическая маршрутизация</string>
+    <string name="tun_settings_auto_route_subtitle">Автоматическая настройка системной таблицы маршрутизации</string>
+    <string name="tun_settings_endpoint_independent_nat">Независимый NAT</string>
+    <string name="tun_settings_endpoint_independent_nat_subtitle">Улучшает P2P-соединения (Full Cone)</string>
+    <string name="tun_settings_strict_route">Строгая маршрутизация</string>
+    <string name="tun_settings_strict_route_subtitle">Предотвращает утечки DNS</string>
+    <string name="tun_settings_route_mode">Режим перехвата</string>
+    <string name="tun_settings_route_cidrs">Перехватываемые подсети</string>
+    <string name="tun_settings_route_cidrs_configured">Задано: %d</string>
+    <string name="tun_settings_app_mode">Режим по приложениям</string>
+    <string name="tun_settings_allowlist">Список разрешённых</string>
+    <string name="tun_settings_allowlist_configured">Задано: %d</string>
+    <string name="tun_settings_blocklist">Список исключений</string>
+    <string name="tun_settings_blocklist_configured">Задано: %d</string>
+    <string name="tun_settings_select_vpn_apps">Выберите приложения, использующие VPN</string>
+    <string name="tun_settings_select_bypass_apps">Выберите приложения, исключённые из VPN</string>
+
+    <!-- DNS Settings -->
+    <string name="dns_settings_title">Настройки DNS</string>
+    <string name="dns_settings_fake_dns">Fake DNS</string>
+    <string name="dns_settings_fake_dns_subtitle">Возвращать виртуальные IP для ускорения разрешения доменов</string>
+    <string name="dns_settings_fake_ip_range">Диапазон виртуальных IP</string>
+    <string name="dns_settings_strategy">Стратегия разрешения</string>
+    <string name="dns_settings_remote_strategy">Стратегия для удалённых доменов</string>
+    <string name="dns_settings_direct_strategy">Стратегия для прямых доменов</string>
+    <string name="dns_settings_server_strategy">Стратегия для адреса сервера</string>
+    <string name="dns_settings_cache">Кэш DNS</string>
+  <!-- Profiles -->
+    <string name="profiles_title">Управление конфигурациями</string>
+    <string name="profiles_search">Поиск конфигураций</string>
+    <string name="profiles_deep_link_import_title">Подтвердите импорт подписки</string>
+    <string name="profiles_deep_link_import_message">Будет импортирована подписка:
+%1$s
+
+%2$s</string>
+    <string name="profiles_import_content_too_large">Слишком большое содержимое, уменьшите его и попробуйте снова</string>
+    <string name="profiles_search_hint">Введите ключевое слово...</string>
+    <string name="profiles_add_subscription">Добавить подписку</string>
+    <string name="profiles_edit_profile">Изменить конфигурацию</string>
+    <string name="profiles_subscription_link">Ссылка на подписку</string>
+    <string name="profiles_local_file">Локальный файл</string>
+    <string name="profiles_local_file_subtitle">Импорт из файла JSON/YAML</string>
+    <string name="profiles_clipboard">Буфер обмена</string>
+    <string name="profiles_clipboard_subtitle">Импорт из содержимого буфера обмена</string>
+    <string name="profiles_import_clipboard">Импорт из буфера обмена</string>
+    <string name="profiles_import_clipboard_hint">Имя конфигурации</string>
+    <string name="profiles_scan_qrcode">Сканировать QR-код</string>
+    <string name="profiles_scan_qrcode_subtitle">Использовать камеру для сканирования</string>
+    <string name="profiles_qrcode_import">Импорт QR-кодом</string>
+    <string name="profiles_qrcode_subscription">Подписка через QR-код</string>
+    <string name="profiles_file_import">Импорт из файла</string>
+    <string name="profiles_clipboard_import">Импорт из буфера обмена</string>
+    <string name="rulesets_select_target">Выберите цель</string>
+    <string name="rulesets_tap_to_select">Нажмите для выбора...</string>
+    <string name="rulesets_rule_set_tag">Метка набора правил</string>
+    <string name="profiles_file_empty">Файл пуст</string>
+    <string name="profiles_read_file_failed">Ошибка чтения файла: %s</string>
+    <string name="profiles_clipboard_empty">Буфер обмена пуст</string>
+    <string name="profiles_name_invalid">Имя конфигурации не может содержать ссылку</string>
+    <string name="profiles_camera_permission_required">Для сканирования QR-кода требуется доступ к камере</string>
+    <string name="profiles_import_success">Импорт успешен: %s</string>
+    <string name="profiles_import_failed">Ошибка импорта: %s</string>
+    <string name="profiles_parse_failed">Не удалось разобрать содержимое</string>
+    <string name="profiles_content_empty">Содержимое пусто</string>
+    <string name="profiles_updated">Конфигурация обновлена</string>
+    <string name="profiles_deleted">Конфигурация удалена</string>
+    <string name="profiles_auto_update">Автообновление</string>
+    <string name="profiles_auto_update_interval">Интервал обновления (минуты)</string>
+    <string name="profiles_auto_update_hint">Рекомендуется не менее 30 минут</string>
+    <string name="profiles_dns_preresolve">Предварительное разрешение DNS</string>
+    <string name="profiles_dns_preresolve_hint">Предварительно разрешать домены узлов в IP, в обход подмены DNS</string>
+    <string name="profiles_dns_server">DNS-сервер</string>
+    <string name="profiles_dns_server_cloudflare">Cloudflare (1.1.1.1)</string>
+    <string name="profiles_dns_server_google">Google (8.8.8.8)</string>
+    <string name="profiles_dns_server_alidns">AliDNS (223.5.5.5)</string>
+    <string name="profiles_name_label">Имя</string>
+    <string name="profiles_url_label">Ссылка на подписку</string>
+    <string name="profiles_subscription_node_warning">Не указывайте одиночные узлы в ссылке на подписку — используйте импорт из буфера обмена или функцию «Добавить узел»</string>
+    <string name="profiles_extracting_nodes">Извлечение узлов (%1$d/%2$d)...</string>
+
+    <!-- Nodes -->
+    <string name="nodes_title">Список узлов</string>
+    <string name="nodes_count_suffix">узлов</string>
+    <string name="nodes_sort">Сортировка</string>
+    <string name="nodes_filter">Фильтр</string>
+    <string name="nodes_add">Добавить узел</string>
+    <string name="nodes_add_hint">Введите ссылку на узел (vmess://, vless://, ss:// и т. д.)...</string>
+    <string name="nodes_add_to_profile">Добавить в конфигурацию</string>
+    <string name="nodes_add_create_new_profile">Создать новую конфигурацию</string>
+    <string name="nodes_add_new_profile_name_hint">Введите имя новой конфигурации...</string>
+    <string name="nodes_export_link">Экспорт ссылки</string>
+    <string name="nodes_copied_to_clipboard">Скопировано в буфер обмена</string>
+    <string name="nodes_clear_latency">Очистить задержку</string>
+    <string name="nodes_latency_cleared">Задержка очищена</string>
+    <string name="nodes_test_latency">Тестировать задержку</string>
+    <string name="nodes_testing_progress">Тестирование...</string>
+    <string name="nodes_test_complete_stats">Тест завершён: %1$d успешно, %2$d таймаут</string>
+    <string name="nodes_test_complete_stats_v6">Тест завершён: %1$d успешно, %2$d таймаут, %3$d только IPv6</string>
+    <string name="nodes_stop_test">Остановить тест</string>
+    <string name="nodes_unknown_node">Неизвестный узел</string>
+    <string name="nodes_test_failed">%s — тест не пройден / таймаут</string>
+    <string name="nodes_filter_applied">Фильтр применён</string>
+    <string name="nodes_filter_cleared">Фильтр сброшен</string>
+    <string name="nodes_unsupported_format">Неподдерживаемый формат ссылки</string>
+    <string name="nodes_add_failed">Ошибка добавления</string>
+    <string name="nodes_group_auto_generated">Группа создана автоматически из конфигурации. Для удаления перейдите в «Управление конфигурациями» и удалите соответствующую конфигурацию</string>
+
+    <!-- Node Sort -->
+    <string name="nodes_sort_default">По умолчанию</string>
+    <string name="nodes_sort_latency">Задержка (мин. → макс.)</string>
+    <string name="nodes_sort_name">Имя (А → Я)</string>
+    <string name="nodes_sort_region">Регион</string>
+
+    <!-- Node Filter -->
+    <string name="node_filter_title">Фильтр узлов</string>
+    <string name="node_filter_mode">Режим фильтра</string>
+    <string name="node_filter_none">Без фильтра</string>
+    <string name="node_filter_include">Только содержащие</string>
+    <string name="node_filter_exclude">Исключить содержащие</string>
+    <string name="node_filter_keywords">Ключевые слова</string>
+    <string name="node_filter_keywords_hint">Слова через запятую, например: Гонконг, HK</string>
+    <string name="node_filter_keywords_tip">Подсказка: поиск по имени узла, регистр не учитывается</string>
+
+    <!-- Node Stats -->
+    <string name="nodes_stat_total">%d узлов</string>
+    <string name="nodes_stat_available">%d доступно</string>
+    <string name="nodes_stat_avg_latency">%d мс</string>
+
+    <!-- Node Detail -->
+    <string name="node_detail_title">Настройка сервера</string>
+    <string name="node_detail_saved">Конфигурация сохранена</string>
+    <string name="node_create_title">Создать узел</string>
+    <string name="node_created">Узел создан</string>
+    <string name="nodes_manual_create">Создать вручную</string>
+    <string name="nodes_select_protocol">Выберите тип протокола</string>
+    <string name="node_detail_config_name">Имя конфигурации</string>
+    <string name="node_detail_server_settings">Настройки сервера</string>
+    <string name="node_detail_server_address">Адрес сервера</string>
+    <string name="node_detail_server_port">Порт сервера</string>
+    <string name="node_detail_encryption">Шифрование</string>
+    <string name="node_detail_password">Пароль</string>
+    <string name="node_detail_plugin_options">Параметры плагина</string>
+    <string name="node_detail_packet_encoding">Кодирование пакетов</string>
+    <string name="node_detail_obfs_type">Тип обфускации</string>
+    <string name="node_detail_obfs_password">Пароль обфускации</string>
+    <string name="node_detail_congestion_control">Управление перегрузкой</string>
+    <string name="node_detail_username">Имя пользователя</string>
+    <string name="node_detail_private_key">Закрытый ключ</string>
+    <string name="node_detail_idle_session_check">Интервал проверки простоя сессии</string>
+    <string name="node_detail_idle_session_timeout">Таймаут простоя сессии</string>
+    <string name="node_detail_min_idle_sessions">Минимум простаивающих сессий</string>
+    <string name="node_detail_auth_string">Строка авторизации</string>
+    <string name="node_detail_transport_settings">Транспорт</string>
+    <string name="node_detail_transport_protocol">Транспортный протокол</string>
+    <string name="node_detail_transport_path">Путь</string>
+    <string name="node_detail_transport_security">Шифрование транспорта</string>
+    <string name="node_detail_mux_settings">Настройки мультиплексирования</string>
+    <string name="node_detail_mux_enable">Включить мультиплексирование</string>
+    <string name="node_detail_mux_subtitle">Оптимизация одновременных подключений</string>
+    <string name="node_detail_mux_max_connections">Макс. одновременных подключений</string>
+    <string name="node_detail_common_settings">Общие настройки</string>
+    <string name="node_detail_plugin">Плагин (необязательно)</string>
+    <string name="node_detail_udp_over_tcp">UDP over TCP</string>
+    <string name="node_detail_uuid">UUID</string>
+    <string name="node_detail_flow">Flow</string>
+    <string name="node_detail_ports_jumping">Переключение портов</string>
+    <string name="node_detail_upload_speed">Скорость отдачи (Мбит/с)</string>
+    <string name="node_detail_download_speed">Скорость загрузки (Мбит/с)</string>
+    <string name="node_detail_udp_relay_mode">Режим UDP-релея</string>
+    <string name="node_detail_heartbeat">Heartbeat</string>
+    <string name="node_detail_zero_rtt">Zero RTT</string>
+    <string name="node_detail_disable_sni">Отключить SNI</string>
+    <string name="node_detail_host">Host</string>
+    <string name="node_detail_insecure_concurrency">Небезопасный параллелизм</string>
+    <string name="node_detail_extra_headers">Дополнительные заголовки</string>
+    <string name="node_detail_extra_headers_hint">По одному заголовку на строку, формат: Key: Value</string>
+    <string name="node_detail_peer_public_key">Открытый ключ пира</string>
+    <string name="node_detail_pre_shared_key">Предварительный общий ключ</string>
+    <string name="node_detail_local_address">Локальный адрес (CIDR)</string>
+    <string name="node_detail_mtu">MTU</string>
+    <string name="node_detail_reserved">Reserved (WARP)</string>
+    <string name="node_detail_passphrase">Кодовая фраза</string>
+    <string name="node_detail_host_key">Ключ хоста</string>
+    <string name="node_detail_socks_version">Версия SOCKS</string>
+    <string name="node_detail_username_optional">Имя пользователя (необязательно)</string>
+    <string name="node_detail_password_optional">Пароль (необязательно)</string>
+    <string name="node_detail_shadowtls_version">Версия ShadowTLS</string>
+    <string name="node_detail_hop_interval">Интервал переключения (сек)</string>
+    <string name="node_detail_ws_host">WebSocket Host</string>
+    <string name="node_detail_ws_path">Путь WebSocket</string>
+    <string name="node_detail_max_early_data">Max Early Data</string>
+    <string name="node_detail_early_data_header">Early Data Header</string>
+    <string name="node_detail_service_name">Имя сервиса</string>
+    <string name="node_detail_xhttp_mode">Режим XHTTP</string>
+    <string name="node_detail_xpadding_bytes">XPaddingBytes</string>
+    <string name="node_detail_sc_max_each_post_bytes">scMaxEachPostBytes</string>
+    <string name="node_detail_sc_min_posts_interval_ms">scMinPostsIntervalMs</string>
+    <string name="node_detail_sc_max_buffered_posts">scMaxBufferedPosts</string>
+    <string name="node_detail_no_grpc_header">No GRPC Header</string>
+    <string name="node_detail_no_sse_header">No SSE Header</string>
+    <string name="node_detail_tls_settings">Настройки TLS</string>
+    <string name="node_detail_sni">SNI (Server Name Indication)</string>
+    <string name="node_detail_alpn">ALPN</string>
+    <string name="node_detail_allow_insecure">Разрешить небезопасное</string>
+    <string name="node_detail_allow_insecure_subtitle">Отключить проверку сертификата</string>
+    <string name="node_detail_ca_cert">CA-сертификат (PEM)</string>
+    <string name="node_detail_client_cert">Клиентский сертификат (PEM)</string>
+    <string name="node_detail_client_key">Клиентский ключ (PEM)</string>
+    <string name="node_detail_utls_fingerprint">Отпечаток uTLS</string>
+    <string name="node_detail_reality_public_key">Открытый ключ Reality</string>
+    <string name="node_detail_reality_short_id">Reality ShortId</string>
+    <string name="node_detail_enable_ech">Включить ECH</string>
+    <string name="node_detail_ech_config">Конфигурация ECH (Base64)</string>
+    <string name="node_detail_ech_key">Ключ ECH (Base64)</string>
+    <string name="node_detail_mux_protocol">Протокол мультиплексирования</string>
+    <string name="node_detail_min_streams">Минимум потоков</string>
+    <string name="node_detail_max_streams">Максимум потоков</string>
+    <string name="node_detail_padding">Дополнение (padding)</string>
+    <string name="node_detail_detour_proxy">Предварительный прокси</string>
+    <string name="node_detail_detour_proxy_subtitle">Выберите узел из любой конфигурации</string>
+    <string name="node_detail_detour_tag">Тег предварительного прокси (расширенное)</string>
+    <string name="node_detail_detour_tag_subtitle">Вручную задайте исходящий тег; пусто — отключено</string>
+    <string name="node_detail_tcp_fast_open">TCP Fast Open</string>
+    <string name="node_detail_select_detour_node">Выбрать узел предварительного прокси</string>
+    <string name="node_detail_unknown_profile">Неизвестная конфигурация (%s)</string>
+  <!-- Rule Sets -->
+    <string name="rulesets_title">Управление наборами правил</string>
+    <string name="rulesets_empty">Нет наборов правил</string>
+    <string name="rulesets_add">Добавить набор правил</string>
+    <string name="rulesets_edit">Изменить набор правил</string>
+    <string name="rulesets_default_rule">Правило по умолчанию</string>
+    <string name="rulesets_delete_title">Удалить набор правил</string>
+    <string name="rulesets_delete_confirm">Удалить набор правил «%s»?</string>
+    <string name="rulesets_delete_batch_confirm">Удалить выбранные наборы правил (%d шт.)?</string>
+    <string name="rulesets_select_outbound">Выберите исходящий режим</string>
+    <string name="rulesets_select_profile">Выбрать конфигурацию</string>
+    <string name="rulesets_select_node">Выбрать узел</string>
+    <string name="rulesets_select_inbound">Выбрать входящий</string>
+    <string name="rulesets_type">Тип</string>
+    <string name="rulesets_format">Формат</string>
+    <string name="rulesets_url">URL</string>
+    <string name="rulesets_local_path">Локальный путь</string>
+    <string name="rulesets_nodes_count">%d узлов</string>
+    <string name="rulesets_unknown_profile">Неизвестная конфигурация (%s)</string>
+    <string name="rulesets_exists">Набор правил «%s» уже существует</string>
+    <string name="rulesets_added_downloaded">Набор правил «%s» добавлен и загружен</string>
+    <string name="rulesets_added_failed">Набор правил «%s» добавлен, но загрузка не удалась (можно обновить позже вручную)</string>
+
+    <!-- Rule Set Hub -->
+    <string name="ruleset_hub_title">Каталог наборов правил</string>
+    <string name="ruleset_hub_subtitle">Предоставлено SagerNet</string>
+
+    <!-- Rule Set Default Configs -->
+    <string name="rulesets_add_default">Добавить стандартные наборы правил</string>
+    <string name="rulesets_default_subtitle">Распространённые правила для пользователей материкового Китая</string>
+    <string name="rulesets_geosite_cn_desc">Прямое подключение к доменам материкового Китая</string>
+    <string name="rulesets_geosite_not_cn_desc">Прокси для не-китайских доменов</string>
+    <string name="rulesets_geosite_ads_desc">Блокировка рекламных доменов</string>
+    <string name="rulesets_geosite_private_desc">Прямое подключение для частных сетей</string>
+    <string name="rulesets_geosite_apple_desc">Прокси для сервисов Apple</string>
+
+    <!-- App Rules -->
+    <string name="app_rules_title">Маршрутизация приложений</string>
+    <string name="app_rules_empty">Нет правил маршрутизации приложений</string>
+    <string name="app_rules_description">Различные правила прокси для разных приложений</string>
+    <string name="app_rules_add">Добавить правило приложения</string>
+    <string name="app_rules_edit">Изменить правило приложения</string>
+    <string name="app_rules_delete_title">Удалить правило</string>
+    <string name="app_rules_delete_confirm">Удалить правило маршрутизации для «%s»?</string>
+    <string name="app_rules_not_selected">Не выбрано</string>
+    <string name="app_rules_unknown_profile">Неизвестная конфигурация</string>
+    <string name="app_rules_tabs_groups">Группы приложений</string>
+    <string name="app_rules_tabs_individual">Отдельные правила</string>
+    <string name="app_rules_empty_groups">Нет групп приложений</string>
+    <string name="app_rules_empty_groups_hint">Нажмите + в правом верхнем углу, чтобы создать группу</string>
+    <string name="app_rules_empty_individual">Нет отдельных правил приложений</string>
+    <string name="app_rules_empty_individual_hint">Нажмите + в правом верхнем углу, чтобы добавить правило</string>
+    <string name="app_rules_select_app">Выберите приложение</string>
+    <string name="app_rules_click_to_select">Нажмите для выбора...</string>
+    <string name="app_rules_select_target">Выберите цель</string>
+    <string name="app_groups_description">Объединяйте приложения в группы для общих правил прокси</string>
+
+    <!-- App Groups -->
+    <string name="app_groups_add">Добавить группу</string>
+    <string name="app_groups_create">Создать группу</string>
+    <string name="app_groups_edit">Изменить группу</string>
+    <string name="app_groups_delete_title">Удалить группу</string>
+    <string name="app_groups_delete_confirm">Удалить группу «%1$s»? В ней %2$d приложений.</string>
+    <string name="app_groups_empty">Нет групп</string>
+    <string name="app_groups_name">Имя группы</string>
+    <string name="app_groups_select_apps">Выберите приложения</string>
+    <string name="app_groups_click_to_add">Нажмите кнопку выше, чтобы выбрать приложения</string>
+    <string name="app_groups_remove">Удалить</string>
+
+    <!-- Domain Rules -->
+    <string name="domain_rules_title">Маршрутизация по домену</string>
+    <string name="domain_rules_placeholder">google.com / =exact.com / *keyword*</string>
+    <string name="domain_rules_detected_type">Определённый тип: %s</string>
+    <string name="domain_rules_type_exact">Точное совпадение</string>
+    <string name="domain_rules_type_keyword">Совпадение по ключевому слову</string>
+    <string name="domain_rules_type_suffix">Совпадение по суффиксу (включая поддомены)</string>
+    <string name="domain_rules_empty">Нет правил маршрутизации по домену</string>
+    <string name="domain_rules_add">Добавить правило</string>
+    <string name="domain_rules_edit">Изменить правило</string>
+    <string name="domain_rules_delete_title">Удалить правило</string>
+    <string name="domain_rules_delete_confirm">Удалить правило «%s»?</string>
+
+    <!-- Custom Rules -->
+    <string name="custom_rules_title">Свои правила</string>
+    <string name="custom_rules_empty">Нет своих правил</string>
+    <string name="custom_rules_add">Добавить правило</string>
+    <string name="custom_rules_edit">Изменить правило</string>
+    <string name="custom_rules_delete_title">Удалить правило</string>
+    <string name="custom_rules_delete_confirm">Удалить правило «%s»?</string>
+    <string name="custom_rules_name">Имя</string>
+    <string name="custom_rules_name_hint">Моё правило</string>
+    <string name="custom_rules_type">Тип правила</string>
+    <string name="custom_rules_content">Содержимое правила</string>
+    <string name="custom_rules_content_hint">Содержимое</string>
+
+    <!-- Logs -->
+    <string name="logs_title">Журнал работы</string>
+    <string name="logs_export">Экспорт</string>
+    <string name="logs_clear">Очистить</string>
+    <string name="logs_search_hint">Поиск (домены, ошибки и т. д.)</string>
+    <string name="logs_debug_disabled">Режим отладки выключен</string>
+    <string name="logs_debug_disabled_hint">Логи не записываются для экономии ресурсов</string>
+
+    <!-- Diagnostics -->
+    <string name="diagnostics_title">Диагностика сети</string>
+    <string name="diagnostics_view_config">Краткая сводка по конфигурации</string>
+    <string name="diagnostics_view_config_subtitle">Проверить, созданы ли правила package_name</string>
+    <string name="diagnostics_view_config_loading">Создание сводки...</string>
+    <string name="diagnostics_export_config">Экспорт работающей конфигурации</string>
+    <string name="diagnostics_export_config_subtitle">Экспорт running_config.json во внешнее хранилище</string>
+    <string name="diagnostics_export_config_loading">Экспорт...</string>
+    <string name="diagnostics_app_routing">Диагностика маршрутизации приложений</string>
+    <string name="diagnostics_app_routing_subtitle">Проверка доступности /proc/net (влияет на работу package_name)</string>
+    <string name="diagnostics_app_routing_loading">Проверка...</string>
+    <string name="diagnostics_conn_owner">Статистика владельцев соединений</string>
+    <string name="diagnostics_conn_owner_subtitle">Просмотр счётчиков успехов/ошибок findConnectionOwner</string>
+    <string name="diagnostics_conn_owner_loading">Чтение...</string>
+    <string name="diagnostics_reset_conn_owner">Сбросить статистику владельцев соединений</string>
+    <string name="diagnostics_reset_conn_owner_subtitle">Обнулить счётчики (для воспроизведения проблем)</string>
+    <string name="diagnostics_node_line_query">Проверка линии узла</string>
+    <string name="diagnostics_node_line_query_subtitle">Просмотр линии и выхода текущего глобального узла</string>
+    <string name="diagnostics_node_line_query_loading">Запрос...</string>
+    <string name="diagnostics_connectivity">Проверка связи</string>
+    <string name="diagnostics_connectivity_subtitle">Тест подключения (www.google.com)</string>
+    <string name="diagnostics_connectivity_loading">Проверка...</string>
+    <string name="diagnostics_ping_test">Ping-тест</string>
+    <string name="diagnostics_ping_test_subtitle">ICMP Ping (8.8.8.8)</string>
+    <string name="diagnostics_dns_query">DNS-запрос</string>
+    <string name="diagnostics_dns_query_subtitle">Разрешение домена (www.google.com)</string>
+    <string name="diagnostics_routing_test">Тест маршрутизации</string>
+    <string name="diagnostics_routing_test_subtitle">Симуляция применения правил (baidu.com)</string>
+    <string name="diagnostics_routing_test_loading">Тестирование...</string>
+    <string name="diagnostics_file_not_exist">Не существует</string>
+    <string name="diagnostics_file_not_readable">Существует, но недоступен для чтения</string>
+    <string name="diagnostics_stats_reset">Статистика findConnectionOwner сброшена.</string>
+
+    <!-- Profile Editor -->
+    <string name="profile_editor_title">Изменить конфигурацию</string>
+
+    <!-- Export/Import -->
+    <string name="export_success">Экспорт успешен</string>
+    <string name="export_success_message">Данные сохранены в выбранное место</string>
+    <string name="export_failed">Ошибка экспорта</string>
+    <string name="data_validation_failed">Ошибка проверки данных</string>
+    <string name="import_confirm_title">Подтвердите импорт</string>
+    <string name="import_confirm_button">Подтвердить импорт</string>
+    <string name="import_export_time">Время экспорта</string>
+    <string name="import_app_version">Версия приложения</string>
+    <string name="import_data_version">Версия данных</string>
+    <string name="import_profile_count">Количество конфигураций</string>
+    <string name="import_node_count">Всего узлов</string>
+    <string name="import_has_settings">Включает настройки</string>
+    <string name="import_has_custom_rules">Свои правила</string>
+    <string name="import_has_rulesets">Наборы правил</string>
+    <string name="import_has_app_rules">Маршрутизация приложений</string>
+    <string name="import_overwrite_warning">Импорт перезапишет существующие конфигурации и настройки с такими же именами</string>
+    <string name="import_count_items">%d шт.</string>
+    <string name="import_success">Импорт успешен</string>
+    <string name="import_partial_success">Импорт частично успешен</string>
+    <string name="import_failed">Ошибка импорта</string>
+    <string name="import_settings_restored">Настройки восстановлены</string>
+    <string name="import_success_detail">Импорт успешен: %1$d конфигураций, %2$d узлов</string>
+    <string name="import_partial_detail">Успешно: %1$d
+Не удалось: %2$d</string>
+    <string name="import_more_errors">… и ещё %d ошибок</string>
+
+    <!-- App List -->
+    <string name="app_list_loading">Загрузка списка приложений...</string>
+    <string name="app_list_loaded">Загружено %1$d из %2$d приложений</string>
+    <string name="app_list_search_hint">Поиск приложения или имени пакета</string>
+    <string name="app_list_show_system">Показывать системные приложения</string>
+    <string name="app_list_show_no_launcher">Показывать приложения без иконки запуска</string>
+    <string name="app_list_quick_select">Распространённые</string>
+
+    <!-- QR Scanner -->
+    <string name="qr_scanner_no_qr_found">QR-код не обнаружен</string>
+    <string name="qr_scanner_cannot_read_image">Не удалось прочитать изображение</string>
+    <string name="qr_scanner_flash_on">Вспышка включена</string>
+    <string name="qr_scanner_flash_off">Вспышка выключена</string>
+
+    <!-- Profile Card -->
+    <string name="profile_card_no_expiry">Бессрочно</string>
+    <string name="profile_card_never_updated">Никогда не обновлялось</string>
+    <string name="profile_card_traffic_unlimited">Без ограничений</string>
+    <string name="profile_card_traffic_remaining">Осталось: %s</string>
+    <string name="profile_card_updated_at">Обновлено:</string>
+
+    <!-- Service Notifications -->
+    <string name="notification_switch_node">Сменить узел</string>
+    <string name="notification_reset_connections">Сбросить соединения</string>
+    <string name="notification_disconnect">Отключить</string>
+    <string name="notification_speed_format">↑ %1$s  ↓ %2$s</string>
+
+    <!-- Connection Settings -->
+    <string name="connection_settings_show_notification_speed">Скорость в уведомлении</string>
+    <string name="connection_settings_show_notification_speed_subtitle">Показывать скорость отдачи и загрузки в уведомлении</string>
+    <string name="connection_settings_wake_reset">Сброс соединений при выходе из сна</string>
+    <string name="connection_settings_wake_reset_subtitle">Закрывать все активные соединения при выходе устройства из сна</string>
+
+    <!-- About Dialog -->
+    <string name="about_version">Версия приложения: %1$s (%2$d)</string>
+    <string name="about_kernel_version">Версия ядра: %s</string>
+    <string name="about_kernel_loading">Загрузка...</string>
+    <string name="about_kernel_builtin">sing-box (встроенный)</string>
+    <string name="about_address">Адрес:</string>
+    <string name="about_based_on">Основано на ядре Sing-box.</string>
+    <string name="about_designed_by">Designed by KunK.</string>
+
+    <!-- MainActivity -->
+    <string name="main_restart">Перезапустить</string>
+
+    <!-- Enum: RoutingMode -->
+    <string name="routing_mode_rule">Режим правил</string>
+    <string name="routing_mode_global_proxy">Глобальный прокси</string>
+    <string name="routing_mode_global_direct">Глобальное прямое подключение</string>
+
+    <!-- Enum: DefaultRule -->
+    <string name="default_rule_direct">Прямое</string>
+    <string name="default_rule_proxy">Прокси</string>
+    <string name="default_rule_block">Блокировать</string>
+
+    <!-- Enum: AppThemeMode -->
+    <string name="theme_system">Как в системе</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+
+    <!-- Enum: AppLanguage -->
+    <string name="language_system">Как в системе</string>
+    <string name="language_chinese">简体中文</string>
+    <string name="language_english">English</string>
+
+    <!-- Enum: TunStack -->
+    <string name="tun_stack_system">System</string>
+    <string name="tun_stack_gvisor">gVisor</string>
+    <string name="tun_stack_mixed">Mixed</string>
+
+    <!-- Enum: IpVersionMode -->
+    <string name="ip_version_mode_ipv4_only">Только IPv4</string>
+    <string name="ip_version_mode_dual_stack">Двойной стек</string>
+    <string name="ip_version_mode_prefer_ipv6">Двойной стек, приоритет IPv6</string>
+    <string name="ip_version_mode_ipv6_only">Только IPv6</string>
+
+    <!-- Enum: VpnRouteMode -->
+    <string name="vpn_route_mode_global">Глобальный перехват</string>
+    <string name="vpn_route_mode_custom">Свой перехват</string>
+
+    <!-- Enum: VpnAppMode -->
+    <string name="vpn_app_mode_all">Все приложения</string>
+    <string name="vpn_app_mode_allowlist">Только разрешённые</string>
+    <string name="vpn_app_mode_blocklist">Список исключений</string>
+
+    <!-- Enum: DnsStrategy -->
+    <string name="dns_strategy_auto">Auto</string>
+    <string name="dns_strategy_prefer_ipv4">Приоритет IPv4</string>
+    <string name="dns_strategy_prefer_ipv6">Приоритет IPv6</string>
+    <string name="dns_strategy_only_ipv4">Только IPv4</string>
+    <string name="dns_strategy_only_ipv6">Только IPv6</string>
+
+    <!-- Enum: LatencyTestMethod -->
+    <string name="latency_test_tcp">Задержка TCP</string>
+    <string name="latency_test_rtt">Реальная задержка (RTT)</string>
+    <string name="latency_test_handshake">Задержка HTTP-рукопожатия</string>
+
+    <!-- Enum: GhProxyMirror -->
+    <string name="gh_mirror_sagernet">SagerNet (официальное)</string>
+    <string name="gh_mirror_jsdelivr">jsDelivr (CDN)</string>
+
+    <!-- Enum: RuleType -->
+    <string name="rule_type_domain">Домен</string>
+    <string name="rule_type_domain_suffix">Суффикс домена</string>
+    <string name="rule_type_domain_keyword">Ключевое слово домена</string>
+    <string name="rule_type_ip_cidr">IP CIDR</string>
+    <string name="rule_type_geoip">GeoIP</string>
+    <string name="rule_type_geosite">GeoSite</string>
+    <string name="rule_type_port">Порт</string>
+    <string name="rule_type_process_name">Имя процесса</string>
+
+    <!-- Enum: OutboundTag -->
+    <string name="outbound_tag_direct">Прямое</string>
+    <string name="outbound_tag_proxy">Прокси</string>
+    <string name="outbound_tag_block">Блокировать</string>
+
+    <!-- Enum: RuleSetType -->
+    <string name="ruleset_type_remote">Удалённый</string>
+    <string name="ruleset_type_local">Локальный</string>
+
+    <!-- Enum: RuleSetOutboundMode -->
+    <string name="ruleset_outbound_direct">Прямое</string>
+    <string name="ruleset_outbound_block">Блокировать</string>
+    <string name="ruleset_outbound_proxy">Прокси</string>
+    <string name="ruleset_outbound_node">Один узел</string>
+    <string name="ruleset_outbound_profile">Конфигурация</string>
+
+    <!-- Update Status Messages -->
+    <string name="update_status_no_subscription">Нет подписок для обновления</string>
+    <string name="update_status_failed">Ошибка обновления</string>
+    <string name="update_status_success_changes">Обновление успешно, изменено подписок: %d</string>
+    <string name="update_status_success_no_changes">Обновление завершено, без изменений</string>
+    <string name="update_status_partial">Обновление завершено: %1$d успешно, %2$d с ошибкой</string>
+    <string name="update_status_complete">Обновление завершено</string>
+
+    <!-- Infinite Date -->
+    <string name="date_infinite">Бессрочно</string>
+
+    <!-- Enum: BackgroundPowerSavingDelay -->
+    <string name="power_saving_delay_5min">5 минут</string>
+    <string name="power_saving_delay_15min">15 минут</string>
+    <string name="power_saving_delay_30min">30 минут</string>
+    <string name="power_saving_delay_1hour">1 час</string>
+    <string name="power_saving_delay_2hours">2 часа</string>
+    <string name="power_saving_delay_never">Никогда</string>
+
+    <!-- Connection Settings - Power Saving -->
+    <string name="connection_settings_power_saving">Задержка энергосбережения в фоне</string>
+    <string name="connection_settings_power_saving_subtitle">Через какое время после ухода в фон приостанавливать второстепенные процессы</string>
+
+    <!-- Node Switch Messages -->
+    <string name="node_switch_success">Переключено на %s</string>
+    <string name="node_switch_not_running">Переключено на %s (служба не запущена)</string>
+    <string name="node_switch_failed">Не удалось переключиться на %s</string>
+    <string name="node_start_failed">Ошибка запуска: %s</string>
+    <string name="nodes_no_valid_found">Действующие узлы не найдены</string>
+
+    <!-- Subscription Update Messages -->
+    <string name="subscription_update_success_with_changes">Обновлено (%1$s, узлов: %2$d)</string>
+    <string name="subscription_update_success_no_changes">Обновление завершено, без изменений (узлов: %d)</string>
+    <string name="subscription_update_success_background_dns">%1$s, предварительное разрешение DNS перенесено в фон</string>
+    <string name="subscription_update_stage_requesting">Запрос</string>
+    <string name="subscription_update_stage_parsing">Разбор</string>
+    <string name="subscription_update_stage_saving">Сохранение</string>
+    <string name="subscription_update_stage_dns_background">Предварительное разрешение DNS в фоне</string>
+    <string name="ruleset_update_network_error">Ошибка обновления, проверьте подключение</string>
+
+    <!-- App Groups -->
+    <string name="app_groups_name_placeholder">Например: Соцсети, Игры</string>
+
+    <!-- RuleSet Hub -->
+    <string name="ruleset_hub_rule_count">Количество правил: %d</string>
+
+    <!-- RuleSets Screen -->
+    <string name="rulesets_selection_mode">Выбрано: %d</string>
+
+    <!-- Traffic Stats -->
+    <string name="traffic_stats_title">Статистика трафика</string>
+    <string name="traffic_stats_clear_title">Очистить статистику</string>
+    <string name="traffic_stats_clear_message">Удалить все данные статистики? Это действие необратимо.</string>
+    <string name="traffic_stats_clear_button">Очистить</string>
+    <string name="traffic_stats_period_today">Сегодня</string>
+    <string name="traffic_stats_period_this_week">Эта неделя</string>
+    <string name="traffic_stats_period_this_month">Этот месяц</string>
+    <string name="traffic_stats_period_all">За всё время</string>
+    <string name="traffic_stats_total_traffic">Всего</string>
+    <string name="traffic_stats_upload">Отдача</string>
+    <string name="traffic_stats_download">Загрузка</string>
+    <string name="traffic_stats_total_format">Всего: %s</string>
+    <string name="traffic_stats_distribution">Распределение трафика</string>
+    <string name="traffic_stats_unknown_node">Неизвестно</string>
+    <string name="traffic_stats_top_nodes">Топ узлов</string>
+    <string name="traffic_stats_upload_short">↑ %s</string>
+    <string name="traffic_stats_download_short">↓ %s</string>
+    <string name="traffic_stats_no_data">Нет данных о трафике</string>
+    <string name="traffic_stats_no_data_hint">Подключитесь к VPN и используйте его, затем вернитесь сюда.</string>
+    <string name="traffic_stats_settings_title">Статистика трафика</string>
+    <string name="traffic_stats_settings_subtitle">Отдача и загрузка по периодам и узлам</string>
+
+    <!-- InfoCard -->
+    <string name="info_card_upload">Отдача</string>
+    <string name="info_card_download">Загрузка</string>
+    <string name="info_card_ping">Задержка</string>
+
+</resources>
