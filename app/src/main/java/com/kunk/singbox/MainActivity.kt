@@ -150,6 +150,7 @@ fun SingBoxApp() {
         val language = settings?.appLanguage ?: return@LaunchedEffect
         val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
         prefs.edit().putString("app_language_cache", language.name).apply()
+        LocaleHelper.applyLanguage(language)
     }
 
     val isVpnRunningForUpdate by SingBoxRemote.isRunning.collectAsState()
