@@ -33,6 +33,10 @@ class StartupManager(
     companion object {
         private const val TAG = "StartupManager"
 
+        internal fun resolveRuntimeLogLevel(debugLoggingEnabled: Boolean): String {
+            return if (debugLoggingEnabled) "debug" else "error"
+        }
+
         internal fun applyPrewarmedDomainIps(
             config: SingBoxConfig,
             prewarmedDomainIps: Map<String, String>
@@ -495,7 +499,7 @@ class StartupManager(
         prewarmedDomainIps: Map<String, String> = emptyMap()
     ): String {
         var configContent = rawConfigContent
-        val logLevel = if (settings.debugLoggingEnabled) "debug" else "info"
+        val logLevel = resolveRuntimeLogLevel(settings.debugLoggingEnabled)
 
         try {
             val configObj = gson.fromJson(configContent, SingBoxConfig::class.java)

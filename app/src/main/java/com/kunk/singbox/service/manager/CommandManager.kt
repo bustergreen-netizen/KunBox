@@ -562,6 +562,7 @@ class CommandManager(
         override fun writeLogs(messageList: LogIterator?) {
             if (messageList == null) return
             val repo = LogRepository.getInstance()
+            if (!repo.isEnabled()) return
             runCatching {
                 while (messageList.hasNext()) {
                     val msg = messageList.next()?.message

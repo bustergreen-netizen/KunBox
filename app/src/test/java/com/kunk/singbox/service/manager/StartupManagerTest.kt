@@ -9,6 +9,12 @@ import org.junit.Test
 class StartupManagerTest {
 
     @Test
+    fun resolveRuntimeLogLevelOnlyEnablesVerboseLogsInDebugMode() {
+        assertEquals("error", StartupManager.resolveRuntimeLogLevel(debugLoggingEnabled = false))
+        assertEquals("debug", StartupManager.resolveRuntimeLogLevel(debugLoggingEnabled = true))
+    }
+
+    @Test
     fun applyPrewarmedDomainIpsReplacesMatchingOutboundServers() {
         val config = SingBoxConfig(
             outbounds = listOf(

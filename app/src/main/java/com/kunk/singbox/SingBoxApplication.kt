@@ -17,6 +17,7 @@ import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class SingBoxApplication : Application(), Configuration.Provider {
@@ -38,6 +39,13 @@ class SingBoxApplication : Application(), Configuration.Provider {
         }
 
         LogRepository.init(this)
+        val settingsRepository = SettingsRepository.getInstance(this)
+        LogRepository.getInstance().setEnabled(settingsRepository.settings.value.debugLoggingEnabled)
+        applicationScope.launch {
+            settingsRepository.settings.collect { settings ->
+                LogRepository.getInstance().setEnabled(settings.debugLoggingEnabled)
+            }
+        }
 
         cleanupOrphanedTempFiles()
 
@@ -47,7 +55,7 @@ class SingBoxApplication : Application(), Configuration.Provider {
             applicationScope.launch {
 
                 try {
-                    val settings = SettingsRepository.getInstance(this@SingBoxApplication).settings.value
+                    val settings = settingsRepository.settings.value
                     AppLifecycleObserver.setBackgroundTimeout(settings.backgroundPowerSavingDelay.delayMs)
                 } catch (e: Exception) {
                     android.util.Log.w("SingBoxApp", "Failed to read power saving setting", e)

@@ -39,12 +39,29 @@ class LogRepository private constructor() {
     private val flushRunning = AtomicBoolean(false)
     private val logUiActiveCount = AtomicInteger(0)
 
+    @Volatile private var enabled: Boolean = false
     @Volatile private var fileSyncJob: Job? = null
     @Volatile private var lastSyncedFileSize: Long = -1L
     @Volatile private var lastSyncedFileMtime: Long = -1L
 
+    fun setEnabled(value: Boolean) {
+        if (enabled == value) return
+        enabled = value
+        if (!value) {
+            logUiActiveCount.set(0)
+            clearLogs()
+            stopFileSyncLoop()
+        }
+    }
+
+    fun isEnabled(): Boolean = enabled
+
     fun setLogUiActive(active: Boolean) {
         if (active) {
+            if (!enabled) {
+                _logs.value = emptyList()
+                return
+            }
             val count = logUiActiveCount.incrementAndGet()
             if (count == 1) {
                 reloadFromFileBestEffort()
@@ -67,6 +84,8 @@ class LogRepository private constructor() {
 
     @Suppress("CyclomaticComplexMethod", "ComplexCondition")
     fun addLog(message: String) {
+        if (!enabled) return
+
         val timestamp = synchronized(dateFormat) { dateFormat.format(Date()) }
 
         if (message.contains("TRACE")) {
