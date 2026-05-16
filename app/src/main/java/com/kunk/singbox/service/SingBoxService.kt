@@ -406,6 +406,13 @@ class SingBoxService : VpnService() {
                 NetworkTypeChangedFallbackAction.RESTART_VPN
             }
         }
+
+        internal fun shouldCloseConnectionsDuringForegroundFastRecovery(profile: RecoveryProfile): Boolean {
+            return when (profile) {
+                RecoveryProfile.DEFAULT,
+                RecoveryProfile.HYSTERIA2 -> false
+            }
+        }
     }
 
     private fun tryRegisterRunningServiceForLibbox() {
@@ -1878,17 +1885,15 @@ class SingBoxService : VpnService() {
         val startMs = SystemClock.elapsedRealtime()
         val isHy2 = isSelectedHysteria2Outbound()
 
+        val recoveryProfile = getRecoveryProfile()
         BoxWrapperManager.wake()
-        if (isHy2) {
-            Log.i(TAG, "[ForegroundFastRecovery] hysteria2 selected, skip aggressive reset")
-        } else {
-            // 2026-fix: wake + 清理僵死连接 + resetNetwork
-            // 息屏/后台期间 TCP 连接已超时，必须清理旧连接引用
-            // 否则前台应用复用旧连接会一直 loading
+        if (shouldCloseConnectionsDuringForegroundFastRecovery(recoveryProfile)) {
             BoxWrapperManager.closeAllTrackedConnections()
             BoxWrapperManager.resetAllConnections(true)
-            BoxWrapperManager.resetNetwork()
+        } else if (isHy2) {
+            Log.i(TAG, "[ForegroundFastRecovery] hysteria2 selected, skip aggressive reset")
         }
+        BoxWrapperManager.resetNetwork()
 
         val elapsedMs = SystemClock.elapsedRealtime() - startMs
         Log.i(TAG, "[ForegroundFastRecovery] completed in ${elapsedMs}ms")

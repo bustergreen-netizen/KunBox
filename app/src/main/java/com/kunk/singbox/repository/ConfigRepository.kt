@@ -1068,8 +1068,20 @@ class ConfigRepository(private val context: Context) {
             )
         }
 
+        internal fun buildDnsRouteToNonDirectForTest(
+            fakeDnsEnabled: Boolean,
+            serverTag: String,
+            rule: DnsRule
+        ): List<DnsRule> {
+            return buildDnsRouteToNonDirect(fakeDnsEnabled, serverTag, rule)
+        }
+
         internal fun buildNonIpDnsFallbackRuleForTest(serverTag: String): DnsRule {
             return buildNonIpDnsFallbackRule(serverTag)
+        }
+
+        internal fun buildDnsRouteToDirectForTest(rule: DnsRule): DnsRule {
+            return buildDnsRouteToDirect("local", "local", rule)
         }
 
         internal fun sortRuleSetsForDnsAndRoutePriorityForTest(ruleSets: List<RuleSet>): List<RuleSet> {
@@ -1079,8 +1091,7 @@ class ConfigRepository(private val context: Context) {
         internal fun buildQuicBlockRuleForTest(settings: AppSettings): List<RouteRule> {
             return if (settings.blockQuic) {
                 listOf(
-                    RouteRule(protocolRaw = listOf("quic"), action = "reject", outbound = "direct"),
-                    RouteRule(networkRaw = listOf("udp"), port = listOf(443), action = "reject", outbound = "direct")
+                    RouteRule(protocolRaw = listOf("quic"), action = "reject", outbound = "direct")
                 )
             } else {
                 emptyList()
@@ -1130,6 +1141,36 @@ class ConfigRepository(private val context: Context) {
                 action = "route",
                 queryType = NON_IP_DNS_QUERY_TYPES,
                 server = serverTag
+            )
+        }
+
+        private fun buildDnsRouteToDirect(
+            serverTag: String,
+            directServerTag: String,
+            rule: DnsRule
+        ): DnsRule {
+            val routeRule = if (serverTag == directServerTag && rule.queryType == null) {
+                rule.copy(queryType = IP_DNS_QUERY_TYPES)
+            } else {
+                rule
+            }
+            return routeRule.copy(action = "route", server = serverTag)
+        }
+
+        private fun buildDnsRouteToNonDirect(
+            fakeDnsEnabled: Boolean,
+            serverTag: String,
+            rule: DnsRule
+        ): List<DnsRule> {
+            fun dnsRouteTo(server: String, currentRule: DnsRule): DnsRule =
+                currentRule.copy(action = "route", server = server)
+
+            if (!fakeDnsEnabled) {
+                return listOf(dnsRouteTo(serverTag, rule))
+            }
+            return listOf(
+                dnsRouteTo("fakeip-dns", rule.copy(queryType = IP_DNS_QUERY_TYPES)),
+                dnsRouteTo(serverTag, rule.copy(queryType = null))
             )
         }
 
@@ -4506,6 +4547,9 @@ class ConfigRepository(private val context: Context) {
         fun dnsRouteTo(server: String, rule: DnsRule): DnsRule =
             rule.copy(action = "route", server = server)
 
+        fun dnsRouteToDirect(server: String, rule: DnsRule): DnsRule =
+            buildDnsRouteToDirect(server, directServerTag, rule)
+
         fun dnsReject(rule: DnsRule): DnsRule = rule.copy(action = "reject", method = "default")
 
         fun parseDomainList(input: String): List<String> {
@@ -4526,13 +4570,11 @@ class ConfigRepository(private val context: Context) {
         }
 
         fun dnsRouteToProxy(rule: DnsRule): List<DnsRule> {
-            if (!settings.fakeDnsEnabled) {
-                return listOf(dnsRouteTo(proxyServerTag, rule))
-            }
-            return listOf(
-                dnsRouteTo("fakeip-dns", rule.copy(queryType = IP_DNS_QUERY_TYPES)),
-                dnsRouteTo(proxyServerTag, rule.copy(queryType = null))
-            )
+            return buildDnsRouteToNonDirect(settings.fakeDnsEnabled, proxyServerTag, rule)
+        }
+
+        fun dnsRouteToNonDirect(server: String, rule: DnsRule): List<DnsRule> {
+            return buildDnsRouteToNonDirect(settings.fakeDnsEnabled, server, rule)
         }
 
         fun outboundModeOf(
@@ -4553,7 +4595,6 @@ class ConfigRepository(private val context: Context) {
         }
         val echQueryServerTag = "dns-bootstrap"
         dnsRules.addAll(buildEchDnsRules(outboundsContext.outbounds, echQueryServerTag))
-        dnsRules.add(buildNonIpDnsFallbackRule(proxyServerTag))
         val bootstrapStrategy = resolveDnsStrategy(settings.serverAddressStrategy, settings.ipVersionMode)
         val bootstrapV4Tag = "dns-bootstrap-v4"
         val bootstrapV6Tag = "dns-bootstrap-v6"
@@ -4690,8 +4731,10 @@ class ConfigRepository(private val context: Context) {
                 rulesForServer.forEach { rule ->
                     if (serverTag == "fakeip-dns") {
                         dnsRules.addAll(dnsRouteToProxy(rule))
+                    } else if (serverTag == directServerTag) {
+                        dnsRules.add(dnsRouteToDirect(serverTag, rule))
                     } else {
-                        dnsRules.add(dnsRouteTo(serverTag, rule))
+                        dnsRules.addAll(dnsRouteToNonDirect(serverTag, rule))
                     }
                 }
             }
@@ -4752,8 +4795,10 @@ class ConfigRepository(private val context: Context) {
             rulesForServer.forEach { rule ->
                 if (serverTag == "fakeip-dns") {
                     dnsRules.addAll(dnsRouteToProxy(rule))
+                } else if (serverTag == directServerTag) {
+                    dnsRules.add(dnsRouteToDirect(serverTag, rule))
                 } else {
-                    dnsRules.add(dnsRouteTo(serverTag, rule))
+                    dnsRules.addAll(dnsRouteToNonDirect(serverTag, rule))
                 }
             }
         }
@@ -4836,7 +4881,7 @@ class ConfigRepository(private val context: Context) {
                 return@forEach
             }
             rulesForServer.forEach { rule ->
-                dnsRules.add(dnsRouteTo(serverTag, rule))
+                dnsRules.addAll(dnsRouteToNonDirect(serverTag, rule))
             }
         }
 
@@ -4852,7 +4897,7 @@ class ConfigRepository(private val context: Context) {
         }
         if (directPkgs.isNotEmpty()) {
             dnsRules.add(
-                dnsRouteTo(
+                dnsRouteToDirect(
                     directServerTag,
                     DnsRule(packageName = directPkgs, userId = resolveUids(directPkgs))
                 )
@@ -4885,6 +4930,7 @@ class ConfigRepository(private val context: Context) {
                 dnsRules.add(dnsRouteTo(proxyFinalServerTag, DnsRule(domain = fakeIpExcludeDomains)))
             }
         }
+        dnsRules.add(buildNonIpDnsFallbackRule(proxyServerTag))
         dnsRules.addAll(buildTunFakeIpDnsRulesStatic(settings.fakeDnsEnabled))
 
         val fakeIpConfig = if (settings.fakeDnsEnabled) {
@@ -5217,8 +5263,7 @@ class ConfigRepository(private val context: Context) {
     private fun buildQuicBlockRule(settings: AppSettings): List<RouteRule> {
         return if (settings.blockQuic) {
             listOf(
-                RouteRule(protocolRaw = listOf("quic"), action = "reject", outbound = "direct"),
-                RouteRule(networkRaw = listOf("udp"), port = listOf(443), action = "reject", outbound = "direct")
+                RouteRule(protocolRaw = listOf("quic"), action = "reject", outbound = "direct")
             )
         } else {
             emptyList()

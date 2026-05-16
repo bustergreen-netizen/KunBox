@@ -966,6 +966,22 @@ class ConfigRepositoryTest {
     }
 
     @Test
+    fun testDnsRouteToNonDirectReturnsFakeIpAndSpecificDnsWhenFakeDnsEnabled() {
+        val serverTag = ConfigRepository.buildDynamicDnsServerTag("SG|官方优选|94ms_2")
+        val rules = ConfigRepository.buildDnsRouteToNonDirectForTest(
+            fakeDnsEnabled = true,
+            serverTag = serverTag,
+            rule = com.kunk.singbox.model.DnsRule(ruleSet = listOf("geosite-geolocation-!cn"))
+        )
+
+        assertEquals(2, rules.size)
+        assertEquals("fakeip-dns", rules[0].server)
+        assertEquals(listOf("A", "AAAA"), rules[0].queryType)
+        assertEquals(serverTag, rules[1].server)
+        assertNull(rules[1].queryType)
+    }
+
+    @Test
     fun testNonIpDnsFallbackRoutesHttpsAndSvcbToProxyDns() {
         val rule = ConfigRepository.buildNonIpDnsFallbackRuleForTest(
             ConfigRepository.buildDynamicDnsServerTag("PROXY")
@@ -974,6 +990,17 @@ class ConfigRepositoryTest {
         assertEquals("route", rule.action)
         assertEquals(listOf("HTTPS", "SVCB"), rule.queryType)
         assertEquals(ConfigRepository.buildDynamicDnsServerTag("PROXY"), rule.server)
+    }
+
+    @Test
+    fun testDnsRouteToDirectOnlyRoutesIpQueriesToLocalDns() {
+        val rule = ConfigRepository.buildDnsRouteToDirectForTest(
+            com.kunk.singbox.model.DnsRule(ruleSet = listOf("geosite-cn"))
+        )
+
+        assertEquals("route", rule.action)
+        assertEquals("local", rule.server)
+        assertEquals(listOf("A", "AAAA"), rule.queryType)
     }
 
     @Test
@@ -1409,12 +1436,12 @@ class ConfigRepositoryTest {
     }
 
     @Test
-    fun testBuildQuicBlockRuleReturnsRejectRulesWhenBlockQuicEnabled() {
+    fun testBuildQuicBlockRuleOnlyRejectsSniffedQuicWhenBlockQuicEnabled() {
         val rules = ConfigRepository.buildQuicBlockRuleForTest(AppSettings(blockQuic = true))
 
-        assertFalse(rules.isEmpty())
+        assertEquals(1, rules.size)
         assertTrue(rules.any { it.protocol?.contains("quic") == true })
-        assertTrue(rules.any { it.network?.contains("udp") == true && it.port == listOf(443) })
+        assertFalse(rules.any { it.network?.contains("udp") == true && it.port == listOf(443) })
     }
 
     @Test

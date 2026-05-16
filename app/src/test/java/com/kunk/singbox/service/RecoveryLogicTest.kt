@@ -177,6 +177,20 @@ class RecoveryLogicTest {
     }
 
     @Test
+    fun foregroundFastRecoveryDoesNotCloseActiveConnections() {
+        assertFalse(
+            SingBoxService.shouldCloseConnectionsDuringForegroundFastRecovery(
+                SingBoxService.RecoveryProfile.DEFAULT
+            )
+        )
+        assertFalse(
+            SingBoxService.shouldCloseConnectionsDuringForegroundFastRecovery(
+                SingBoxService.RecoveryProfile.HYSTERIA2
+            )
+        )
+    }
+
+    @Test
     fun allRecoveryReasonValuesHavePositivePriority() {
         val values = SingBoxService.RecoveryReason.values()
         for (reason in values) {
