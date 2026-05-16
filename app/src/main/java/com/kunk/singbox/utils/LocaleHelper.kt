@@ -16,6 +16,7 @@ object LocaleHelper {
             AppLanguage.SYSTEM -> getSystemLocale()
             AppLanguage.CHINESE -> Locale.SIMPLIFIED_CHINESE
             AppLanguage.ENGLISH -> Locale.ENGLISH
+            AppLanguage.RUSSIAN -> Locale("ru")
         }
 
         return updateResources(context, locale)
@@ -54,6 +55,7 @@ object LocaleHelper {
             AppLanguage.SYSTEM -> "System Default"
             AppLanguage.CHINESE -> "简体中文"
             AppLanguage.ENGLISH -> "English"
+            AppLanguage.RUSSIAN -> "Русский"
         }
     }
 
