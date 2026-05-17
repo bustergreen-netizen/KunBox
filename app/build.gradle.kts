@@ -275,7 +275,7 @@ configure<ApplicationExtension> {
         }
 
         androidResources {
-            localeFilters += listOf("zh", "en") // 仅保留中文和英文资源，减少体积
+            localeFilters += listOf("zh", "en", "ru") // 中文、英文、俄文
         }
     }
 
